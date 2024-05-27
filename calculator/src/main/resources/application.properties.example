@@ -1,0 +1,4 @@
+#General
+spring.application.name=calculator
+#Dev
+springdoc.api-docs.path=/api-docs
