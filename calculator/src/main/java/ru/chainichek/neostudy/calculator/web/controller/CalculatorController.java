@@ -7,6 +7,7 @@ import ru.chainichek.neostudy.calculator.domain.entity.dto.prescore.LoanOfferDto
 import ru.chainichek.neostudy.calculator.domain.entity.dto.prescore.LoanStatementRequestDto;
 import ru.chainichek.neostudy.calculator.domain.entity.dto.score.CreditDto;
 import ru.chainichek.neostudy.calculator.domain.entity.dto.score.ScoringDataDto;
+import ru.chainichek.neostudy.calculator.domain.service.PreScoreUseCase;
 import ru.chainichek.neostudy.calculator.web.api.CalculatorApi;
 
 import java.util.List;
@@ -14,13 +15,14 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 public class CalculatorController implements CalculatorApi {
+    private final PreScoreUseCase preScoreUseCase;
     @Override
-    public ResponseEntity<List<LoanOfferDto>> makeOffers(final LoanStatementRequestDto loanStatementRequest) {
-        return null;
+    public ResponseEntity<List<LoanOfferDto>> makeOffers(final LoanStatementRequestDto request) {
+        return ResponseEntity.ok(preScoreUseCase.execute(request));
     }
 
     @Override
-    public ResponseEntity<CreditDto> calculateCredit(final ScoringDataDto scoringData) {
+    public ResponseEntity<CreditDto> calculateCredit(final ScoringDataDto data) {
         return null;
     }
 }
