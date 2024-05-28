@@ -1,4 +1,14 @@
 #General
+##Spring
 spring.application.name=calculator
+#Application
+##Rate
+app.property.base-rate = 16
+app.property.salary-discount = 1
+app.property.insurance-discount = 3
+##Insuance cost
+app.property.insurance-cost-rate = 6
 #Dev
+##Springdoc
 springdoc.api-docs.path=/api-docs
+springdoc.swagger-ui.path=/swagger-docs
