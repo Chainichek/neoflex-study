@@ -28,7 +28,7 @@ public record ScoringDataDto(@NotNull @DecimalMin(value = Validation.AMOUNT_MIN,
                              @NotNull
                              Gender gender,
                              @NotNull @DateTimeFormat(pattern = Validation.DATE_FORMAT_PATTERN) @Past
-                             LocalDate birthDate,
+                             LocalDate birthdate,
                              @NotBlank @Pattern(regexp = Validation.PASSPORT_SERIES_PATTERN, message = ValidationMessage.PASSPORT_SERIES_MESSAGE)
                              String passportSeries,
                              @NotBlank @Pattern(regexp = Validation.PASSPORT_NUMBER_PATTERN, message = ValidationMessage.PASSPORT_NUMBER_MESSAGE)
