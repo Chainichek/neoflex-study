@@ -6,7 +6,7 @@ import ru.chainichek.neostudy.calculator.domain.entity.dto.prescore.LoanOfferDto
 import ru.chainichek.neostudy.calculator.domain.entity.dto.prescore.LoanStatementRequestDto;
 import ru.chainichek.neostudy.calculator.domain.service.calculation.AmountCalculator;
 import ru.chainichek.neostudy.calculator.domain.service.calculation.MonthlyPaymentCalculator;
-import ru.chainichek.neostudy.calculator.domain.service.calculation.RateCalculator;
+import ru.chainichek.neostudy.calculator.domain.service.calculation.PreScoreRateCalculator;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 public class PreScoreUseCase {
-    private final RateCalculator rateCalculator;
+    private final PreScoreRateCalculator prescoreRateCalculator;
     private final AmountCalculator amountCalculator;
     private final MonthlyPaymentCalculator monthlyPaymentCalculator;
 
@@ -27,7 +27,7 @@ public class PreScoreUseCase {
         int i = 0;
         for (boolean isInsuranceEnabled: booleans) {
             for (boolean isSalaryClient: booleans) {
-                final BigDecimal rate = rateCalculator.execute(isInsuranceEnabled, isSalaryClient);
+                final BigDecimal rate = prescoreRateCalculator.execute(isInsuranceEnabled, isSalaryClient);
                 final BigDecimal totalAmount = amountCalculator.execute(request.amount(), isInsuranceEnabled, isSalaryClient);
                 final BigDecimal monthlyPayment = monthlyPaymentCalculator.execute(totalAmount, rate, request.term());
 

@@ -8,16 +8,16 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 
 @Service
-public class CalculateRateUseCase implements RateCalculator {
+public class CalculatePreScoreRateUseCase implements PreScoreRateCalculator {
     private final BigDecimal baseRate;
     private final BigDecimal insuranceRate = BigDecimal.valueOf(3);
     private final BigDecimal salaryRate = BigDecimal.valueOf(1);
     private final MathContext resultMathContext;
     private final MathContext calculationMathContext;
 
-    public CalculateRateUseCase(final @Value("${app.property.base-rate}") BigDecimal baseRate,
-                                final @Qualifier("resultMathContext") MathContext resultMathContext,
-                                final @Qualifier("calculationMathContext") MathContext calculationMathContext) {
+    public CalculatePreScoreRateUseCase(final @Value("${app.property.base-rate}") BigDecimal baseRate,
+                                        final @Qualifier("resultMathContext") MathContext resultMathContext,
+                                        final @Qualifier("calculationMathContext") MathContext calculationMathContext) {
         this.baseRate = baseRate;
         this.resultMathContext = resultMathContext;
         this.calculationMathContext = calculationMathContext;
