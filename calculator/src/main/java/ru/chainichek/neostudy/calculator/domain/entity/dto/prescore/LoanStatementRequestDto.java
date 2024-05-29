@@ -4,7 +4,7 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.format.annotation.DateTimeFormat;
 import ru.chainichek.neostudy.calculator.domain.util.Validation;
@@ -25,7 +25,7 @@ public record LoanStatementRequestDto(@NotNull @DecimalMin(value = Validation.AM
                                       String middleName,
                                       @NotBlank @Pattern(regexp = Validation.EMAIL_PATTERN, message = ValidationMessage.EMAIL_MESSAGE)
                                       String email,
-                                      @NotNull @DateTimeFormat(pattern = Validation.DATE_FORMAT_PATTERN) @Past
+                                      @NotNull @DateTimeFormat(pattern = Validation.DATE_FORMAT_PATTERN) @PastOrPresent
                                       LocalDateTime birthdate,
                                       @NotBlank @Pattern(regexp = Validation.PASSPORT_SERIES_PATTERN, message = ValidationMessage.PASSPORT_SERIES_MESSAGE)
                                       String passportSeries,

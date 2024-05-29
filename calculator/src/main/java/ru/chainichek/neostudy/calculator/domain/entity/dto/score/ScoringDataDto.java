@@ -4,7 +4,7 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.format.annotation.DateTimeFormat;
 import ru.chainichek.neostudy.calculator.domain.entity.Gender;
@@ -27,13 +27,13 @@ public record ScoringDataDto(@NotNull @DecimalMin(value = Validation.AMOUNT_MIN,
                              String middleName,
                              @NotNull
                              Gender gender,
-                             @NotNull @DateTimeFormat(pattern = Validation.DATE_FORMAT_PATTERN) @Past
+                             @NotNull @DateTimeFormat(pattern = Validation.DATE_FORMAT_PATTERN) @PastOrPresent
                              LocalDate birthdate,
                              @NotBlank @Pattern(regexp = Validation.PASSPORT_SERIES_PATTERN, message = ValidationMessage.PASSPORT_SERIES_MESSAGE)
                              String passportSeries,
                              @NotBlank @Pattern(regexp = Validation.PASSPORT_NUMBER_PATTERN, message = ValidationMessage.PASSPORT_NUMBER_MESSAGE)
                              String passportNumber,
-                             @NotNull @DateTimeFormat(pattern = Validation.DATE_FORMAT_PATTERN) @Past
+                             @NotNull @DateTimeFormat(pattern = Validation.DATE_FORMAT_PATTERN) @PastOrPresent
                              LocalDate passportIssueDate,
                              @NotBlank
                              String passportIssueBranch,
