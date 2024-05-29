@@ -2,10 +2,19 @@ package ru.chainichek.neostudy.calculator.service.validator;
 
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.Period;
+
 @Service
-public class INNValidatorService implements INNValidator {
+public class ValidatorService implements BirthdateValidator, INNValidator{
     private final int[] coefficients1 = {7, 2, 4, 10, 3, 5, 9, 4, 6, 8};
     private final int[] coefficients2 = {3, 7, 2, 4, 10, 3, 5, 9, 4, 6, 8};
+
+    @Override
+    public boolean validateBirthdate(final LocalDate birthdate, final int age) {
+        return Period.between(birthdate, LocalDate.now()).getYears() >= age;
+    }
+
     @Override
     public boolean validateINN(final String INN) {
         int checkNumber1 = 0, checkNumber2 = 0;
