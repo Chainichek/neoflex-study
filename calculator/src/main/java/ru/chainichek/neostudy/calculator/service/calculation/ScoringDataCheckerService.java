@@ -12,15 +12,15 @@ import java.time.LocalDate;
 import java.time.Period;
 
 @Service
-public class CheckCanBeCalculatedUseCase implements CheckCalculator {
+public class ScoringDataCheckerService implements CheckCalculator {
     private final MathContext calculationMathContext;
 
-    public CheckCanBeCalculatedUseCase(final @Qualifier("calculationMathContext") MathContext calculationMathContext) {
+    public ScoringDataCheckerService(final @Qualifier("calculationMathContext") MathContext calculationMathContext) {
         this.calculationMathContext = calculationMathContext;
     }
 
     @Override
-    public void execute(final ScoringDataDto scoringData) {
+    public void check(final ScoringDataDto scoringData) {
         if (scoringData.employment().employmentStatus() == EmploymentStatus.UNEMPLOYED) {
             throw new ForbiddenException("Cannot offer a loan for unemployed");
         }

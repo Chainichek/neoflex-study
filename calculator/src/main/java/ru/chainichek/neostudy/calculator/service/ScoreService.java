@@ -11,7 +11,7 @@ import ru.chainichek.neostudy.calculator.service.calculation.MonthlyPaymentCalcu
 import ru.chainichek.neostudy.calculator.service.calculation.PaymentScheduleCalculator;
 import ru.chainichek.neostudy.calculator.service.calculation.PskCalculator;
 import ru.chainichek.neostudy.calculator.service.calculation.ScoreRateCalculator;
-import ru.chainichek.neostudy.calculator.service.validator.BirthDateValidator;
+import ru.chainichek.neostudy.calculator.service.validator.BirthdateValidator;
 import ru.chainichek.neostudy.calculator.service.validator.INNValidator;
 import ru.chainichek.neostudy.calculator.util.Validation;
 import ru.chainichek.neostudy.calculator.util.ValidationMessage;
@@ -22,7 +22,7 @@ import java.time.LocalDate;
 @Service
 @AllArgsConstructor
 public class ScoreService {
-    private final BirthDateValidator birthDateValidator;
+    private final BirthdateValidator birthDateValidator;
     private final INNValidator innValidator;
 
     private final CheckCalculator checkCalculator;
@@ -34,20 +34,20 @@ public class ScoreService {
 
     public CreditDto getCreditInfo(final ScoringDataDto scoringData) {
         validateScoringData(scoringData);
-        checkCalculator.execute(scoringData);
+        checkCalculator.check(scoringData);
 
-        final BigDecimal rate = scoreRateCalculator.execute(scoringData);
-        final BigDecimal totalAmount = amountCalculator.execute(scoringData.amount(), scoringData.isInsuranceEnabled(), scoringData.isSalaryClient());
-        final BigDecimal monthlyPayment = monthlyPaymentCalculator.execute(totalAmount, rate, scoringData.term());
+        final BigDecimal rate = scoreRateCalculator.calculateScoreRate(scoringData);
+        final BigDecimal totalAmount = amountCalculator.calculateAmount(scoringData.amount(), scoringData.isInsuranceEnabled(), scoringData.isSalaryClient());
+        final BigDecimal monthlyPayment = monthlyPaymentCalculator.calculateMonthlyPayment(totalAmount, rate, scoringData.term());
 
         return new CreditDto(totalAmount,
                 scoringData.term(),
                 monthlyPayment,
                 rate,
-                pskCalculator.execute(monthlyPayment, scoringData.term()),
+                pskCalculator.calculatePsk(monthlyPayment, scoringData.term()),
                 scoringData.isInsuranceEnabled(),
                 scoringData.isSalaryClient(),
-                paymentScheduleCalculator.execute(totalAmount,
+                paymentScheduleCalculator.calculatePaymentSchedule(totalAmount,
                         rate,
                         monthlyPayment,
                         scoringData.term(),
@@ -55,10 +55,10 @@ public class ScoreService {
     }
 
     public void validateScoringData(final ScoringDataDto scoringData) {
-        if (!birthDateValidator.execute(scoringData.birthdate(), Validation.AGE_MIN)) {
+        if (!birthDateValidator.validateBirthdate(scoringData.birthdate(), Validation.AGE_MIN)) {
             throw new ValidationException(ValidationMessage.AGE_MESSAGE);
         }
-        if (!innValidator.execute(scoringData.employment().employerINN())) {
+        if (!innValidator.validateINN(scoringData.employment().employerINN())) {
             throw new ValidationException(ValidationMessage.INN_CHECK_NUMBER_MESSAGE);
         }
     }

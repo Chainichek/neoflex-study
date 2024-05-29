@@ -7,12 +7,12 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 
 @Service
-public class CalculateMonthlyPaymentUseCase implements MonthlyPaymentCalculator {
+public class MonthlyPaymentCalculatorService implements MonthlyPaymentCalculator {
     private final MathContext resultMathContext;
     private final MathContext calculationMathContext;
 
-    public CalculateMonthlyPaymentUseCase(final @Qualifier("resultMathContext") MathContext resultMathContext,
-                                          final @Qualifier("calculationMathContext") MathContext calculationMathContext) {
+    public MonthlyPaymentCalculatorService(final @Qualifier("resultMathContext") MathContext resultMathContext,
+                                           final @Qualifier("calculationMathContext") MathContext calculationMathContext) {
         this.resultMathContext = resultMathContext;
         this.calculationMathContext = calculationMathContext;
     }
@@ -27,9 +27,9 @@ public class CalculateMonthlyPaymentUseCase implements MonthlyPaymentCalculator 
      * @return the amount of the monthly annuity payment
      */
     @Override
-    public BigDecimal execute(final BigDecimal amount,
-                              final BigDecimal rate,
-                              final int term) {
+    public BigDecimal calculateMonthlyPayment(final BigDecimal amount,
+                                              final BigDecimal rate,
+                                              final int term) {
         final BigDecimal monthlyRate = rate.divide(BigDecimal.valueOf(100), calculationMathContext)
                 .divide(BigDecimal.valueOf(12), calculationMathContext);
         return amount.multiply(

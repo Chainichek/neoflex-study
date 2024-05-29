@@ -6,9 +6,9 @@ import java.time.LocalDate;
 import java.time.Period;
 
 @Service
-public class ValidateBirthDateUseCase implements BirthDateValidator {
+public class BirthdateValidatorService implements BirthdateValidator {
     @Override
-    public boolean execute(final LocalDate birthdate, final int age) {
+    public boolean validateBirthdate(final LocalDate birthdate, final int age) {
         return Period.between(birthdate, LocalDate.now()).getYears() >= age;
     }
 }

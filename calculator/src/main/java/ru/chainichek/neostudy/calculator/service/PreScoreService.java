@@ -27,9 +27,9 @@ public class PreScoreService {
         int i = 0;
         for (boolean isInsuranceEnabled: booleans) {
             for (boolean isSalaryClient: booleans) {
-                final BigDecimal rate = prescoreRateCalculator.execute(isInsuranceEnabled, isSalaryClient);
-                final BigDecimal totalAmount = amountCalculator.execute(request.amount(), isInsuranceEnabled, isSalaryClient);
-                final BigDecimal monthlyPayment = monthlyPaymentCalculator.execute(totalAmount, rate, request.term());
+                final BigDecimal rate = prescoreRateCalculator.calculatePreScoreRate(isInsuranceEnabled, isSalaryClient);
+                final BigDecimal totalAmount = amountCalculator.calculateAmount(request.amount(), isInsuranceEnabled, isSalaryClient);
+                final BigDecimal monthlyPayment = monthlyPaymentCalculator.calculateMonthlyPayment(totalAmount, rate, request.term());
 
                 offers[i++] = new LoanOfferDto(UUID.randomUUID(),
                         request.amount(),

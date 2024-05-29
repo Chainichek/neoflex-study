@@ -7,16 +7,16 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 
 @Service
-public class CalculatePskUseCase implements PskCalculator {
+public class PskCalculatorService implements PskCalculator {
     private final MathContext resultMathContext;
 
-    public CalculatePskUseCase(final @Qualifier("resultMathContext") MathContext resultMathContext) {
+    public PskCalculatorService(final @Qualifier("resultMathContext") MathContext resultMathContext) {
         this.resultMathContext = resultMathContext;
     }
 
     @Override
-    public BigDecimal execute(final BigDecimal monthPayment,
-                              final Integer term) {
+    public BigDecimal calculatePsk(final BigDecimal monthPayment,
+                                   final Integer term) {
         return monthPayment.multiply(BigDecimal.valueOf(term), resultMathContext);
     }
 }

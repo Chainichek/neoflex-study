@@ -7,9 +7,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface PaymentScheduleCalculator {
-    List<PaymentScheduleElementDto> execute(BigDecimal amount,
-                                            BigDecimal rate,
-                                            BigDecimal monthlyPayment,
-                                            int term,
-                                            LocalDate loanStartDate);
+    List<PaymentScheduleElementDto> calculatePaymentSchedule(BigDecimal amount,
+                                                             BigDecimal rate,
+                                                             BigDecimal monthlyPayment,
+                                                             int term,
+                                                             LocalDate loanStartDate);
 }

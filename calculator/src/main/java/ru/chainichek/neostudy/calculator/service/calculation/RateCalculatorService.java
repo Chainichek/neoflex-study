@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.time.Period;
 
 @Service
-public class CalculateScoreRateUseCase implements ScoreRateCalculator {
+public class RateCalculatorService implements PreScoreRateCalculator, ScoreRateCalculator {
 
     private final BigDecimal baseRate;
     private final MathContext resultMathContext;
@@ -20,15 +20,24 @@ public class CalculateScoreRateUseCase implements ScoreRateCalculator {
     private final BigDecimal insuranceRate = BigDecimal.valueOf(3);
     private final BigDecimal salaryRate = BigDecimal.valueOf(1);
 
-    public CalculateScoreRateUseCase(final @Value("${app.property.base-rate}") BigDecimal baseRate,
-                                        final @Qualifier("resultMathContext") MathContext resultMathContext,
-                                        final @Qualifier("calculationMathContext") MathContext calculationMathContext) {
+    public RateCalculatorService(final @Value("${app.property.base-rate}") BigDecimal baseRate,
+                                 final @Qualifier("resultMathContext") MathContext resultMathContext,
+                                 final @Qualifier("calculationMathContext") MathContext calculationMathContext) {
         this.baseRate = baseRate;
         this.resultMathContext = resultMathContext;
         this.calculationMathContext = calculationMathContext;
     }
+
     @Override
-    public BigDecimal execute(final ScoringDataDto scoringData) {
+    public BigDecimal calculatePreScoreRate(final boolean isInsuranceEnabled,
+                                            final boolean isSalaryClient) {
+        return baseRate
+                .subtract(isInsuranceEnabled ? insuranceRate : BigDecimal.ZERO, calculationMathContext)
+                .subtract(isSalaryClient ? salaryRate : BigDecimal.ZERO, resultMathContext);
+    }
+
+    @Override
+    public BigDecimal calculateScoreRate(final ScoringDataDto scoringData) {
         BigDecimal rate = baseRate;
 
         switch (scoringData.employment().employmentStatus()) {

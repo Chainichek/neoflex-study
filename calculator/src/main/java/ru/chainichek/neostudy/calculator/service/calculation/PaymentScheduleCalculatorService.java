@@ -10,22 +10,22 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public class CalculatePaymentScheduleUseCase implements PaymentScheduleCalculator {
+public class PaymentScheduleCalculatorService implements PaymentScheduleCalculator {
     private final MathContext resultMathContext;
     private final MathContext calculationMathContext;
 
-    public CalculatePaymentScheduleUseCase(final @Qualifier("resultMathContext") MathContext resultMathContext,
-                                           final @Qualifier("calculationMathContext") MathContext calculationMathContext) {
+    public PaymentScheduleCalculatorService(final @Qualifier("resultMathContext") MathContext resultMathContext,
+                                            final @Qualifier("calculationMathContext") MathContext calculationMathContext) {
         this.resultMathContext = resultMathContext;
         this.calculationMathContext = calculationMathContext;
     }
 
     @Override
-    public List<PaymentScheduleElementDto> execute(final BigDecimal amount,
-                                                   final BigDecimal rate,
-                                                   final BigDecimal monthlyPayment,
-                                                   final int term,
-                                                   final LocalDate loanStartDate) {
+    public List<PaymentScheduleElementDto> calculatePaymentSchedule(final BigDecimal amount,
+                                                                    final BigDecimal rate,
+                                                                    final BigDecimal monthlyPayment,
+                                                                    final int term,
+                                                                    final LocalDate loanStartDate) {
         final PaymentScheduleElementDto[] paymentScheduleElements = new PaymentScheduleElementDto[term];
         final BigDecimal monthlyRate = rate.divide(BigDecimal.valueOf(100), calculationMathContext)
                 .divide(BigDecimal.valueOf(12), calculationMathContext);
