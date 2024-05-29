@@ -4,20 +4,26 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.chainichek.neostudy.calculator.dto.score.CreditDto;
 import ru.chainichek.neostudy.calculator.dto.score.ScoringDataDto;
+import ru.chainichek.neostudy.calculator.exception.ValidationException;
 import ru.chainichek.neostudy.calculator.service.calculation.AmountCalculator;
 import ru.chainichek.neostudy.calculator.service.calculation.CheckCalculator;
 import ru.chainichek.neostudy.calculator.service.calculation.MonthlyPaymentCalculator;
 import ru.chainichek.neostudy.calculator.service.calculation.PaymentScheduleCalculator;
 import ru.chainichek.neostudy.calculator.service.calculation.PskCalculator;
 import ru.chainichek.neostudy.calculator.service.calculation.ScoreRateCalculator;
+import ru.chainichek.neostudy.calculator.service.validator.BirthDateValidator;
+import ru.chainichek.neostudy.calculator.service.validator.INNValidator;
+import ru.chainichek.neostudy.calculator.util.Validation;
+import ru.chainichek.neostudy.calculator.util.ValidationMessage;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Service
 @AllArgsConstructor
-public class ScoreUseCase {
-    private final ValidateScoringDataUseCase scoringDataValidator;
+public class ScoreService {
+    private final BirthDateValidator birthDateValidator;
+    private final INNValidator innValidator;
 
     private final CheckCalculator checkCalculator;
     private final ScoreRateCalculator scoreRateCalculator;
@@ -26,8 +32,8 @@ public class ScoreUseCase {
     private final PskCalculator pskCalculator;
     private final PaymentScheduleCalculator paymentScheduleCalculator;
 
-    public CreditDto execute(final ScoringDataDto scoringData) {
-        scoringDataValidator.execute(scoringData);
+    public CreditDto getCreditInfo(final ScoringDataDto scoringData) {
+        validateScoringData(scoringData);
         checkCalculator.execute(scoringData);
 
         final BigDecimal rate = scoreRateCalculator.execute(scoringData);
@@ -46,5 +52,14 @@ public class ScoreUseCase {
                         monthlyPayment,
                         scoringData.term(),
                         LocalDate.now()));
+    }
+
+    public void validateScoringData(final ScoringDataDto scoringData) {
+        if (!birthDateValidator.execute(scoringData.birthdate(), Validation.AGE_MIN)) {
+            throw new ValidationException(ValidationMessage.AGE_MESSAGE);
+        }
+        if (!innValidator.execute(scoringData.employment().employerINN())) {
+            throw new ValidationException(ValidationMessage.INN_CHECK_NUMBER_MESSAGE);
+        }
     }
 }

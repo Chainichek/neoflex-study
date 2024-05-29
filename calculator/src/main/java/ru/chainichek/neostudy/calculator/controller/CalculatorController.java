@@ -9,8 +9,8 @@ import ru.chainichek.neostudy.calculator.dto.prescore.LoanOfferDto;
 import ru.chainichek.neostudy.calculator.dto.prescore.LoanStatementRequestDto;
 import ru.chainichek.neostudy.calculator.dto.score.CreditDto;
 import ru.chainichek.neostudy.calculator.dto.score.ScoringDataDto;
-import ru.chainichek.neostudy.calculator.service.PreScoreUseCase;
-import ru.chainichek.neostudy.calculator.service.ScoreUseCase;
+import ru.chainichek.neostudy.calculator.service.PreScoreService;
+import ru.chainichek.neostudy.calculator.service.ScoreService;
 import ru.chainichek.neostudy.calculator.api.CalculatorApi;
 
 import java.util.List;
@@ -20,13 +20,13 @@ import java.util.List;
 public class CalculatorController implements CalculatorApi {
     private static final Logger LOG = LoggerFactory.getLogger(CalculatorController.class);
 
-    private final PreScoreUseCase preScore;
-    private final ScoreUseCase score;
+    private final PreScoreService preScoreService;
+    private final ScoreService scoreService;
     @Override
     public ResponseEntity<List<LoanOfferDto>> makeOffers(final LoanStatementRequestDto request) {
         LOG.info("Got: " + request);
 
-        final List<LoanOfferDto> offers = preScore.execute(request);
+        final List<LoanOfferDto> offers = preScoreService.getOffers(request);
 
         LOG.info("Send: " + offers);
         return ResponseEntity.ok(offers);
@@ -36,7 +36,7 @@ public class CalculatorController implements CalculatorApi {
     public ResponseEntity<CreditDto> calculateCredit(final ScoringDataDto data) {
         LOG.info("Got: " + data);
 
-        final CreditDto credit = score.execute(data);
+        final CreditDto credit = scoreService.getCreditInfo(data);
 
         LOG.info("Send: " + credit);
         return ResponseEntity.ok(credit);

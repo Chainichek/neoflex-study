@@ -14,14 +14,14 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class PreScoreUseCase {
+public class PreScoreService {
     private final PreScoreRateCalculator prescoreRateCalculator;
     private final AmountCalculator amountCalculator;
     private final MonthlyPaymentCalculator monthlyPaymentCalculator;
 
     private final boolean[] booleans = {false, true};
 
-    public List<LoanOfferDto> execute(final LoanStatementRequestDto request) {
+    public List<LoanOfferDto> getOffers(final LoanStatementRequestDto request) {
         final LoanOfferDto[] offers = new LoanOfferDto[4];
 
         int i = 0;
