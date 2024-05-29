@@ -12,4 +12,14 @@ public class ValidationMessage {
     public static final String PASSPORT_SERIES_MESSAGE = "Passport series must be 4 digits";
 
     public static final String PASSPORT_NUMBER_MESSAGE = "Passport number must be 6 digits";
+
+    public static final String DEPENDENT_AMOUNT_MESSAGE = "The number of dependent cannot be lower than " + Validation.DEPENDENT_AMOUNT_MIN;
+
+    public static final String INN_MESSAGE = "INN number must be 12 digits";
+
+    public static final String SALARY_MESSAGE = "Salary cannot be lower than " + Validation.SALARY_MIN;
+
+    public static final String WORK_EXPERIENCE_MESSAGE = "Work experience cannot be lower than " + Validation.WORK_EXPERIENCE_MIN;
+
+    public static final String ACCOUNT_NUMBER_MESSAGE = "Account number must be 20 digits";
 }

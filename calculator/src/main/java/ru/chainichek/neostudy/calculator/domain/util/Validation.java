@@ -17,4 +17,14 @@ public class Validation {
     public static final String PASSPORT_SERIES_PATTERN = "^\\d{4}$";
 
     public static final String PASSPORT_NUMBER_PATTERN = "^\\d{6}$";
+
+    public static final int DEPENDENT_AMOUNT_MIN = 0;
+
+    public static final String INN_PATTERN = "^\\d{12}$";
+
+    public static final String SALARY_MIN = "19242";
+
+    public static final int WORK_EXPERIENCE_MIN = 0;
+
+    public static final String ACCOUNT_NUMBER_PATTERN = "^\\d{20}$";
 }
