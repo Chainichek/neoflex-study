@@ -7,11 +7,12 @@ public class Validation {
 
     public static final String NAME_PATTERN = "^[a-zA-Z]{2,30}$";
 
-
     // The pattern was changed with length limitations because RFC 5321
     public static final String EMAIL_PATTERN = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]{1,64}@[a-zA-Z0-9.-]{255}$";
 
     public static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd";
+
+    public static final int AGE_MIN = 18;
 
     public static final String PASSPORT_SERIES_PATTERN = "^\\d{4}$";
 
