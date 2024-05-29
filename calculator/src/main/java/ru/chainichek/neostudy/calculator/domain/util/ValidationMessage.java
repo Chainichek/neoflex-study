@@ -5,7 +5,7 @@ public class ValidationMessage {
 
     public static final String TERM_MESSAGE = "The loan term must be more than 6 months";
 
-    public static final String NAME_MESSAGE = "Names must be between 2 and 30 characters";
+    public static final String NAME_MESSAGE = "Names must be between 2 and 30 latin characters";
 
     public static final String EMAIL_MESSAGE = "Email must comply with RFC 5321";
 

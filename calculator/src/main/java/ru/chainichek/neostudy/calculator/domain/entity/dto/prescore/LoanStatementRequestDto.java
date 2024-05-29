@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 import ru.chainichek.neostudy.calculator.domain.util.Validation;
 import ru.chainichek.neostudy.calculator.domain.util.ValidationMessage;
@@ -18,11 +17,11 @@ public record LoanStatementRequestDto(@NotNull @DecimalMin(value = Validation.AM
                                       BigDecimal amount,
                                       @NotNull @Min(value = Validation.TERM_MIN, message = ValidationMessage.TERM_MESSAGE)
                                       Integer term,
-                                      @NotBlank @Size(min = Validation.NAME_SIZE_MIN, max = Validation.NAME_SIZE_MAX, message = ValidationMessage.NAME_MESSAGE)
+                                      @NotBlank @Pattern(regexp = Validation.NAME_PATTERN, message = ValidationMessage.NAME_MESSAGE)
                                       String firstName,
-                                      @NotBlank @Size(min = Validation.NAME_SIZE_MIN, max = Validation.NAME_SIZE_MAX, message = ValidationMessage.NAME_MESSAGE)
+                                      @NotBlank @Pattern(regexp = Validation.NAME_PATTERN, message = ValidationMessage.NAME_MESSAGE)
                                       String lastName,
-                                      @Size(min = Validation.NAME_SIZE_MIN, max = Validation.NAME_SIZE_MAX, message = ValidationMessage.NAME_MESSAGE)
+                                      @Pattern(regexp = Validation.NAME_PATTERN, message = ValidationMessage.NAME_MESSAGE)
                                       String middleName,
                                       @NotBlank @Pattern(regexp = Validation.EMAIL_PATTERN, message = ValidationMessage.EMAIL_MESSAGE)
                                       String email,
