@@ -1,5 +1,6 @@
 package ru.chainichek.neostudy.calculator.web.api;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,8 +17,8 @@ import java.util.List;
 public interface CalculatorApi {
 
     @PostMapping("/offers")
-    ResponseEntity<List<LoanOfferDto>> makeOffers(@RequestBody @NotNull LoanStatementRequestDto loanStatementRequest);
+    ResponseEntity<List<LoanOfferDto>> makeOffers(@RequestBody @Valid @NotNull LoanStatementRequestDto loanStatementRequest);
 
     @PostMapping("/calc")
-    ResponseEntity<CreditDto> calculateCredit(@RequestBody @NotNull ScoringDataDto scoringData);
+    ResponseEntity<CreditDto> calculateCredit(@RequestBody @Valid @NotNull ScoringDataDto scoringData);
 }
