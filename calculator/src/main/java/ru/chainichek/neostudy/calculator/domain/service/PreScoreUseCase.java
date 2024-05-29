@@ -25,10 +25,10 @@ public class PreScoreUseCase {
         final LoanOfferDto[] offers = new LoanOfferDto[4];
 
         int i = 0;
-        for (boolean isSalaryClient: booleans) {
-            for (boolean isInsuranceEnabled: booleans) {
+        for (boolean isInsuranceEnabled: booleans) {
+            for (boolean isSalaryClient: booleans) {
                 final BigDecimal rate = rateCalculator.execute(isInsuranceEnabled, isSalaryClient);
-                final BigDecimal totalAmount = amountCalculator.execute(request.amount(), isInsuranceEnabled);
+                final BigDecimal totalAmount = amountCalculator.execute(request.amount(), isInsuranceEnabled, isSalaryClient);
                 final BigDecimal monthlyPayment = monthlyPaymentCalculator.execute(totalAmount, rate, request.term());
 
                 offers[i++] = new LoanOfferDto(UUID.randomUUID(),

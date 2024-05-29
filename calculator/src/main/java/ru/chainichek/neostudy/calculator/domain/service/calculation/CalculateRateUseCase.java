@@ -10,19 +10,15 @@ import java.math.MathContext;
 @Service
 public class CalculateRateUseCase implements RateCalculator {
     private final BigDecimal baseRate;
-    private final BigDecimal insuranceRate;
-    private final BigDecimal salaryRate;
+    private final BigDecimal insuranceRate = BigDecimal.valueOf(3);
+    private final BigDecimal salaryRate = BigDecimal.valueOf(1);
     private final MathContext resultMathContext;
     private final MathContext calculationMathContext;
 
     public CalculateRateUseCase(final @Value("${app.property.base-rate}") BigDecimal baseRate,
-                                final @Value("${app.property.insurance-discount}") BigDecimal insuranceRate,
-                                final @Value("${app.property.salary-discount}") BigDecimal salaryRate,
                                 final @Qualifier("resultMathContext") MathContext resultMathContext,
                                 final @Qualifier("calculationMathContext") MathContext calculationMathContext) {
         this.baseRate = baseRate;
-        this.insuranceRate = insuranceRate;
-        this.salaryRate = salaryRate;
         this.resultMathContext = resultMathContext;
         this.calculationMathContext = calculationMathContext;
     }
