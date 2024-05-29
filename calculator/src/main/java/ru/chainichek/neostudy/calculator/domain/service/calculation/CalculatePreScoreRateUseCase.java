@@ -10,10 +10,12 @@ import java.math.MathContext;
 @Service
 public class CalculatePreScoreRateUseCase implements PreScoreRateCalculator {
     private final BigDecimal baseRate;
-    private final BigDecimal insuranceRate = BigDecimal.valueOf(3);
-    private final BigDecimal salaryRate = BigDecimal.valueOf(1);
     private final MathContext resultMathContext;
     private final MathContext calculationMathContext;
+
+    private final BigDecimal insuranceRate = BigDecimal.valueOf(3);
+    private final BigDecimal salaryRate = BigDecimal.valueOf(1);
+
 
     public CalculatePreScoreRateUseCase(final @Value("${app.property.base-rate}") BigDecimal baseRate,
                                         final @Qualifier("resultMathContext") MathContext resultMathContext,

@@ -37,7 +37,6 @@ public record ScoringDataDto(@NotNull @DecimalMin(value = Validation.AMOUNT_MIN,
                              LocalDate passportIssueDate,
                              @NotBlank
                              String passportIssueBranch,
-                             @NotNull
                              MaritalStatus maritalStatus,
                              @NotNull @Min(value = Validation.DEPENDENT_AMOUNT_MIN, message = ValidationMessage.DEPENDENT_AMOUNT_MESSAGE)
                              Integer dependentAmount,

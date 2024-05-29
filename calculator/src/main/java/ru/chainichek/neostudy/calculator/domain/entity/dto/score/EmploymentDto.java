@@ -18,7 +18,6 @@ public record EmploymentDto(@NotNull
                             String employerINN,
                             @NotNull @DecimalMin(value = Validation.SALARY_MIN, message = ValidationMessage.SALARY_MESSAGE)
                             BigDecimal salary,
-                            @NotNull
                             Position position,
                             @NotNull @Min(value = Validation.WORK_EXPERIENCE_MIN, message = ValidationMessage.WORK_EXPERIENCE_MESSAGE)
                             Integer workExperienceTotal,
