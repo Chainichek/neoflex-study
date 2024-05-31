@@ -241,9 +241,19 @@ public class LoanCalculationService implements AmountCalculator,
     }
 
     @Override
-    public BigDecimal calculatePsk(final @NotNull BigDecimal monthPayment,
+    public BigDecimal calculatePsk(final @NotNull BigDecimal amount,
+                                   final @NotNull BigDecimal monthPayment,
                                    final @NotNull Integer term) {
-        return monthPayment.multiply(BigDecimal.valueOf(term), calculationMathContext);
+        LOG.debug("Starting to calculate loan psk: monthPayment = %s, term = %d".formatted(monthPayment, term));
+
+        final BigDecimal psk = (
+                monthPayment.multiply(BigDecimal.valueOf(term), calculationMathContext)
+                        .divide(amount.subtract(BigDecimal.ONE, calculationMathContext), calculationMathContext))
+                        .divide(BigDecimal.valueOf(term).divide(BigDecimal.valueOf(12), calculationMathContext), calculationMathContext);
+
+        LOG.debug("Finished calculating psk: psk = %s".formatted(psk));
+
+        return psk;
     }
 
 

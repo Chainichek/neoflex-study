@@ -65,7 +65,7 @@ public class CalculatorService {
         final BigDecimal rate = loanCalculationService.calculateScoreRate(scoringData);
         final BigDecimal totalAmount = loanCalculationService.calculateAmount(scoringData.amount(), scoringData.isInsuranceEnabled(), scoringData.isSalaryClient());
         final BigDecimal monthlyPayment = loanCalculationService.calculateMonthlyPayment(totalAmount, rate, scoringData.term());
-        final BigDecimal psk = loanCalculationService.calculatePsk(monthlyPayment, scoringData.term());
+        final BigDecimal psk = loanCalculationService.calculatePsk(totalAmount, monthlyPayment, scoringData.term());
         final List<PaymentScheduleElementDto> schedule = loanCalculationService.calculatePaymentSchedule(totalAmount,
                 rate,
                 monthlyPayment,

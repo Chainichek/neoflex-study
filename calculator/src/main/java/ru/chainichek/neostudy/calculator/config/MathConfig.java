@@ -13,10 +13,10 @@ public class MathConfig {
     private int resultPrecision;
     @Bean
     public MathContext resultMathContext() {
-        return new MathContext(resultPrecision, RoundingMode.HALF_DOWN);
+        return new MathContext(resultPrecision, RoundingMode.HALF_UP);
     }
     @Bean
     public MathContext calculationMathContext() {
-        return new MathContext(10, RoundingMode.HALF_DOWN);
+        return MathContext.DECIMAL64;
     }
 }
