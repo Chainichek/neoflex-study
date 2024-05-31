@@ -1,4 +1,4 @@
-package ru.chainichek.neostudy.calculator.service.validator;
+package ru.chainichek.neostudy.calculator.logic.validation;
 
 import java.time.LocalDate;
 

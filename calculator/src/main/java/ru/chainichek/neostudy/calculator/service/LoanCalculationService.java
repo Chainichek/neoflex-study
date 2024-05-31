@@ -1,11 +1,19 @@
-package ru.chainichek.neostudy.calculator.service.calculation;
+package ru.chainichek.neostudy.calculator.service;
 
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.chainichek.neostudy.calculator.dto.score.PaymentScheduleElementDto;
 import ru.chainichek.neostudy.calculator.dto.score.ScoringDataDto;
 import ru.chainichek.neostudy.calculator.exception.ForbiddenException;
+import ru.chainichek.neostudy.calculator.logic.calculation.AmountCalculator;
+import ru.chainichek.neostudy.calculator.logic.calculation.CheckCalculator;
+import ru.chainichek.neostudy.calculator.logic.calculation.MonthlyPaymentCalculator;
+import ru.chainichek.neostudy.calculator.logic.calculation.PaymentScheduleCalculator;
+import ru.chainichek.neostudy.calculator.logic.calculation.PreScoreRateCalculator;
+import ru.chainichek.neostudy.calculator.logic.calculation.PskCalculator;
+import ru.chainichek.neostudy.calculator.logic.calculation.ScoreRateCalculator;
 import ru.chainichek.neostudy.calculator.model.EmploymentStatus;
 
 import java.math.BigDecimal;
@@ -15,7 +23,7 @@ import java.time.Period;
 import java.util.List;
 
 @Service
-public class CalculatorService implements AmountCalculator,
+public class LoanCalculationService implements AmountCalculator,
         CheckCalculator,
         MonthlyPaymentCalculator,
         PaymentScheduleCalculator,
@@ -30,16 +38,38 @@ public class CalculatorService implements AmountCalculator,
 
     private final BigDecimal baseRate;
 
-    public CalculatorService(final @Qualifier("resultMathContext") MathContext resultMathContext,
-                             final @Qualifier("calculationMathContext") MathContext calculationMathContext,
-                             final @Value("${app.property.base-rate}") BigDecimal baseRate) {
+    public LoanCalculationService(final @Qualifier("resultMathContext") MathContext resultMathContext,
+                                  final @Qualifier("calculationMathContext") MathContext calculationMathContext,
+                                  final @Value("${app.property.base-rate}") BigDecimal baseRate) {
         this.resultMathContext = resultMathContext;
         this.calculationMathContext = calculationMathContext;
         this.baseRate = baseRate;
     }
 
     @Override
-    public BigDecimal calculateAmount(final BigDecimal amount,
+    public void check(final @NotNull ScoringDataDto scoringData) {
+        if (scoringData.employment().employmentStatus() == EmploymentStatus.UNEMPLOYED) {
+            throw new ForbiddenException("Cannot offer a loan for unemployed");
+        }
+
+        if (scoringData.employment().salary()
+                    .multiply(BigDecimal.valueOf(25), calculationMathContext)
+                    .compareTo(scoringData.amount()) < 0) {
+            throw new ForbiddenException("Cannot offer a loan whose amount exceeds 25 salaries");
+        }
+
+        final int age = Period.between(scoringData.birthdate(), LocalDate.now()).getYears();
+        if (age > 65 || age < 20) {
+            throw new ForbiddenException("Cannot offer a loan to those under 20 or over 65");
+        }
+
+        if (scoringData.employment().workExperienceTotal() < 18 || scoringData.employment().workExperienceCurrent() < 3) {
+            throw new ForbiddenException("Cannot offer a loan to those whose total experience is less 18 months or whose current experience is less 3 months");
+        }
+    }
+
+    @Override
+    public BigDecimal calculateAmount(final @NotNull BigDecimal amount,
                                       final boolean isInsuranceEnabled,
                                       final boolean isSalaryClient) {
         return amount
@@ -59,8 +89,8 @@ public class CalculatorService implements AmountCalculator,
      * @return the amount of the monthly annuity payment
      */
     @Override
-    public BigDecimal calculateMonthlyPayment(final BigDecimal amount,
-                                              final BigDecimal rate,
+    public BigDecimal calculateMonthlyPayment(final @NotNull BigDecimal amount,
+                                              final @NotNull BigDecimal rate,
                                               final int term) {
         final BigDecimal monthlyRate = rate.divide(BigDecimal.valueOf(100), calculationMathContext)
                 .divide(BigDecimal.valueOf(12), calculationMathContext);
@@ -75,11 +105,11 @@ public class CalculatorService implements AmountCalculator,
     }
 
     @Override
-    public List<PaymentScheduleElementDto> calculatePaymentSchedule(final BigDecimal amount,
-                                                                    final BigDecimal rate,
-                                                                    final BigDecimal monthlyPayment,
+    public List<PaymentScheduleElementDto> calculatePaymentSchedule(final @NotNull BigDecimal amount,
+                                                                    final @NotNull BigDecimal rate,
+                                                                    final @NotNull BigDecimal monthlyPayment,
                                                                     final int term,
-                                                                    final LocalDate loanStartDate) {
+                                                                    final @NotNull LocalDate loanStartDate) {
         final PaymentScheduleElementDto[] paymentScheduleElements = new PaymentScheduleElementDto[term];
         final BigDecimal monthlyRate = rate.divide(BigDecimal.valueOf(100), calculationMathContext)
                 .divide(BigDecimal.valueOf(12), calculationMathContext);
@@ -89,29 +119,44 @@ public class CalculatorService implements AmountCalculator,
         LocalDate currentDate = loanStartDate;
 
         for (int i = 0; i < term; i++) {
-            final BigDecimal interestPayment = currentAmount.multiply(monthlyRate, resultMathContext);
-            final BigDecimal remainingDebt = currentAmount.add(interestPayment, calculationMathContext).subtract(monthlyPayment, resultMathContext);
-            final BigDecimal debtPayment = monthlyPayment.subtract(interestPayment, resultMathContext);
-
-            currentAmount = remainingDebt;
-            currentDate = currentDate.plusMonths(1);
-            totalPayment = totalPayment.add(monthlyPayment, resultMathContext);
-
-            paymentScheduleElements[i] = new PaymentScheduleElementDto(i + 1,
+            final PaymentScheduleElementDto paymentScheduleElement = calculatePaymentScheduleElement(
+                    i + 1,
                     currentDate,
-                    totalPayment,
-                    interestPayment,
-                    debtPayment,
-                    remainingDebt);
+                    currentAmount,
+                    monthlyRate,
+                    monthlyPayment,
+                    totalPayment
+            );
+
+            currentAmount = paymentScheduleElement.remainingDebt();
+            currentDate = currentDate.plusMonths(1);
+            totalPayment = paymentScheduleElement.totalPayment();
+
+            paymentScheduleElements[i] = paymentScheduleElement;
         }
 
         return List.of(paymentScheduleElements);
     }
 
-    @Override
-    public BigDecimal calculatePsk(final BigDecimal monthPayment,
-                                   final Integer term) {
-        return monthPayment.multiply(BigDecimal.valueOf(term), resultMathContext);
+    private PaymentScheduleElementDto calculatePaymentScheduleElement(final int number,
+                                                                      final @NotNull LocalDate date,
+                                                                      final @NotNull BigDecimal amount,
+                                                                      final @NotNull BigDecimal monthlyRate,
+                                                                      final @NotNull BigDecimal monthlyPayment,
+                                                                      final @NotNull BigDecimal totalPayment) {
+        final BigDecimal currentTotalPayment = totalPayment.add(monthlyPayment, resultMathContext);
+        final BigDecimal interestPayment = amount.multiply(monthlyRate, resultMathContext);
+        final BigDecimal remainingDebt = amount.add(interestPayment, calculationMathContext)
+                .subtract(monthlyPayment, resultMathContext);
+        final BigDecimal debtPayment = monthlyPayment.subtract(interestPayment, resultMathContext);
+
+        return new PaymentScheduleElementDto(number,
+                date,
+                currentTotalPayment,
+                interestPayment,
+                debtPayment,
+                remainingDebt
+                );
     }
 
     @Override
@@ -123,7 +168,14 @@ public class CalculatorService implements AmountCalculator,
     }
 
     @Override
-    public BigDecimal calculateScoreRate(final ScoringDataDto scoringData) {
+    public BigDecimal calculatePsk(final @NotNull BigDecimal monthPayment,
+                                   final @NotNull Integer term) {
+        return monthPayment.multiply(BigDecimal.valueOf(term), resultMathContext);
+    }
+
+
+    @Override
+    public BigDecimal calculateScoreRate(final @NotNull ScoringDataDto scoringData) {
         BigDecimal rate = baseRate;
 
         switch (scoringData.employment().employmentStatus()) {
@@ -159,30 +211,9 @@ public class CalculatorService implements AmountCalculator,
             }
         }
 
-        return rate
-                .subtract(scoringData.isInsuranceEnabled() ? insuranceRate :BigDecimal.ZERO, calculationMathContext)
+        rate = rate.subtract(scoringData.isInsuranceEnabled() ? insuranceRate :BigDecimal.ZERO, calculationMathContext)
                 .subtract(scoringData.isSalaryClient() ? salaryRate : BigDecimal.ZERO, resultMathContext);
-    }
 
-    @Override
-    public void check(final ScoringDataDto scoringData) {
-        if (scoringData.employment().employmentStatus() == EmploymentStatus.UNEMPLOYED) {
-            throw new ForbiddenException("Cannot offer a loan for unemployed");
-        }
-
-        if (scoringData.employment().salary()
-                    .multiply(BigDecimal.valueOf(25), calculationMathContext)
-                    .compareTo(scoringData.amount()) < 0) {
-            throw new ForbiddenException("Cannot offer a loan whose amount exceeds 25 salaries");
-        }
-
-        final int age = Period.between(scoringData.birthdate(), LocalDate.now()).getYears();
-        if (age > 65 || age < 20) {
-            throw new ForbiddenException("Cannot offer a loan to those under 20 or over 65");
-        }
-
-        if (scoringData.employment().workExperienceTotal() < 18 || scoringData.employment().workExperienceCurrent() < 3) {
-            throw new ForbiddenException("Cannot offer a loan to those whose total experience is less 18 months or whose current experience is less 3 months");
-        }
+        return rate;
     }
 }

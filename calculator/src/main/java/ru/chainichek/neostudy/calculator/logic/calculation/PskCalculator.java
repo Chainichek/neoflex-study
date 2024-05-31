@@ -1,4 +1,4 @@
-package ru.chainichek.neostudy.calculator.service.calculation;
+package ru.chainichek.neostudy.calculator.logic.calculation;
 
 import java.math.BigDecimal;
 
