@@ -1,5 +1,6 @@
 package ru.chainichek.neostudy.calculator.service.validator;
 
+import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -11,12 +12,16 @@ public class ValidatorService implements BirthdateValidator, INNValidator{
     private final int[] coefficients2 = {3, 7, 2, 4, 10, 3, 5, 9, 4, 6, 8};
 
     @Override
-    public boolean validateBirthdate(final LocalDate birthdate, final int age) {
+    public boolean validateBirthdate(final @NotNull LocalDate birthdate, final int age) {
         return Period.between(birthdate, LocalDate.now()).getYears() >= age;
     }
 
     @Override
-    public boolean validateINN(final String INN) {
+    public boolean validateINN(final @NotNull String INN) {
+        if (INN.length() != 12) {
+            return false;
+        }
+
         int checkNumber1 = 0, checkNumber2 = 0;
         for (int i = 0; i < coefficients2.length; i++) {
             final int symbol = (INN.charAt(i) - '0');
