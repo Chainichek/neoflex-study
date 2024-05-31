@@ -183,18 +183,16 @@ public class LoanCalculationService implements AmountCalculator,
             case BUSINESS_OWNER -> rate = rate.add(BigDecimal.valueOf(3), calculationMathContext);
         }
 
-        if (scoringData.employment().position() != null) {
-            switch (scoringData.employment().position()) {
-                case MIDDLE_MANAGER -> rate = rate.subtract(BigDecimal.valueOf(2), calculationMathContext);
-                case TOP_MANAGER -> rate = rate.subtract(BigDecimal.valueOf(3), calculationMathContext);
-            }
+
+        switch (scoringData.employment().position()) {
+            case MIDDLE_MANAGER -> rate = rate.subtract(BigDecimal.valueOf(2), calculationMathContext);
+            case TOP_MANAGER -> rate = rate.subtract(BigDecimal.valueOf(3), calculationMathContext);
         }
 
-        if (scoringData.maritalStatus() != null) {
-            switch (scoringData.maritalStatus()) {
-                case MARRIED -> rate = rate.subtract(BigDecimal.valueOf(3), calculationMathContext);
-                case DIVORCED -> rate = rate.add(BigDecimal.ONE, calculationMathContext);
-            }
+
+        switch (scoringData.maritalStatus()) {
+            case MARRIED -> rate = rate.subtract(BigDecimal.valueOf(3), calculationMathContext);
+            case DIVORCED -> rate = rate.add(BigDecimal.ONE, calculationMathContext);
         }
 
         final int age = Period.between(scoringData.birthdate(), LocalDate.now()).getYears();
