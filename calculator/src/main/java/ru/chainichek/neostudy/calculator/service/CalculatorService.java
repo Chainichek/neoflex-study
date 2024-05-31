@@ -46,13 +46,13 @@ public class CalculatorService {
                         isInsuranceEnabled,
                         isSalaryClient);
 
-                LOG.debug("Generated offer: isInsuranceEnabled=%s, isSalaryClient=%s, offer=%s".formatted(isInsuranceEnabled, isSalaryClient, loanOffer));
+                LOG.debug("Generated offer: isInsuranceEnabled = %s, isSalaryClient = %s, offer = %s".formatted(isInsuranceEnabled, isSalaryClient, loanOffer));
 
                 offers[i++] = loanOffer;
             }
         }
 
-        LOG.debug("Finished generating offers: offers=%s".formatted(Arrays.toString(offers)));
+        LOG.debug("Finished generating offers: offers = %s".formatted(Arrays.toString(offers)));
         return List.of(offers);
     }
 
@@ -81,7 +81,7 @@ public class CalculatorService {
                 scoringData.isSalaryClient(),
                 schedule);
 
-        LOG.debug("Finished generating credit info: credit=%s".formatted(credit));
+        LOG.debug("Finished generating credit info: credit = %s".formatted(credit));
 
         return credit;
     }
