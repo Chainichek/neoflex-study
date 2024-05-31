@@ -21,7 +21,7 @@ public class CalculatorController implements CalculatorApi {
 
     private final CalculatorService calculatorService;
     @Override
-    public ResponseEntity<List<LoanOfferDto>> makeOffers(final LoanStatementRequestDto request) {
+    public ResponseEntity<List<LoanOfferDto>> getOffers(final LoanStatementRequestDto request) {
         LOG.info("Got: " + request);
 
         final List<LoanOfferDto> offers = calculatorService.getOffers(request);

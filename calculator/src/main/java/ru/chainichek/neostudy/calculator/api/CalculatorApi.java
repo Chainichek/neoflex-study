@@ -17,7 +17,7 @@ import java.util.List;
 public interface CalculatorApi {
 
     @PostMapping("/offers")
-    ResponseEntity<List<LoanOfferDto>> makeOffers(@RequestBody @Valid @NotNull LoanStatementRequestDto loanStatementRequest);
+    ResponseEntity<List<LoanOfferDto>> getOffers(@RequestBody @Valid @NotNull LoanStatementRequestDto loanStatementRequest);
 
     @PostMapping("/calc")
     ResponseEntity<CreditDto> calculateCredit(@RequestBody @Valid @NotNull ScoringDataDto scoringData);
