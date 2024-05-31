@@ -22,21 +22,21 @@ public class CalculatorController implements CalculatorApi {
     private final CalculatorService calculatorService;
     @Override
     public ResponseEntity<List<LoanOfferDto>> getOffers(final LoanStatementRequestDto request) {
-        LOG.info("Got: " + request);
+        LOG.info("Request on 'getting offers' Got: " + request);
 
         final List<LoanOfferDto> offers = calculatorService.getOffers(request);
 
-        LOG.info("Send: " + offers);
+        LOG.info("Response on 'getting offers' Sending: " + offers);
         return ResponseEntity.ok(offers);
     }
 
     @Override
     public ResponseEntity<CreditDto> calculateCredit(final ScoringDataDto data) {
-        LOG.info("Got: " + data);
+        LOG.info("Request on 'calculating credit' Got: " + data);
 
         final CreditDto credit = calculatorService.getCreditInfo(data);
 
-        LOG.info("Send: " + credit);
+        LOG.info("Response on 'calculating credit' Sending: " + credit);
         return ResponseEntity.ok(credit);
     }
 }
