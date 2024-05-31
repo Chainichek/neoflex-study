@@ -70,8 +70,6 @@ public class LoanCalculationService implements LoanCalculator,
                     .formatted(scoringData.employment().workExperienceTotal(), scoringData.employment().workExperienceCurrent()));
             throw new ForbiddenException("Cannot offer a loan to those whose total experience is less 18 months or whose current experience is less 3 months");
         }
-
-        LOG.debug("Finished checking scoring data");
     }
 
     @Override
@@ -92,8 +90,6 @@ public class LoanCalculationService implements LoanCalculator,
                         calculationMathContext) : BigDecimal.ZERO, calculationMathContext);
 
         LOG.debug("Calculating of the impact of the presence of salary client on the loan amount: totalAmount = %s".formatted(totalAmount));
-        LOG.debug("Finished calculating total amount of loan: totalAmount = %s".formatted(totalAmount));
-
         return totalAmount;
     }
 
@@ -224,8 +220,6 @@ public class LoanCalculationService implements LoanCalculator,
         rate = rate.subtract(isSalaryClient ? salaryRate : BigDecimal.ZERO, calculationMathContext);
 
         LOG.debug("Calculating of the impact of the presence of salary client on the rate: rate = %s".formatted(rate));
-        LOG.debug("Finished calculating loan rate: rate = %s".formatted(rate));
-
         return rate;
     }
 
