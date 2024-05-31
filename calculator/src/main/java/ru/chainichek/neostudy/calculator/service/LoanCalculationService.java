@@ -9,13 +9,9 @@ import org.springframework.stereotype.Service;
 import ru.chainichek.neostudy.calculator.dto.score.PaymentScheduleElementDto;
 import ru.chainichek.neostudy.calculator.dto.score.ScoringDataDto;
 import ru.chainichek.neostudy.calculator.exception.ForbiddenException;
-import ru.chainichek.neostudy.calculator.logic.calculation.AmountCalculator;
-import ru.chainichek.neostudy.calculator.logic.calculation.CheckCalculator;
+import ru.chainichek.neostudy.calculator.logic.calculation.CreditCalculator;
+import ru.chainichek.neostudy.calculator.logic.calculation.LoanCalculator;
 import ru.chainichek.neostudy.calculator.logic.calculation.MonthlyPaymentCalculator;
-import ru.chainichek.neostudy.calculator.logic.calculation.PaymentScheduleCalculator;
-import ru.chainichek.neostudy.calculator.logic.calculation.PreScoreRateCalculator;
-import ru.chainichek.neostudy.calculator.logic.calculation.PskCalculator;
-import ru.chainichek.neostudy.calculator.logic.calculation.ScoreRateCalculator;
 import ru.chainichek.neostudy.calculator.model.EmploymentStatus;
 
 import java.math.BigDecimal;
@@ -26,13 +22,9 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class LoanCalculationService implements AmountCalculator,
-        CheckCalculator,
-        MonthlyPaymentCalculator,
-        PaymentScheduleCalculator,
-        PreScoreRateCalculator,
-        PskCalculator,
-        ScoreRateCalculator {
+public class LoanCalculationService implements LoanCalculator,
+        CreditCalculator,
+        MonthlyPaymentCalculator{
     private final static Logger LOG = LoggerFactory.getLogger(LoanCalculationService.class);
 
     private final MathContext calculationMathContext;
@@ -49,7 +41,7 @@ public class LoanCalculationService implements AmountCalculator,
     }
 
     @Override
-    public void check(final @NotNull ScoringDataDto scoringData) {
+    public void checkScoringData(final @NotNull ScoringDataDto scoringData) {
         LOG.debug("Starting to check scoring data");
 
         if (scoringData.employment().employmentStatus() == EmploymentStatus.UNEMPLOYED) {
