@@ -1,5 +1,6 @@
 package ru.chainichek.neostudy.calculator.dto.score;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -13,15 +14,19 @@ import ru.chainichek.neostudy.calculator.util.ValidationMessage;
 import java.math.BigDecimal;
 
 public record EmploymentDto(@NotNull
+                            @Schema(example = "SELF_EMPLOYED")
                             EmploymentStatus employmentStatus,
                             @NotBlank @Pattern(regexp = Validation.INN_PATTERN, message = ValidationMessage.INN_MESSAGE)
+                            @Schema(example = "251112724508")
                             String employerINN,
                             @NotNull @DecimalMin(value = Validation.SALARY_MIN, message = ValidationMessage.SALARY_MESSAGE)
                             BigDecimal salary,
                             @NotNull
                             Position position,
                             @NotNull @Min(value = Validation.WORK_EXPERIENCE_MIN, message = ValidationMessage.WORK_EXPERIENCE_MESSAGE)
+                            @Schema(example = "18")
                             Integer workExperienceTotal,
                             @NotNull @Min(value = Validation.WORK_EXPERIENCE_MIN, message = ValidationMessage.WORK_EXPERIENCE_MESSAGE)
+                            @Schema(example = "3")
                             Integer workExperienceCurrent) {
 }
