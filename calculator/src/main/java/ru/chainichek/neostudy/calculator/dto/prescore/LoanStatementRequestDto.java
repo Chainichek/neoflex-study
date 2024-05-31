@@ -11,7 +11,7 @@ import ru.chainichek.neostudy.calculator.util.Validation;
 import ru.chainichek.neostudy.calculator.util.ValidationMessage;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public record LoanStatementRequestDto(@NotNull @DecimalMin(value = Validation.AMOUNT_MIN, message = ValidationMessage.AMOUNT_MESSAGE)
                                       BigDecimal amount,
@@ -26,7 +26,7 @@ public record LoanStatementRequestDto(@NotNull @DecimalMin(value = Validation.AM
                                       @NotBlank @Pattern(regexp = Validation.EMAIL_PATTERN, message = ValidationMessage.EMAIL_MESSAGE)
                                       String email,
                                       @NotNull @DateTimeFormat(pattern = Validation.DATE_FORMAT_PATTERN) @PastOrPresent
-                                      LocalDateTime birthdate,
+                                      LocalDate birthdate,
                                       @NotBlank @Pattern(regexp = Validation.PASSPORT_SERIES_PATTERN, message = ValidationMessage.PASSPORT_SERIES_MESSAGE)
                                       String passportSeries,
                                       @NotBlank @Pattern(regexp = Validation.PASSPORT_NUMBER_PATTERN, message = ValidationMessage.PASSPORT_NUMBER_MESSAGE)
