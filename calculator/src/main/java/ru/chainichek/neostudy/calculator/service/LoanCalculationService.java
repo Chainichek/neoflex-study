@@ -35,7 +35,6 @@ public class LoanCalculationService implements AmountCalculator,
         ScoreRateCalculator {
     private final static Logger LOG = LoggerFactory.getLogger(LoanCalculationService.class);
 
-    private final MathContext resultMathContext;
     private final MathContext calculationMathContext;
 
     private final BigDecimal insuranceRate = BigDecimal.valueOf(3);
@@ -43,10 +42,8 @@ public class LoanCalculationService implements AmountCalculator,
 
     private final BigDecimal baseRate;
 
-    public LoanCalculationService(final @Qualifier("resultMathContext") MathContext resultMathContext,
-                                  final @Qualifier("calculationMathContext") MathContext calculationMathContext,
+    public LoanCalculationService(final @Qualifier("calculationMathContext") MathContext calculationMathContext,
                                   final @Value("${app.property.base-rate}") BigDecimal baseRate) {
-        this.resultMathContext = resultMathContext;
         this.calculationMathContext = calculationMathContext;
         this.baseRate = baseRate;
     }
@@ -105,7 +102,7 @@ public class LoanCalculationService implements AmountCalculator,
         LOG.debug("Calculating of the impact of the presence of salary client on the loan amount: totalAmount = %s".formatted(totalAmount));
         LOG.debug("Finished calculating total amount of loan: totalAmount = %s".formatted(totalAmount));
 
-        return totalAmount.setScale(resultMathContext.getPrecision(), resultMathContext.getRoundingMode());
+        return totalAmount;
     }
 
     /**
@@ -139,7 +136,7 @@ public class LoanCalculationService implements AmountCalculator,
 
         LOG.debug("Finished calculating monthly payment: monthlyPayment = %s".formatted(monthlyPayment));
 
-        return monthlyPayment.setScale(resultMathContext.getPrecision(), resultMathContext.getRoundingMode());
+        return monthlyPayment;
     }
 
     @Override
@@ -209,10 +206,10 @@ public class LoanCalculationService implements AmountCalculator,
 
         final PaymentScheduleElementDto scheduleElement = new PaymentScheduleElementDto(number,
                 date,
-                currentTotalPayment.setScale(resultMathContext.getPrecision(), resultMathContext.getRoundingMode()),
-                interestPayment.setScale(resultMathContext.getPrecision(), resultMathContext.getRoundingMode()),
-                debtPayment.setScale(resultMathContext.getPrecision(), resultMathContext.getRoundingMode()),
-                remainingDebt.setScale(resultMathContext.getPrecision(), resultMathContext.getRoundingMode())
+                currentTotalPayment,
+                interestPayment,
+                debtPayment,
+                remainingDebt
         );
 
         LOG.debug("Finished calculating payment schedule element: scheduleElement = %s".formatted(scheduleElement));
@@ -237,7 +234,7 @@ public class LoanCalculationService implements AmountCalculator,
         LOG.debug("Calculating of the impact of the presence of salary client on the rate: rate = %s".formatted(rate));
         LOG.debug("Finished calculating loan rate: rate = %s".formatted(rate));
 
-        return rate.setScale(resultMathContext.getPrecision(), resultMathContext.getRoundingMode());
+        return rate;
     }
 
     @Override
@@ -253,7 +250,7 @@ public class LoanCalculationService implements AmountCalculator,
 
         LOG.debug("Finished calculating psk: psk = %s".formatted(psk));
 
-        return psk.setScale(resultMathContext.getPrecision(), resultMathContext.getRoundingMode());
+        return psk;
     }
 
 
@@ -312,6 +309,6 @@ public class LoanCalculationService implements AmountCalculator,
         LOG.debug("Calculating of the impact of the presence of salary client on the rate: rate = %s".formatted(rate));
         LOG.debug("Finished calculating loan rate: rate = %s".formatted(rate));
 
-        return rate.setScale(resultMathContext.getPrecision(), resultMathContext.getRoundingMode());
+        return rate;
     }
 }
