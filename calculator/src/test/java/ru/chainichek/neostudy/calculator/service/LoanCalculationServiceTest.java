@@ -41,7 +41,7 @@ class LoanCalculationServiceTest {
 
     static class AmountArgumentsProvider implements ArgumentsProvider {
         @Override
-        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
+        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
             return Stream.of(
                     Arguments.of(BigDecimal.valueOf(30000), false, false, BigDecimal.valueOf(30000)),
                     Arguments.of(BigDecimal.valueOf(30000), false, true, BigDecimal.valueOf(30000)),
@@ -67,7 +67,7 @@ class LoanCalculationServiceTest {
 
     static final class MonthlyPaymentArgumentsProvider implements ArgumentsProvider {
         @Override
-        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
+        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
             return Stream.of(
                     Arguments.of(BigDecimal.valueOf(30000), BigDecimal.valueOf(16), 6, BigDecimal.valueOf(5235.908515504683)),
                     Arguments.of(BigDecimal.valueOf(50000), BigDecimal.valueOf(15), 6, BigDecimal.valueOf(8701.690510672815)),
@@ -92,7 +92,7 @@ class LoanCalculationServiceTest {
 
     static class PreScoreRateArgumentsProvider implements ArgumentsProvider {
         @Override
-        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
+        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
             return Stream.of(
                     Arguments.of(false, false, BigDecimal.valueOf(16)),
                     Arguments.of(false, true, BigDecimal.valueOf(15)),
@@ -112,7 +112,7 @@ class LoanCalculationServiceTest {
 
     static class PskArgumentsProvider implements ArgumentsProvider {
         @Override
-        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
+        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
             return Stream.of(
                     Arguments.of(BigDecimal.valueOf(30000), BigDecimal.valueOf(5176.45), 6, BigDecimal.valueOf(7.058)),
                     Arguments.of(BigDecimal.valueOf(30000), BigDecimal.valueOf(5235.91), 6, BigDecimal.valueOf(9.436400)),
