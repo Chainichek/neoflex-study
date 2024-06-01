@@ -16,13 +16,13 @@ import ru.chainichek.neostudy.calculator.logic.validation.Validator;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,15 +49,11 @@ class CalculatorServiceTest {
 
     @Test
     void getOffers() {
-        LoanStatementRequestDto request = new LoanStatementRequestDto(BigDecimal.valueOf(30000),
-                6,
-                "Ivan",
-                "Fedorov",
-                null,
-                "ivan-fedorov@yandex.ru",
-                LocalDate.of(2023, 3, 7),
-                "6161",
-                "345678");
+        LoanStatementRequestDto request = mock(LoanStatementRequestDto.class);
+
+        when(request.amount()).thenReturn(BigDecimal.valueOf(30000));
+        when(request.term()).thenReturn(6);
+
         boolean[] booleans = {false, true};
         BigDecimal[] rateValues = {BigDecimal.valueOf(16), BigDecimal.valueOf(15), BigDecimal.valueOf(13), BigDecimal.valueOf(12)};
         BigDecimal[] amountValues = {BigDecimal.valueOf(30000), BigDecimal.valueOf(30000), BigDecimal.valueOf(31800), BigDecimal.valueOf(31800)};
