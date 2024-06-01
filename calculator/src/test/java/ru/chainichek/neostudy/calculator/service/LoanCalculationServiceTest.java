@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.chainichek.neostudy.calculator.dto.score.EmploymentDto;
+import ru.chainichek.neostudy.calculator.dto.score.PaymentScheduleElementDto;
 import ru.chainichek.neostudy.calculator.dto.score.ScoringDataDto;
 import ru.chainichek.neostudy.calculator.model.EmploymentStatus;
 import ru.chainichek.neostudy.calculator.model.Gender;
@@ -19,8 +20,11 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -91,6 +95,26 @@ class LoanCalculationServiceTest {
 
     @Test
     void calculatePaymentSchedule() {
+        BigDecimal amount = BigDecimal.valueOf(30000);
+        BigDecimal rate = BigDecimal.valueOf(12);
+        BigDecimal monthlyPayment = BigDecimal.valueOf(5176.45);
+        int term = 6;
+        LocalDate loanStartDate = LocalDate.now();
+        List<PaymentScheduleElementDto> paymentSchedule = loanCalculationService.calculatePaymentSchedule(amount, rate, monthlyPayment, term, loanStartDate);
+
+        assertEquals(term, paymentSchedule.size());
+        assertTrue(amount.compareTo(paymentSchedule.get(term - 1).totalPayment()) <= 0);
+        assertTrue(amount.compareTo(paymentSchedule.get(term - 1).remainingDebt()) > 0);
+        assertIterableEquals(List.of(
+                loanStartDate.plusMonths(1),
+                loanStartDate.plusMonths(2),
+                loanStartDate.plusMonths(3),
+                loanStartDate.plusMonths(4),
+                loanStartDate.plusMonths(5),
+                loanStartDate.plusMonths(6)
+        ), paymentSchedule.stream()
+                .map(PaymentScheduleElementDto::date)
+                .toList());
     }
 
     @ParameterizedTest
@@ -105,7 +129,7 @@ class LoanCalculationServiceTest {
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
             return Stream.of(
-                    Arguments.of(false, false, BigDecimal.valueOf(16)),
+                    Arguments.of(false, false, java.math.BigDecimal.valueOf(16)),
                     Arguments.of(false, true, BigDecimal.valueOf(15)),
                     Arguments.of(true, false, BigDecimal.valueOf(13)),
                     Arguments.of(true, true, BigDecimal.valueOf(12))
@@ -165,7 +189,7 @@ class LoanCalculationServiceTest {
 
     static final class ScoreRateArgumentsProvider implements ArgumentsProvider {
         @Override
-        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
+        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
             return Stream.of(
                     Arguments.of(EmploymentStatus.EMPLOYED, Position.OTHER, MaritalStatus.SINGLE, Gender.MALE, LocalDate.now().minusYears(20), false, false, BigDecimal.valueOf(16)),
                     Arguments.of(EmploymentStatus.SELF_EMPLOYED, Position.OTHER, MaritalStatus.SINGLE, Gender.MALE, LocalDate.now().minusYears(20), false, false, BigDecimal.valueOf(18)),

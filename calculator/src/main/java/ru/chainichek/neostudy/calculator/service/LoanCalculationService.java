@@ -148,7 +148,7 @@ public class LoanCalculationService implements PreScoreCalculator,
 
         BigDecimal currentAmount = amount;
         BigDecimal totalPayment = BigDecimal.ZERO;
-        LocalDate currentDate = loanStartDate;
+        LocalDate currentDate = loanStartDate.plusMonths(1);
 
         for (int i = 0; i < term; i++) {
 
