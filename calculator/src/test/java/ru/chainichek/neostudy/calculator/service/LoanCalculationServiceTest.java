@@ -1,20 +1,32 @@
 package ru.chainichek.neostudy.calculator.service;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.mockito.junit.jupiter.MockitoExtension;
+import ru.chainichek.neostudy.calculator.dto.score.EmploymentDto;
+import ru.chainichek.neostudy.calculator.dto.score.ScoringDataDto;
+import ru.chainichek.neostudy.calculator.model.EmploymentStatus;
+import ru.chainichek.neostudy.calculator.model.Gender;
+import ru.chainichek.neostudy.calculator.model.MaritalStatus;
+import ru.chainichek.neostudy.calculator.model.Position;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class LoanCalculationServiceTest {
     final static int PRECISION = MathContext.DECIMAL64.getPrecision();
     final static RoundingMode ROUNDING_MODE = RoundingMode.HALF_UP;
@@ -51,7 +63,6 @@ class LoanCalculationServiceTest {
                     Arguments.of(BigDecimal.valueOf(100000), false, true, BigDecimal.valueOf(100000)),
                     Arguments.of(BigDecimal.valueOf(100000), true, false, BigDecimal.valueOf(106000)),
                     Arguments.of(BigDecimal.valueOf(100000), true, true, BigDecimal.valueOf(106000))
-
             );
         }
     }
@@ -123,7 +134,52 @@ class LoanCalculationServiceTest {
         }
     }
 
-    @Test
-    void calculateScoreRate() {
+    @ParameterizedTest
+    @ArgumentsSource(ScoreRateArgumentsProvider.class)
+    void calculateScoreRate(EmploymentStatus employmentStatus,
+                            Position position,
+                            MaritalStatus maritalStatus,
+                            Gender gender,
+                            LocalDate birthdate,
+                            boolean isInsuranceEnabled,
+                            boolean isSalaryClient,
+                            BigDecimal expected) {
+        EmploymentDto employmentDto = mock(EmploymentDto.class);
+        ScoringDataDto scoringData = mock(ScoringDataDto.class);
+
+        when(scoringData.employment()).thenReturn(employmentDto);
+        when(scoringData.gender()).thenReturn(gender);
+        when(scoringData.birthdate()).thenReturn(birthdate);
+        when(scoringData.maritalStatus()).thenReturn(maritalStatus);
+        when(scoringData.isInsuranceEnabled()).thenReturn(isInsuranceEnabled);
+        when(scoringData.isSalaryClient()).thenReturn(isSalaryClient);
+
+        when(employmentDto.employmentStatus()).thenReturn(employmentStatus);
+        when(employmentDto.position()).thenReturn(position);
+
+        BigDecimal scoreRate = loanCalculationService.calculateScoreRate(scoringData);
+
+        assertNotNull(scoreRate);
+        assertTrue(compareBigDecimals(expected, scoreRate));
+    }
+
+    static final class ScoreRateArgumentsProvider implements ArgumentsProvider {
+        @Override
+        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
+            return Stream.of(
+                    Arguments.of(EmploymentStatus.EMPLOYED, Position.OTHER, MaritalStatus.SINGLE, Gender.MALE, LocalDate.now().minusYears(20), false, false, BigDecimal.valueOf(16)),
+                    Arguments.of(EmploymentStatus.SELF_EMPLOYED, Position.OTHER, MaritalStatus.SINGLE, Gender.MALE, LocalDate.now().minusYears(20), false, false, BigDecimal.valueOf(18)),
+                    Arguments.of(EmploymentStatus.BUSINESS_OWNER, Position.OTHER, MaritalStatus.SINGLE, Gender.MALE, LocalDate.now().minusYears(20), false, false, BigDecimal.valueOf(19)),
+                    Arguments.of(EmploymentStatus.EMPLOYED, Position.MIDDLE_MANAGER, MaritalStatus.SINGLE, Gender.MALE, LocalDate.now().minusYears(20), false, false, BigDecimal.valueOf(14)),
+                    Arguments.of(EmploymentStatus.EMPLOYED, Position.TOP_MANAGER, MaritalStatus.SINGLE, Gender.MALE, LocalDate.now().minusYears(20), false, false, BigDecimal.valueOf(13)),
+                    Arguments.of(EmploymentStatus.EMPLOYED, Position.OTHER, MaritalStatus.SINGLE, Gender.FEMALE, LocalDate.now().minusYears(20), false, false, BigDecimal.valueOf(16)),
+                    Arguments.of(EmploymentStatus.EMPLOYED, Position.OTHER, MaritalStatus.SINGLE, Gender.MALE, LocalDate.now().minusYears(40), false, false, BigDecimal.valueOf(13)),
+                    Arguments.of(EmploymentStatus.EMPLOYED, Position.OTHER, MaritalStatus.SINGLE, Gender.FEMALE, LocalDate.now().minusYears(40), false, false, BigDecimal.valueOf(13)),
+                    Arguments.of(EmploymentStatus.EMPLOYED, Position.OTHER, MaritalStatus.MARRIED, Gender.MALE, LocalDate.now().minusYears(20), false, false, BigDecimal.valueOf(13)),
+                    Arguments.of(EmploymentStatus.EMPLOYED, Position.OTHER, MaritalStatus.DIVORCED, Gender.MALE, LocalDate.now().minusYears(20), false, false, BigDecimal.valueOf(17)),
+                    Arguments.of(EmploymentStatus.EMPLOYED, Position.OTHER, MaritalStatus.SINGLE, Gender.MALE, LocalDate.now().minusYears(20), true, false, BigDecimal.valueOf(13)),
+                    Arguments.of(EmploymentStatus.EMPLOYED, Position.OTHER, MaritalStatus.SINGLE, Gender.MALE, LocalDate.now().minusYears(20), false, true, BigDecimal.valueOf(15))
+            );
+        }
     }
 }
