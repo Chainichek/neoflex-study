@@ -225,12 +225,12 @@ public class LoanCalculationService implements PreScoreCalculator,
 
     @Override
     public BigDecimal calculatePsk(final @NotNull BigDecimal amount,
-                                   final @NotNull BigDecimal monthPayment,
+                                   final @NotNull BigDecimal monthlyPayment,
                                    final @NotNull Integer term) {
-        LOG.debug("Starting to calculate loan psk: monthPayment = %s, term = %d".formatted(monthPayment, term));
+        LOG.debug("Starting to calculate loan psk: monthlyPayment = %s, term = %d".formatted(monthlyPayment, term));
 
         final BigDecimal psk = (
-                monthPayment.multiply(BigDecimal.valueOf(term), calculationMathContext)
+                monthlyPayment.multiply(BigDecimal.valueOf(term), calculationMathContext)
                         .divide(amount, calculationMathContext)
                         .subtract(BigDecimal.ONE, calculationMathContext))
                 .divide(BigDecimal.valueOf(term).divide(BigDecimal.valueOf(12), calculationMathContext), calculationMathContext)
