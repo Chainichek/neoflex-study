@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface CreditCalculator {
+public interface ScoreCalculator {
     void checkScoringData(ScoringDataDto scoringData);
     BigDecimal calculateScoreRate(ScoringDataDto scoringData);
     BigDecimal calculatePsk(BigDecimal amount, BigDecimal monthPayment, Integer term);

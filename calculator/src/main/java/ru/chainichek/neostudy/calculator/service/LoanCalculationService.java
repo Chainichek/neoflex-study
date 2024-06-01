@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import ru.chainichek.neostudy.calculator.dto.score.PaymentScheduleElementDto;
 import ru.chainichek.neostudy.calculator.dto.score.ScoringDataDto;
 import ru.chainichek.neostudy.calculator.exception.UnprocessableEntityException;
-import ru.chainichek.neostudy.calculator.logic.calculation.CreditCalculator;
-import ru.chainichek.neostudy.calculator.logic.calculation.LoanCalculator;
+import ru.chainichek.neostudy.calculator.logic.calculation.ScoreCalculator;
+import ru.chainichek.neostudy.calculator.logic.calculation.PreScoreCalculator;
 import ru.chainichek.neostudy.calculator.logic.calculation.MonthlyPaymentCalculator;
 import ru.chainichek.neostudy.calculator.model.EmploymentStatus;
 
@@ -22,8 +22,8 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class LoanCalculationService implements LoanCalculator,
-        CreditCalculator,
+public class LoanCalculationService implements PreScoreCalculator,
+        ScoreCalculator,
         MonthlyPaymentCalculator{
     private final static Logger LOG = LoggerFactory.getLogger(LoanCalculationService.class);
 
