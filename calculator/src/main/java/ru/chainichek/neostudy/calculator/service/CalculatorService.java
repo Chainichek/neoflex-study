@@ -11,8 +11,8 @@ import ru.chainichek.neostudy.calculator.dto.score.CreditDto;
 import ru.chainichek.neostudy.calculator.dto.score.PaymentScheduleElementDto;
 import ru.chainichek.neostudy.calculator.dto.score.ScoringDataDto;
 import ru.chainichek.neostudy.calculator.exception.ValidationException;
-import ru.chainichek.neostudy.calculator.logic.calculation.CreditCalculator;
-import ru.chainichek.neostudy.calculator.logic.calculation.LoanCalculator;
+import ru.chainichek.neostudy.calculator.logic.calculation.ScoreCalculator;
+import ru.chainichek.neostudy.calculator.logic.calculation.PreScoreCalculator;
 import ru.chainichek.neostudy.calculator.logic.calculation.MonthlyPaymentCalculator;
 import ru.chainichek.neostudy.calculator.logic.validation.Validator;
 import ru.chainichek.neostudy.calculator.util.Validation;
@@ -29,19 +29,19 @@ import java.util.UUID;
 public class CalculatorService {
     private final static Logger LOG = LoggerFactory.getLogger(CalculatorService.class);
     private final MathContext resultMathContext;
-    private final LoanCalculator loanCalculator;
-    private final CreditCalculator creditCalculator;
+    private final PreScoreCalculator preScoreCalculator;
+    private final ScoreCalculator scoreCalculator;
     private final MonthlyPaymentCalculator monthlyPaymentCalculator;
     private final Validator validator;
 
     public CalculatorService(final @Qualifier("resultMathContext") MathContext resultMathContext,
-                             LoanCalculator loanCalculator,
-                             CreditCalculator creditCalculator,
+                             PreScoreCalculator preScoreCalculator,
+                             ScoreCalculator scoreCalculator,
                              MonthlyPaymentCalculator monthlyPaymentCalculator,
                              Validator validator) {
         this.resultMathContext = resultMathContext;
-        this.loanCalculator = loanCalculator;
-        this.creditCalculator = creditCalculator;
+        this.preScoreCalculator = preScoreCalculator;
+        this.scoreCalculator = scoreCalculator;
         this.monthlyPaymentCalculator = monthlyPaymentCalculator;
         this.validator = validator;
     }
@@ -56,8 +56,8 @@ public class CalculatorService {
         int i = 0;
         for (boolean isInsuranceEnabled : booleans) {
             for (boolean isSalaryClient : booleans) {
-                final BigDecimal rate = loanCalculator.calculatePreScoreRate(isInsuranceEnabled, isSalaryClient);
-                final BigDecimal totalAmount = loanCalculator.calculateAmount(request.amount(), isInsuranceEnabled, isSalaryClient);
+                final BigDecimal rate = preScoreCalculator.calculatePreScoreRate(isInsuranceEnabled, isSalaryClient);
+                final BigDecimal totalAmount = preScoreCalculator.calculateAmount(request.amount(), isInsuranceEnabled, isSalaryClient);
                 final BigDecimal monthlyPayment = monthlyPaymentCalculator.calculateMonthlyPayment(totalAmount, rate, request.term());
 
                 final LoanOfferDto loanOffer = new LoanOfferDto(UUID.randomUUID(),
@@ -83,12 +83,12 @@ public class CalculatorService {
         LOG.debug("Starting to generate credit info");
 
         validateScoringData(scoringData);
-        creditCalculator.checkScoringData(scoringData);
+        scoreCalculator.checkScoringData(scoringData);
 
-        final BigDecimal rate = creditCalculator.calculateScoreRate(scoringData);
+        final BigDecimal rate = scoreCalculator.calculateScoreRate(scoringData);
         final BigDecimal monthlyPayment = monthlyPaymentCalculator.calculateMonthlyPayment(scoringData.amount(), rate, scoringData.term());
-        final BigDecimal psk = creditCalculator.calculatePsk(scoringData.amount(), monthlyPayment, scoringData.term());
-        final List<PaymentScheduleElementDto> schedule = creditCalculator.calculatePaymentSchedule(scoringData.amount(),
+        final BigDecimal psk = scoreCalculator.calculatePsk(scoringData.amount(), monthlyPayment, scoringData.term());
+        final List<PaymentScheduleElementDto> schedule = scoreCalculator.calculatePaymentSchedule(scoringData.amount(),
                 rate,
                 monthlyPayment,
                 scoringData.term(),
