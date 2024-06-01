@@ -17,7 +17,11 @@ public record EmploymentDto(@NotNull
                             @Schema(example = "SELF_EMPLOYED")
                             EmploymentStatus employmentStatus,
                             @NotBlank @Pattern(regexp = Validation.INN_PATTERN, message = ValidationMessage.INN_MESSAGE)
-                            @Schema(example = "251112724508")
+                            @Schema(description = """
+                                    the least significant digit of the sum from 1 to 10 digits must be equal to the 11th digit,
+                                    the least significant digit of the sum from 1 to 11 digits must be equal to the 12th digit
+                                    """,
+                                    example = "251112724508")
                             String employerINN,
                             @NotNull @DecimalMin(value = Validation.SALARY_MIN, message = ValidationMessage.SALARY_MESSAGE)
                             BigDecimal salary,
