@@ -231,8 +231,10 @@ public class LoanCalculationService implements PreScoreCalculator,
 
         final BigDecimal psk = (
                 monthPayment.multiply(BigDecimal.valueOf(term), calculationMathContext)
-                        .divide(amount.subtract(BigDecimal.ONE, calculationMathContext), calculationMathContext))
-                        .divide(BigDecimal.valueOf(term).divide(BigDecimal.valueOf(12), calculationMathContext), calculationMathContext);
+                        .divide(amount, calculationMathContext)
+                        .subtract(BigDecimal.ONE, calculationMathContext))
+                .divide(BigDecimal.valueOf(term).divide(BigDecimal.valueOf(12), calculationMathContext), calculationMathContext)
+                .multiply(BigDecimal.valueOf(100), calculationMathContext);
 
         LOG.debug("Finished calculating psk: psk = %s".formatted(psk));
 
