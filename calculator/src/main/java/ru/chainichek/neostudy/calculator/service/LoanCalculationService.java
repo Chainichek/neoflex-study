@@ -49,12 +49,11 @@ public class LoanCalculationService implements PreScoreCalculator,
             throw new UnprocessableEntityException("Cannot offer a loan for unemployed");
         }
 
-        if (scoringData.employment().salary()
-                    .multiply(BigDecimal.valueOf(25), calculationMathContext)
-                    .compareTo(scoringData.amount()) < 0) {
+        final BigDecimal multipliedSalary = scoringData.employment().salary()
+                .multiply(BigDecimal.valueOf(25), calculationMathContext);
+        if (multipliedSalary.compareTo(scoringData.amount()) < 0) {
             LOG.debug("Can't check further and throwing exception because scoringData.employment.salary * 25 = %s is less than scoringData.amount = %s"
-                    .formatted(scoringData.employment().salary()
-                            .multiply(BigDecimal.valueOf(25), calculationMathContext), scoringData.amount()));
+                    .formatted(multipliedSalary, scoringData.amount()));
             throw new UnprocessableEntityException("Cannot offer a loan whose amount exceeds 25 salaries");
         }
 
@@ -66,7 +65,7 @@ public class LoanCalculationService implements PreScoreCalculator,
         }
 
         if (scoringData.employment().workExperienceTotal() < 18 || scoringData.employment().workExperienceCurrent() < 3) {
-            LOG.debug("Can't check further and throwing exception because scoringData.employment.workExperienceTotal = %s is less 18 months or scoringData.employment.workExperienceCurrent = %s is less 3 months"
+           LOG.debug("Can't check further and throwing exception because scoringData.employment.workExperienceTotal = %s is less 18 months or scoringData.employment.workExperienceCurrent = %s is less 3 months"
                     .formatted(scoringData.employment().workExperienceTotal(), scoringData.employment().workExperienceCurrent()));
             throw new UnprocessableEntityException("Cannot offer a loan to those whose total experience is less 18 months or whose current experience is less 3 months");
         }
