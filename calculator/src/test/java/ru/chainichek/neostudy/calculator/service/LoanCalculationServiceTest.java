@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.chainichek.neostudy.calculator.dto.score.EmploymentDto;
 import ru.chainichek.neostudy.calculator.dto.score.PaymentScheduleElementDto;
 import ru.chainichek.neostudy.calculator.dto.score.ScoringDataDto;
+import ru.chainichek.neostudy.calculator.exception.UnprocessableEntityException;
 import ru.chainichek.neostudy.calculator.model.EmploymentStatus;
 import ru.chainichek.neostudy.calculator.model.Gender;
 import ru.chainichek.neostudy.calculator.model.MaritalStatus;
@@ -23,9 +24,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -43,8 +46,131 @@ class LoanCalculationServiceTest {
         return expected.subtract(actual, CALCULATION_MATH_CONTEXT).abs().compareTo(DELTA) <= 0;
     }
 
+    @ParameterizedTest
+    @ArgumentsSource(CheckAllowedArgumentsProvider.class)
+    void checkScoringData_whenALoanCanBeOffered_thenDoNothing(EmploymentStatus employmentStatus,
+                                                              BigDecimal amount,
+                                                              BigDecimal salary,
+                                                              LocalDate birthdate,
+                                                              int workingExperienceTotal,
+                                                              int workingExperienceCurrent) {
+        EmploymentDto employment = mock(EmploymentDto.class);
+        ScoringDataDto scoringData = mock(ScoringDataDto.class);
+
+        when(scoringData.employment()).thenReturn(employment);
+        when(scoringData.birthdate()).thenReturn(birthdate);
+        when(scoringData.amount()).thenReturn(amount);
+
+        when(employment.employmentStatus()).thenReturn(employmentStatus);
+        when(employment.salary()).thenReturn(salary);
+        when(employment.workExperienceCurrent()).thenReturn(workingExperienceCurrent);
+        when(employment.workExperienceTotal()).thenReturn(workingExperienceTotal);
+
+        assertDoesNotThrow(() -> loanCalculationService.checkScoringData(scoringData));
+    }
+
+    static final class CheckAllowedArgumentsProvider implements ArgumentsProvider {
+        @Override
+        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
+            return Stream.of(
+                    Arguments.of(EmploymentStatus.EMPLOYED, BigDecimal.valueOf(30000), BigDecimal.valueOf(20000), LocalDate.now().minusYears(20), 18, 3),
+                    Arguments.of(EmploymentStatus.SELF_EMPLOYED, BigDecimal.valueOf(30000), BigDecimal.valueOf(20000), LocalDate.now().minusYears(20), 18, 3),
+                    Arguments.of(EmploymentStatus.BUSINESS_OWNER, BigDecimal.valueOf(30000), BigDecimal.valueOf(20000), LocalDate.now().minusYears(20), 18, 3),
+                    Arguments.of(EmploymentStatus.EMPLOYED, BigDecimal.valueOf(499999), BigDecimal.valueOf(20000), LocalDate.now().minusYears(20), 18, 3),
+                    Arguments.of(EmploymentStatus.EMPLOYED, BigDecimal.valueOf(30000), BigDecimal.valueOf(20000), LocalDate.now().minusYears(64), 18, 3),
+                    Arguments.of(EmploymentStatus.EMPLOYED, BigDecimal.valueOf(30000), BigDecimal.valueOf(20000), LocalDate.now().minusYears(20), 36, 3),
+                    Arguments.of(EmploymentStatus.EMPLOYED, BigDecimal.valueOf(30000), BigDecimal.valueOf(20000), LocalDate.now().minusYears(20), 18, 12)
+            );
+        }
+    }
+
     @Test
-    void checkScoringData() {
+    void checkScoringData_whenIsUnemployed_throwUnprocessableEntityException() {
+        EmploymentDto employment = mock(EmploymentDto.class);
+        ScoringDataDto scoringData = mock(ScoringDataDto.class);
+
+        when(scoringData.employment()).thenReturn(employment);
+
+        when(employment.employmentStatus()).thenReturn(EmploymentStatus.UNEMPLOYED);
+
+        assertThrows(UnprocessableEntityException.class, () -> loanCalculationService.checkScoringData(scoringData));
+    }
+
+    @Test
+    void checkScoringData_whenAmountIsMoreThan25Salaries_throwUnprocessableEntityException() {
+        EmploymentDto employment = mock(EmploymentDto.class);
+        ScoringDataDto scoringData = mock(ScoringDataDto.class);
+
+        when(scoringData.employment()).thenReturn(employment);
+        when(scoringData.amount()).thenReturn(BigDecimal.valueOf(500000));
+
+        when(employment.employmentStatus()).thenReturn(EmploymentStatus.EMPLOYED);
+        when(employment.salary()).thenReturn(BigDecimal.valueOf(20000));
+
+        assertThrows(UnprocessableEntityException.class, () -> loanCalculationService.checkScoringData(scoringData));
+    }
+
+    @Test
+    void checkScoringData_whenAgeIsMoreThan65YearsOld_throwUnprocessableEntityException() {
+        EmploymentDto employment = mock(EmploymentDto.class);
+        ScoringDataDto scoringData = mock(ScoringDataDto.class);
+
+        when(scoringData.employment()).thenReturn(employment);
+        when(scoringData.birthdate()).thenReturn(LocalDate.now().minusYears(66));
+        when(scoringData.amount()).thenReturn(BigDecimal.valueOf(30000));
+
+        when(employment.employmentStatus()).thenReturn(EmploymentStatus.EMPLOYED);
+        when(employment.salary()).thenReturn(BigDecimal.valueOf(20000));
+
+        assertThrows(UnprocessableEntityException.class, () -> loanCalculationService.checkScoringData(scoringData));
+    }
+
+    @Test
+    void checkScoringData_whenAgeIsLessThan20YearsOld_throwUnprocessableEntityException() {
+        EmploymentDto employment = mock(EmploymentDto.class);
+        ScoringDataDto scoringData = mock(ScoringDataDto.class);
+
+        when(scoringData.employment()).thenReturn(employment);
+        when(scoringData.birthdate()).thenReturn(LocalDate.now().minusYears(19));
+        when(scoringData.amount()).thenReturn(BigDecimal.valueOf(30000));
+
+        when(employment.employmentStatus()).thenReturn(EmploymentStatus.EMPLOYED);
+        when(employment.salary()).thenReturn(BigDecimal.valueOf(20000));
+
+        assertThrows(UnprocessableEntityException.class, () -> loanCalculationService.checkScoringData(scoringData));
+    }
+
+    @Test
+    void checkScoringData_whenTotalWorkingExperienceIsLessThan18Months_throwUnprocessableEntityException() {
+        EmploymentDto employment = mock(EmploymentDto.class);
+        ScoringDataDto scoringData = mock(ScoringDataDto.class);
+
+        when(scoringData.employment()).thenReturn(employment);
+        when(scoringData.birthdate()).thenReturn(LocalDate.now().minusYears(20));
+        when(scoringData.amount()).thenReturn(BigDecimal.valueOf(30000));
+
+        when(employment.employmentStatus()).thenReturn(EmploymentStatus.EMPLOYED);
+        when(employment.salary()).thenReturn(BigDecimal.valueOf(20000));
+        when(employment.workExperienceTotal()).thenReturn(17);
+        when(employment.workExperienceCurrent()).thenReturn(3);
+
+        assertThrows(UnprocessableEntityException.class, () -> loanCalculationService.checkScoringData(scoringData));
+    }
+    @Test
+    void checkScoringData_whenCurrentWorkingExperienceIsLessThan3Months_throwUnprocessableEntityException() {
+        EmploymentDto employment = mock(EmploymentDto.class);
+        ScoringDataDto scoringData = mock(ScoringDataDto.class);
+
+        when(scoringData.employment()).thenReturn(employment);
+        when(scoringData.birthdate()).thenReturn(LocalDate.now().minusYears(20));
+        when(scoringData.amount()).thenReturn(BigDecimal.valueOf(30000));
+
+        when(employment.employmentStatus()).thenReturn(EmploymentStatus.EMPLOYED);
+        when(employment.salary()).thenReturn(BigDecimal.valueOf(20000));
+        when(employment.workExperienceTotal()).thenReturn(18);
+        when(employment.workExperienceCurrent()).thenReturn(2);
+
+        assertThrows(UnprocessableEntityException.class, () -> loanCalculationService.checkScoringData(scoringData));
     }
 
     @ParameterizedTest
@@ -55,7 +181,8 @@ class LoanCalculationServiceTest {
         assertTrue(compareBigDecimals(expected, totalAmount));
     }
 
-    static class AmountArgumentsProvider implements ArgumentsProvider {
+    static final class AmountArgumentsProvider implements ArgumentsProvider {
+
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
             return Stream.of(
@@ -75,7 +202,6 @@ class LoanCalculationServiceTest {
     @ArgumentsSource(MonthlyPaymentArgumentsProvider.class)
     void calculateMonthlyPayment(BigDecimal amount, BigDecimal rate, int term, BigDecimal expected) {
         BigDecimal monthlyPayment = loanCalculationService.calculateMonthlyPayment(amount, rate, term);
-        System.out.println(monthlyPayment);
         assertNotNull(monthlyPayment);
         assertTrue(compareBigDecimals(expected, monthlyPayment));
     }
@@ -125,7 +251,7 @@ class LoanCalculationServiceTest {
         assertTrue(compareBigDecimals(expected, preScoreRate));
     }
 
-    static class PreScoreRateArgumentsProvider implements ArgumentsProvider {
+    static final class PreScoreRateArgumentsProvider implements ArgumentsProvider {
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
             return Stream.of(
@@ -145,7 +271,7 @@ class LoanCalculationServiceTest {
         assertTrue(compareBigDecimals(expected, psk));
     }
 
-    static class PskArgumentsProvider implements ArgumentsProvider {
+    static final class PskArgumentsProvider implements ArgumentsProvider {
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
             return Stream.of(
