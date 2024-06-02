@@ -124,7 +124,7 @@ public class CalculatorService {
             throw new ValidationException(ValidationMessage.AGE_MESSAGE);
         }
         if (!validator.validateINN(scoringData.employment().employerINN())) {
-            LOG.debug("Can't check further and throwing exception because check number of scoringData.employment.employerINN = %s is not valid"
+            LOG.debug("Can't check further and throwing exception because check number or length of scoringData.employment.employerINN = %s is not valid"
                     .formatted(scoringData.employment().employerINN()));
             throw new ValidationException(ValidationMessage.INN_CHECK_NUMBER_MESSAGE);
         }
