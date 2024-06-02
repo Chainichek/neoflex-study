@@ -4,27 +4,24 @@ import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import ru.chainichek.neostudy.calculator.logic.validation.Validator;
 
 import java.time.LocalDate;
 import java.time.Period;
 
 @Service
-public class ValidationService implements Validator {
+public class ValidationService {
     private final static Logger LOG = LoggerFactory.getLogger(ValidationService.class);
     private final int[] innCoefficients1 = {7, 2, 4, 10, 3, 5, 9, 4, 6, 8};
     private final int[] innCoefficients2 = {3, 7, 2, 4, 10, 3, 5, 9, 4, 6, 8};
 
-    @Override
-    public boolean validateBirthdate(final @NotNull LocalDate birthdate, final int age) {
+    public boolean validateBirthdate(@NotNull LocalDate birthdate,  int age) {
         LOG.debug("Starting to validate birthdate: birthdate = %s, age = %d".formatted(birthdate, age));
         final int years = Period.between(birthdate, LocalDate.now()).getYears();
         LOG.debug("Age is %d y.o.".formatted(years));
         return years >= age;
     }
 
-    @Override
-    public boolean validateINN(final @NotNull String INN) {
+    public boolean validateINN(@NotNull String INN) {
         LOG.debug("Starting to validate INN: INN = %s".formatted(INN));
         if (INN.length() != 12) {
             LOG.debug("INN length is not valid");

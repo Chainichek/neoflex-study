@@ -12,10 +12,6 @@ import ru.chainichek.neostudy.calculator.dto.score.EmploymentDto;
 import ru.chainichek.neostudy.calculator.dto.score.PaymentScheduleElementDto;
 import ru.chainichek.neostudy.calculator.dto.score.ScoringDataDto;
 import ru.chainichek.neostudy.calculator.exception.ValidationException;
-import ru.chainichek.neostudy.calculator.logic.calculation.MonthlyPaymentCalculator;
-import ru.chainichek.neostudy.calculator.logic.calculation.PreScoreCalculator;
-import ru.chainichek.neostudy.calculator.logic.calculation.ScoreCalculator;
-import ru.chainichek.neostudy.calculator.logic.validation.Validator;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -45,13 +41,9 @@ class CalculatorServiceTest {
     @Mock
     MathContext resultMathContext;
     @Mock
-    PreScoreCalculator preScoreCalculator;
+    LoanCalculationService loanCalculationService;
     @Mock
-    ScoreCalculator scoreCalculator;
-    @Mock
-    MonthlyPaymentCalculator monthlyPaymentCalculator;
-    @Mock
-    Validator validator;
+    ValidationService validationService;
 
     @Test
     void getOffers() {
@@ -71,9 +63,9 @@ class CalculatorServiceTest {
         int i = 0;
         for (boolean isInsuranceEnabled : booleans) {
             for (boolean isSalaryClient : booleans) {
-                when(preScoreCalculator.calculatePreScoreRate(isSalaryClient, isInsuranceEnabled)).thenReturn(rateValues[i]);
-                when(preScoreCalculator.calculateAmount(request.amount(), isSalaryClient, isInsuranceEnabled)).thenReturn(amountValues[i]);
-                when(monthlyPaymentCalculator.calculateMonthlyPayment(amountValues[i], rateValues[i], request.term())).thenReturn(monthlyPayment[i]);
+                when(loanCalculationService.calculatePreScoreRate(isSalaryClient, isInsuranceEnabled)).thenReturn(rateValues[i]);
+                when(loanCalculationService.calculateAmount(request.amount(), isSalaryClient, isInsuranceEnabled)).thenReturn(amountValues[i]);
+                when(loanCalculationService.calculateMonthlyPayment(amountValues[i], rateValues[i], request.term())).thenReturn(monthlyPayment[i]);
                 i++;
             }
         }
@@ -100,7 +92,7 @@ class CalculatorServiceTest {
     void getCreditInfo_whenScoringDataBirthdateIsInvalid_thenThrowValidationException() {
         ScoringDataDto scoringData = mock(ScoringDataDto.class);
 
-        when(validator.validateBirthdate(eq(scoringData.birthdate()), any(Integer.class))).thenReturn(false);
+        when(validationService.validateBirthdate(eq(scoringData.birthdate()), any(Integer.class))).thenReturn(false);
 
         assertThrows(ValidationException.class, () -> calculatorService.getCreditInfo(scoringData));
     }
@@ -112,8 +104,8 @@ class CalculatorServiceTest {
 
         when(scoringData.employment()).thenReturn(employment);
 
-        when(validator.validateBirthdate(eq(scoringData.birthdate()), any(Integer.class))).thenReturn(true);
-        when(validator.validateINN(scoringData.employment().employerINN())).thenReturn(false);
+        when(validationService.validateBirthdate(eq(scoringData.birthdate()), any(Integer.class))).thenReturn(true);
+        when(validationService.validateINN(scoringData.employment().employerINN())).thenReturn(false);
 
         assertThrows(ValidationException.class, () -> calculatorService.getCreditInfo(scoringData));
     }
@@ -184,14 +176,14 @@ class CalculatorServiceTest {
         when(scoringData.employment()).thenReturn(employment);
         when(scoringData.amount()).thenReturn(amount);
 
-        when(validator.validateBirthdate(eq(scoringData.birthdate()), any(Integer.class))).thenReturn(true);
-        when(validator.validateINN(scoringData.employment().employerINN())).thenReturn(true);
+        when(validationService.validateBirthdate(eq(scoringData.birthdate()), any(Integer.class))).thenReturn(true);
+        when(validationService.validateINN(scoringData.employment().employerINN())).thenReturn(true);
 
-        doNothing().when(scoreCalculator).checkScoringData(scoringData);
-        when(scoreCalculator.calculateScoreRate(scoringData)).thenReturn(rate);
-        when(monthlyPaymentCalculator.calculateMonthlyPayment(scoringData.amount(), rate, scoringData.term())).thenReturn(monthlyPayment);
-        when(scoreCalculator.calculatePsk(scoringData.amount(), monthlyPayment, scoringData.term())).thenReturn(psk);
-        when(scoreCalculator.calculatePaymentSchedule(scoringData.amount(), rate, monthlyPayment, scoringData.term(), LocalDate.now())).thenReturn(paymentSchedule);
+        doNothing().when(loanCalculationService).checkScoringData(scoringData);
+        when(loanCalculationService.calculateScoreRate(scoringData)).thenReturn(rate);
+        when(loanCalculationService.calculateMonthlyPayment(scoringData.amount(), rate, scoringData.term())).thenReturn(monthlyPayment);
+        when(loanCalculationService.calculatePsk(scoringData.amount(), monthlyPayment, scoringData.term())).thenReturn(psk);
+        when(loanCalculationService.calculatePaymentSchedule(scoringData.amount(), rate, monthlyPayment, scoringData.term(), LocalDate.now())).thenReturn(paymentSchedule);
 
 
         CreditDto credit = calculatorService.getCreditInfo(scoringData);

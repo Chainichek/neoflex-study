@@ -11,10 +11,6 @@ import ru.chainichek.neostudy.calculator.dto.score.CreditDto;
 import ru.chainichek.neostudy.calculator.dto.score.PaymentScheduleElementDto;
 import ru.chainichek.neostudy.calculator.dto.score.ScoringDataDto;
 import ru.chainichek.neostudy.calculator.exception.ValidationException;
-import ru.chainichek.neostudy.calculator.logic.calculation.ScoreCalculator;
-import ru.chainichek.neostudy.calculator.logic.calculation.PreScoreCalculator;
-import ru.chainichek.neostudy.calculator.logic.calculation.MonthlyPaymentCalculator;
-import ru.chainichek.neostudy.calculator.logic.validation.Validator;
 import ru.chainichek.neostudy.calculator.util.Validation;
 import ru.chainichek.neostudy.calculator.util.ValidationMessage;
 
@@ -29,25 +25,19 @@ import java.util.UUID;
 public class CalculatorService {
     private final static Logger LOG = LoggerFactory.getLogger(CalculatorService.class);
     private final MathContext resultMathContext;
-    private final PreScoreCalculator preScoreCalculator;
-    private final ScoreCalculator scoreCalculator;
-    private final MonthlyPaymentCalculator monthlyPaymentCalculator;
-    private final Validator validator;
+    private final LoanCalculationService loanCalculationService;
+    private final ValidationService validationService;
 
-    public CalculatorService(final @Qualifier("resultMathContext") MathContext resultMathContext,
-                             PreScoreCalculator preScoreCalculator,
-                             ScoreCalculator scoreCalculator,
-                             MonthlyPaymentCalculator monthlyPaymentCalculator,
-                             Validator validator) {
+    public CalculatorService(@Qualifier("resultMathContext") MathContext resultMathContext,
+                             LoanCalculationService loanCalculationService,
+                             ValidationService validationService) {
         this.resultMathContext = resultMathContext;
-        this.preScoreCalculator = preScoreCalculator;
-        this.scoreCalculator = scoreCalculator;
-        this.monthlyPaymentCalculator = monthlyPaymentCalculator;
-        this.validator = validator;
+        this.loanCalculationService = loanCalculationService;
+        this.validationService = validationService;
     }
 
 
-    public List<LoanOfferDto> getOffers(final @NotNull LoanStatementRequestDto request) {
+    public List<LoanOfferDto> getOffers(@NotNull LoanStatementRequestDto request) {
         LOG.debug("Starting to generate offers");
 
         final LoanOfferDto[] offers = new LoanOfferDto[4];
@@ -56,9 +46,9 @@ public class CalculatorService {
         int i = 0;
         for (boolean isInsuranceEnabled : booleans) {
             for (boolean isSalaryClient : booleans) {
-                final BigDecimal rate = preScoreCalculator.calculatePreScoreRate(isInsuranceEnabled, isSalaryClient);
-                final BigDecimal totalAmount = preScoreCalculator.calculateAmount(request.amount(), isInsuranceEnabled, isSalaryClient);
-                final BigDecimal monthlyPayment = monthlyPaymentCalculator.calculateMonthlyPayment(totalAmount, rate, request.term());
+                final BigDecimal rate = loanCalculationService.calculatePreScoreRate(isInsuranceEnabled, isSalaryClient);
+                final BigDecimal totalAmount = loanCalculationService.calculateAmount(request.amount(), isInsuranceEnabled, isSalaryClient);
+                final BigDecimal monthlyPayment = loanCalculationService.calculateMonthlyPayment(totalAmount, rate, request.term());
 
                 final LoanOfferDto loanOffer = new LoanOfferDto(UUID.randomUUID(),
                         request.amount().setScale(resultMathContext.getPrecision(), resultMathContext.getRoundingMode()),
@@ -79,16 +69,16 @@ public class CalculatorService {
         return List.of(offers);
     }
 
-    public CreditDto getCreditInfo(final @NotNull ScoringDataDto scoringData) {
+    public CreditDto getCreditInfo(@NotNull ScoringDataDto scoringData) {
         LOG.debug("Starting to generate credit info");
 
         validateScoringData(scoringData);
-        scoreCalculator.checkScoringData(scoringData);
+        loanCalculationService.checkScoringData(scoringData);
 
-        final BigDecimal rate = scoreCalculator.calculateScoreRate(scoringData);
-        final BigDecimal monthlyPayment = monthlyPaymentCalculator.calculateMonthlyPayment(scoringData.amount(), rate, scoringData.term());
-        final BigDecimal psk = scoreCalculator.calculatePsk(scoringData.amount(), monthlyPayment, scoringData.term());
-        final List<PaymentScheduleElementDto> schedule = scoreCalculator.calculatePaymentSchedule(scoringData.amount(),
+        final BigDecimal rate = loanCalculationService.calculateScoreRate(scoringData);
+        final BigDecimal monthlyPayment = loanCalculationService.calculateMonthlyPayment(scoringData.amount(), rate, scoringData.term());
+        final BigDecimal psk = loanCalculationService.calculatePsk(scoringData.amount(), monthlyPayment, scoringData.term());
+        final List<PaymentScheduleElementDto> schedule = loanCalculationService.calculatePaymentSchedule(scoringData.amount(),
                 rate,
                 monthlyPayment,
                 scoringData.term(),
@@ -116,14 +106,14 @@ public class CalculatorService {
         return credit;
     }
 
-    private void validateScoringData(final @NotNull ScoringDataDto scoringData) {
+    private void validateScoringData(@NotNull ScoringDataDto scoringData) {
         LOG.debug("Starting to validate scoring data: scoringData = %s");
-        if (!validator.validateBirthdate(scoringData.birthdate(), Validation.AGE_MIN)) {
+        if (!validationService.validateBirthdate(scoringData.birthdate(), Validation.AGE_MIN)) {
             LOG.debug("Can't check further and throwing exception because period between scoringData.birthdate = %s and now is less than %d"
                     .formatted(scoringData.birthdate(), Validation.AGE_MIN));
             throw new ValidationException(ValidationMessage.AGE_MESSAGE);
         }
-        if (!validator.validateINN(scoringData.employment().employerINN())) {
+        if (!validationService.validateINN(scoringData.employment().employerINN())) {
             LOG.debug("Can't check further and throwing exception because check number or length of scoringData.employment.employerINN = %s is not valid"
                     .formatted(scoringData.employment().employerINN()));
             throw new ValidationException(ValidationMessage.INN_CHECK_NUMBER_MESSAGE);

@@ -24,8 +24,8 @@ public class RestResponseEntityExceptionHandler{
     private final static Logger LOG = LoggerFactory.getLogger(RestResponseEntityExceptionHandler.class);
 
     @ExceptionHandler(UnprocessableEntityException.class)
-    public ResponseEntity<ErrorMessage> unprocessableEntityException(final UnprocessableEntityException exception,
-                                                            final HttpServletRequest request) {
+    public ResponseEntity<ErrorMessage> unprocessableEntityException(UnprocessableEntityException exception,
+                                                            HttpServletRequest request) {
         final ErrorMessage message = new ErrorMessage(LocalDateTime.now(),
                 HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase(),
                 HttpStatus.UNPROCESSABLE_ENTITY.value(),
@@ -40,8 +40,8 @@ public class RestResponseEntityExceptionHandler{
     }
 
     @ExceptionHandler(HandlerMethodValidationException.class)
-    public ResponseEntity<ErrorMessage> handlerMethodValidationException(final HandlerMethodValidationException exception,
-                                                                         final HttpServletRequest request) {
+    public ResponseEntity<ErrorMessage> handlerMethodValidationException(HandlerMethodValidationException exception,
+                                                                         HttpServletRequest request) {
         final List<String> errors = new ArrayList<>();
         for (ParameterValidationResult parameterValidationResult : exception.getAllValidationResults()) {
             for (MessageSourceResolvable messageError : parameterValidationResult.getResolvableErrors()) {
@@ -64,8 +64,8 @@ public class RestResponseEntityExceptionHandler{
     }
 
     @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<ErrorMessage> validationException(final ValidationException exception,
-                                                            final HttpServletRequest request) {
+    public ResponseEntity<ErrorMessage> validationException(ValidationException exception,
+                                                            HttpServletRequest request) {
         final ErrorMessage message = new ErrorMessage(LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 HttpStatus.BAD_REQUEST.value(),
@@ -80,8 +80,8 @@ public class RestResponseEntityExceptionHandler{
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ErrorMessage> otherException(final RuntimeException exception,
-                                                       final HttpServletRequest request) {
+    public ResponseEntity<ErrorMessage> otherException(RuntimeException exception,
+                                                       HttpServletRequest request) {
         final ErrorMessage message = new ErrorMessage(LocalDateTime.now(),
                 HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),

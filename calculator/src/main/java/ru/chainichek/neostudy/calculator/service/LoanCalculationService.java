@@ -9,9 +9,6 @@ import org.springframework.stereotype.Service;
 import ru.chainichek.neostudy.calculator.dto.score.PaymentScheduleElementDto;
 import ru.chainichek.neostudy.calculator.dto.score.ScoringDataDto;
 import ru.chainichek.neostudy.calculator.exception.UnprocessableEntityException;
-import ru.chainichek.neostudy.calculator.logic.calculation.ScoreCalculator;
-import ru.chainichek.neostudy.calculator.logic.calculation.PreScoreCalculator;
-import ru.chainichek.neostudy.calculator.logic.calculation.MonthlyPaymentCalculator;
 import ru.chainichek.neostudy.calculator.model.EmploymentStatus;
 
 import java.math.BigDecimal;
@@ -22,9 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class LoanCalculationService implements PreScoreCalculator,
-        ScoreCalculator,
-        MonthlyPaymentCalculator{
+public class LoanCalculationService{
     private final static Logger LOG = LoggerFactory.getLogger(LoanCalculationService.class);
 
     private final MathContext calculationMathContext;
@@ -34,14 +29,13 @@ public class LoanCalculationService implements PreScoreCalculator,
 
     private final BigDecimal baseRate;
 
-    public LoanCalculationService(final @Qualifier("calculationMathContext") MathContext calculationMathContext,
-                                  final @Value("${app.property.base-rate}") BigDecimal baseRate) {
+    public LoanCalculationService(@Qualifier("calculationMathContext") MathContext calculationMathContext,
+                                  @Value("${app.property.base-rate}") BigDecimal baseRate) {
         this.calculationMathContext = calculationMathContext;
         this.baseRate = baseRate;
     }
 
-    @Override
-    public void checkScoringData(final @NotNull ScoringDataDto scoringData) {
+    public void checkScoringData(@NotNull ScoringDataDto scoringData) {
         LOG.debug("Starting to check scoring data");
 
         if (scoringData.employment().employmentStatus() == EmploymentStatus.UNEMPLOYED) {
@@ -71,10 +65,9 @@ public class LoanCalculationService implements PreScoreCalculator,
         }
     }
 
-    @Override
-    public BigDecimal calculateAmount(final @NotNull BigDecimal amount,
-                                      final boolean isInsuranceEnabled,
-                                      final boolean isSalaryClient) {
+    public BigDecimal calculateAmount(@NotNull BigDecimal amount,
+                                      boolean isInsuranceEnabled,
+                                      boolean isSalaryClient) {
         LOG.debug("Starting to calculate total amount of loan: amount = %s".formatted(amount));
 
         BigDecimal totalAmount = amount;
@@ -92,19 +85,10 @@ public class LoanCalculationService implements PreScoreCalculator,
         return totalAmount;
     }
 
-    /**
-     * <h2>Calculate monthly annuity payment</h2>
-     * <p>Uses this <a href="https://www.raiffeisen.ru/wiki/kak-rasschitat-annuitetnyj-platezh/">formula</a> (date of access 05-24-2024)</p>
-     *
-     * @param amount the loan amount to be divided into monthly payments
-     * @param rate   key loan rate
-     * @param term   loan term in months
-     * @return the amount of the monthly annuity payment
-     */
-    @Override
-    public BigDecimal calculateMonthlyPayment(final @NotNull BigDecimal amount,
-                                              final @NotNull BigDecimal rate,
-                                              final int term) {
+
+    public BigDecimal calculateMonthlyPayment(@NotNull BigDecimal amount,
+                                              @NotNull BigDecimal rate,
+                                              int term) {
         LOG.debug("Starting to calculate amount of monthly payment: amount = %s, rate = %s, term = %d".formatted(amount, rate, term));
 
         final BigDecimal monthlyRate = rate.divide(BigDecimal.valueOf(100), calculationMathContext)
@@ -126,12 +110,11 @@ public class LoanCalculationService implements PreScoreCalculator,
         return monthlyPayment;
     }
 
-    @Override
-    public List<PaymentScheduleElementDto> calculatePaymentSchedule(final @NotNull BigDecimal amount,
-                                                                    final @NotNull BigDecimal rate,
-                                                                    final @NotNull BigDecimal monthlyPayment,
-                                                                    final int term,
-                                                                    final @NotNull LocalDate loanStartDate) {
+    public List<PaymentScheduleElementDto> calculatePaymentSchedule(@NotNull BigDecimal amount,
+                                                                    @NotNull BigDecimal rate,
+                                                                    @NotNull BigDecimal monthlyPayment,
+                                                                    int term,
+                                                                    @NotNull LocalDate loanStartDate) {
         LOG.debug("Starting to calculate loan payment schedule: amount = %s, rate = %s, monthlyPayment = %s, term = %d, loanStartDate = %s"
                 .formatted(amount,
                         rate,
@@ -178,12 +161,12 @@ public class LoanCalculationService implements PreScoreCalculator,
         return List.of(paymentScheduleElements);
     }
 
-    private PaymentScheduleElementDto calculatePaymentScheduleElement(final int number,
-                                                                      final @NotNull LocalDate date,
-                                                                      final @NotNull BigDecimal amount,
-                                                                      final @NotNull BigDecimal monthlyRate,
-                                                                      final @NotNull BigDecimal monthlyPayment,
-                                                                      final @NotNull BigDecimal totalPayment) {
+    private PaymentScheduleElementDto calculatePaymentScheduleElement(int number,
+                                                                      @NotNull LocalDate date,
+                                                                      @NotNull BigDecimal amount,
+                                                                      @NotNull BigDecimal monthlyRate,
+                                                                      @NotNull BigDecimal monthlyPayment,
+                                                                      @NotNull BigDecimal totalPayment) {
         LOG.debug("Starting to calculate payment schedule element: number = %d, date = %s, amount = %s, monthlyRate = %s, totalPayment = %s");
 
         final BigDecimal currentTotalPayment = totalPayment.add(monthlyPayment, calculationMathContext);
@@ -204,9 +187,8 @@ public class LoanCalculationService implements PreScoreCalculator,
         return scheduleElement;
     }
 
-    @Override
-    public BigDecimal calculatePreScoreRate(final boolean isInsuranceEnabled,
-                                            final boolean isSalaryClient) {
+    public BigDecimal calculatePreScoreRate(boolean isInsuranceEnabled,
+                                            boolean isSalaryClient) {
         LOG.debug("Starting to calculate loan pre score rate: baseRate = %s".formatted(baseRate));
 
         BigDecimal rate = baseRate;
@@ -222,10 +204,9 @@ public class LoanCalculationService implements PreScoreCalculator,
         return rate;
     }
 
-    @Override
-    public BigDecimal calculatePsk(final @NotNull BigDecimal amount,
-                                   final @NotNull BigDecimal monthlyPayment,
-                                   final @NotNull Integer term) {
+    public BigDecimal calculatePsk(@NotNull BigDecimal amount,
+                                   @NotNull BigDecimal monthlyPayment,
+                                   @NotNull Integer term) {
         LOG.debug("Starting to calculate loan psk: monthlyPayment = %s, term = %d".formatted(monthlyPayment, term));
 
         final BigDecimal psk = (
@@ -241,8 +222,7 @@ public class LoanCalculationService implements PreScoreCalculator,
     }
 
 
-    @Override
-    public BigDecimal calculateScoreRate(final @NotNull ScoringDataDto scoringData) {
+    public BigDecimal calculateScoreRate(@NotNull ScoringDataDto scoringData) {
         LOG.debug("Starting to calculate loan pre score rate: baseRate = %s".formatted(baseRate));
 
         BigDecimal rate = baseRate;
