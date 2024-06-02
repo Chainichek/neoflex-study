@@ -21,10 +21,13 @@ public record ScoringDataDto(@NotNull @DecimalMin(value = Validation.AMOUNT_MIN,
                              @NotNull @Min(value = Validation.TERM_MIN, message = ValidationMessage.TERM_MESSAGE)
                              Integer term,
                              @NotBlank @Pattern(regexp = Validation.NAME_PATTERN, message = ValidationMessage.NAME_MESSAGE)
+                             @Schema(example = "Ivan")
                              String firstName,
                              @NotBlank @Pattern(regexp = Validation.NAME_PATTERN, message = ValidationMessage.NAME_MESSAGE)
+                             @Schema(example = "Ivanov")
                              String lastName,
                              @Pattern(regexp = Validation.NAME_PATTERN, message = ValidationMessage.NAME_MESSAGE)
+                             @Schema(example = "Ivanovich")
                              String middleName,
                              @NotNull
                              Gender gender,
