@@ -52,7 +52,7 @@ public class LoanCalculationService implements PreScoreCalculator,
         if (scoringData.employment().salary()
                     .multiply(BigDecimal.valueOf(25), calculationMathContext)
                     .compareTo(scoringData.amount()) < 0) {
-            LOG.debug("Can't check further and throwing exception because scoringData.employment.salary * 25 = %s is more than scoringData.amount = %s"
+            LOG.debug("Can't check further and throwing exception because scoringData.employment.salary * 25 = %s is less than scoringData.amount = %s"
                     .formatted(scoringData.employment().salary()
                             .multiply(BigDecimal.valueOf(25), calculationMathContext), scoringData.amount()));
             throw new UnprocessableEntityException("Cannot offer a loan whose amount exceeds 25 salaries");
