@@ -1,0 +1,11 @@
+#General
+##Spring
+spring.application.name=calculator
+#Application
+##Rate
+app.property.base-rate = 16
+app.property.result-precision = 2
+#Dev
+##Springdoc
+springdoc.api-docs.path=/api-docs
+springdoc.swagger-ui.path=/swagger-docs
