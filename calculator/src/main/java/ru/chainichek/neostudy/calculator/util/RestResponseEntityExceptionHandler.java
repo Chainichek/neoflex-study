@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import ru.chainichek.neostudy.calculator.dto.util.ErrorMessage;
-import ru.chainichek.neostudy.calculator.exception.UnprocessableEntityException;
+import ru.chainichek.neostudy.calculator.exception.ForbiddenException;
 import ru.chainichek.neostudy.calculator.exception.ValidationException;
 
 import java.time.LocalDateTime;
@@ -23,19 +23,19 @@ import java.util.List;
 public class RestResponseEntityExceptionHandler{
     private final static Logger LOG = LoggerFactory.getLogger(RestResponseEntityExceptionHandler.class);
 
-    @ExceptionHandler(UnprocessableEntityException.class)
-    public ResponseEntity<ErrorMessage> unprocessableEntityException(UnprocessableEntityException exception,
-                                                            HttpServletRequest request) {
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErrorMessage> forbiddenException(ForbiddenException exception,
+                                                                     HttpServletRequest request) {
         final ErrorMessage message = new ErrorMessage(LocalDateTime.now(),
-                HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase(),
-                HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                HttpStatus.FORBIDDEN.getReasonPhrase(),
+                HttpStatus.FORBIDDEN.value(),
                 exception.getMessage(),
                 request.getRequestURI());
 
         LOG.error(exception.getMessage(), exception);
 
         return ResponseEntity
-                .status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .status(HttpStatus.FORBIDDEN)
                 .body(message);
     }
 

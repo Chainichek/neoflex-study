@@ -11,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.chainichek.neostudy.calculator.dto.score.EmploymentDto;
 import ru.chainichek.neostudy.calculator.dto.score.PaymentScheduleElementDto;
 import ru.chainichek.neostudy.calculator.dto.score.ScoringDataDto;
-import ru.chainichek.neostudy.calculator.exception.UnprocessableEntityException;
+import ru.chainichek.neostudy.calculator.exception.ForbiddenException;
 import ru.chainichek.neostudy.calculator.model.EmploymentStatus;
 import ru.chainichek.neostudy.calculator.model.Gender;
 import ru.chainichek.neostudy.calculator.model.MaritalStatus;
@@ -93,7 +93,7 @@ class LoanCalculationServiceTest {
 
         when(employment.employmentStatus()).thenReturn(EmploymentStatus.UNEMPLOYED);
 
-        assertThrows(UnprocessableEntityException.class, () -> loanCalculationService.checkScoringData(scoringData));
+        assertThrows(ForbiddenException.class, () -> loanCalculationService.checkScoringData(scoringData));
     }
 
     @Test
@@ -107,7 +107,7 @@ class LoanCalculationServiceTest {
         when(employment.employmentStatus()).thenReturn(EmploymentStatus.EMPLOYED);
         when(employment.salary()).thenReturn(BigDecimal.valueOf(20000));
 
-        assertThrows(UnprocessableEntityException.class, () -> loanCalculationService.checkScoringData(scoringData));
+        assertThrows(ForbiddenException.class, () -> loanCalculationService.checkScoringData(scoringData));
     }
 
     @Test
@@ -122,7 +122,7 @@ class LoanCalculationServiceTest {
         when(employment.employmentStatus()).thenReturn(EmploymentStatus.EMPLOYED);
         when(employment.salary()).thenReturn(BigDecimal.valueOf(20000));
 
-        assertThrows(UnprocessableEntityException.class, () -> loanCalculationService.checkScoringData(scoringData));
+        assertThrows(ForbiddenException.class, () -> loanCalculationService.checkScoringData(scoringData));
     }
 
     @Test
@@ -137,7 +137,7 @@ class LoanCalculationServiceTest {
         when(employment.employmentStatus()).thenReturn(EmploymentStatus.EMPLOYED);
         when(employment.salary()).thenReturn(BigDecimal.valueOf(20000));
 
-        assertThrows(UnprocessableEntityException.class, () -> loanCalculationService.checkScoringData(scoringData));
+        assertThrows(ForbiddenException.class, () -> loanCalculationService.checkScoringData(scoringData));
     }
 
     @Test
@@ -154,7 +154,7 @@ class LoanCalculationServiceTest {
         when(employment.workExperienceTotal()).thenReturn(17);
         when(employment.workExperienceCurrent()).thenReturn(3);
 
-        assertThrows(UnprocessableEntityException.class, () -> loanCalculationService.checkScoringData(scoringData));
+        assertThrows(ForbiddenException.class, () -> loanCalculationService.checkScoringData(scoringData));
     }
     @Test
     void checkScoringData_whenCurrentWorkingExperienceIsLessThan3Months_throwUnprocessableEntityException() {
@@ -170,7 +170,7 @@ class LoanCalculationServiceTest {
         when(employment.workExperienceTotal()).thenReturn(18);
         when(employment.workExperienceCurrent()).thenReturn(2);
 
-        assertThrows(UnprocessableEntityException.class, () -> loanCalculationService.checkScoringData(scoringData));
+        assertThrows(ForbiddenException.class, () -> loanCalculationService.checkScoringData(scoringData));
     }
 
     @ParameterizedTest

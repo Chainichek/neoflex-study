@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.chainichek.neostudy.calculator.dto.score.PaymentScheduleElementDto;
 import ru.chainichek.neostudy.calculator.dto.score.ScoringDataDto;
-import ru.chainichek.neostudy.calculator.exception.UnprocessableEntityException;
+import ru.chainichek.neostudy.calculator.exception.ForbiddenException;
 import ru.chainichek.neostudy.calculator.model.EmploymentStatus;
 
 import java.math.BigDecimal;
@@ -40,7 +40,7 @@ public class LoanCalculationService{
 
         if (scoringData.employment().employmentStatus() == EmploymentStatus.UNEMPLOYED) {
             LOG.debug("Can't check further and throwing exception because scoringData.employment.employmentStatus is UNEMPLOYED");
-            throw new UnprocessableEntityException("Cannot offer a loan for unemployed");
+            throw new ForbiddenException("Cannot offer a loan for unemployed");
         }
 
         final BigDecimal multipliedSalary = scoringData.employment().salary()
@@ -48,20 +48,20 @@ public class LoanCalculationService{
         if (multipliedSalary.compareTo(scoringData.amount()) <= 0) {
             LOG.debug("Can't check further and throwing exception because scoringData.employment.salary * 25 = %s is less than scoringData.amount = %s"
                     .formatted(multipliedSalary, scoringData.amount()));
-            throw new UnprocessableEntityException("Cannot offer a loan whose amount exceeds 25 salaries");
+            throw new ForbiddenException("Cannot offer a loan whose amount exceeds 25 salaries");
         }
 
         final int age = Period.between(scoringData.birthdate(), LocalDate.now()).getYears();
         if (age > 65 || age < 20) {
             LOG.debug("Can't check further and throwing exception because period between scoringData.birthdate = %s and now is under 20 or over 65"
                     .formatted(Period.between(scoringData.birthdate(), LocalDate.now()).getYears()));
-            throw new UnprocessableEntityException("Cannot offer a loan to those under 20 or over 65");
+            throw new ForbiddenException("Cannot offer a loan to those under 20 or over 65");
         }
 
         if (scoringData.employment().workExperienceTotal() < 18 || scoringData.employment().workExperienceCurrent() < 3) {
            LOG.debug("Can't check further and throwing exception because scoringData.employment.workExperienceTotal = %s is less 18 months or scoringData.employment.workExperienceCurrent = %s is less 3 months"
                     .formatted(scoringData.employment().workExperienceTotal(), scoringData.employment().workExperienceCurrent()));
-            throw new UnprocessableEntityException("Cannot offer a loan to those whose total experience is less 18 months or whose current experience is less 3 months");
+            throw new ForbiddenException("Cannot offer a loan to those whose total experience is less 18 months or whose current experience is less 3 months");
         }
     }
 

@@ -64,6 +64,10 @@ public interface CalculatorApi {
             @ApiResponse(responseCode = "400",
                     description = "Некорректные данные запроса",
                     content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorMessage.class))),
+            @ApiResponse(responseCode = "403",
+                    description = "Отказ заявки на кредит",
+                    content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorMessage.class)))
     })
     @PostMapping("/calc")
