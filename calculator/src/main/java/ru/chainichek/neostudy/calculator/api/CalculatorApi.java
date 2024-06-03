@@ -19,6 +19,7 @@ import ru.chainichek.neostudy.calculator.dto.prescore.LoanStatementRequestDto;
 import ru.chainichek.neostudy.calculator.dto.score.CreditDto;
 import ru.chainichek.neostudy.calculator.dto.score.ScoringDataDto;
 import ru.chainichek.neostudy.calculator.dto.util.ErrorMessage;
+import ru.chainichek.neostudy.calculator.dto.util.InternalErrorMessage;
 
 import java.util.List;
 
@@ -45,6 +46,13 @@ public interface CalculatorApi {
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = ErrorMessage.class)
                             )
+                    ),
+                    @ApiResponse(responseCode = "500",
+                            description = "Внутренняя ошибка сервера",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = InternalErrorMessage.class)
+                            )
                     )
             }
     )
@@ -64,11 +72,22 @@ public interface CalculatorApi {
             @ApiResponse(responseCode = "400",
                     description = "Некорректные данные запроса",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorMessage.class))),
+                            schema = @Schema(implementation = ErrorMessage.class)
+                    )
+            ),
             @ApiResponse(responseCode = "403",
                     description = "Отказ заявки на кредит",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorMessage.class)))
+                            schema = @Schema(implementation = ErrorMessage.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "500",
+                    description = "Внутренняя ошибка сервера",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = InternalErrorMessage.class)
+                    )
+            )
     })
     @PostMapping("/calc")
     ResponseEntity<CreditDto> calculateCredit(@RequestBody @Valid @NotNull ScoringDataDto scoringData);

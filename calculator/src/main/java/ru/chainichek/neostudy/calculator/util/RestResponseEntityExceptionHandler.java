@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import ru.chainichek.neostudy.calculator.dto.util.ErrorMessage;
+import ru.chainichek.neostudy.calculator.dto.util.InternalErrorMessage;
 import ru.chainichek.neostudy.calculator.exception.ForbiddenException;
 import ru.chainichek.neostudy.calculator.exception.ValidationException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestControllerAdvice
@@ -80,12 +82,13 @@ public class RestResponseEntityExceptionHandler{
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ErrorMessage> otherException(RuntimeException exception,
-                                                       HttpServletRequest request) {
-        final ErrorMessage message = new ErrorMessage(LocalDateTime.now(),
+    public ResponseEntity<InternalErrorMessage> otherException(RuntimeException exception,
+                                                               HttpServletRequest request) {
+        final InternalErrorMessage message = new InternalErrorMessage(LocalDateTime.now(),
                 HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 exception.getMessage(),
+                Arrays.stream(exception.getStackTrace()).map(StackTraceElement::toString).toArray(String[]::new),
                 request.getRequestURI());
 
         LOG.error(exception.getMessage(), exception);
