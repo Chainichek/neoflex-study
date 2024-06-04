@@ -1,9 +1,14 @@
 version: '3.8'
 services:
   calculator-app:
-    image: calculator:0.0.1
     container_name: calculator-container
     build:
       context: ./calculator
     ports:
       - "8080:8080"
+  deal-app:
+    container_name: deal-container
+    build:
+      context: ./deal
+    ports:
+      - "8081:8080"
