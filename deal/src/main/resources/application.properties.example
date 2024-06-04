@@ -1,0 +1,15 @@
+#General
+##Spring
+spring.application.name=deal
+###Datasource
+spring.datasource.url=
+spring.datasource.username=
+spring.datasource.password=
+###JPA
+spring.jpa.hibernate.ddl-auto=none
+###Liquibase
+spring.liquibase.change-log=classpath:/db/changelog/changelog.yaml
+#Dev
+##Springdoc
+springdoc.api-docs.path=/api-docs
+springdoc.swagger-ui.path=/swagger-docs
