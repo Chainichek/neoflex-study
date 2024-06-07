@@ -1,4 +1,4 @@
-package ru.chainichek.neostudy.deal.dto.prescore;
+package ru.chainichek.neostudy.deal.dto.offer;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

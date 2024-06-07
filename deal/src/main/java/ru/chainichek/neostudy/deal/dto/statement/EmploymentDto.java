@@ -1,4 +1,4 @@
-package ru.chainichek.neostudy.deal.dto.score;
+package ru.chainichek.neostudy.deal.dto.statement;
 
 import ru.chainichek.neostudy.deal.model.EmploymentStatus;
 import ru.chainichek.neostudy.deal.model.Position;
