@@ -33,10 +33,10 @@ public class Client {
     private UUID id;
 
     @Column(length = NAME_SIZE_MAX, nullable = false)
-    private String lastName;
+    private String firstName;
 
     @Column(length = NAME_SIZE_MAX, nullable = false)
-    private String firstName;
+    private String lastName;
 
     @Column(length = NAME_SIZE_MAX)
     private String middleName;
@@ -49,14 +49,11 @@ public class Client {
     private String email;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private Gender gender;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private MaritalStatus maritalStatus;
 
-    @Column(nullable = false)
     private Integer dependentAmount;
 
     @Type(JsonType.class)
@@ -64,10 +61,8 @@ public class Client {
     private Passport passport;
 
     @Type(JsonType.class)
-    @Column(nullable = false)
     private Employment employment;
 
-    @Column(nullable = false)
     private String accountNumber;
 
     public Client(String lastName,
@@ -75,22 +70,12 @@ public class Client {
                   String middleName,
                   LocalDate birthdate,
                   String email,
-                  Gender gender,
-                  MaritalStatus maritalStatus,
-                  Integer dependentAmount,
-                  Passport passport,
-                  Employment employment,
-                  String accountNumber) {
+                  Passport passport) {
         this.lastName = lastName;
         this.firstName = firstName;
         this.middleName = middleName;
         this.birthdate = birthdate;
         this.email = email;
-        this.gender = gender;
-        this.maritalStatus = maritalStatus;
-        this.dependentAmount = dependentAmount;
         this.passport = passport;
-        this.employment = employment;
-        this.accountNumber = accountNumber;
     }
 }
