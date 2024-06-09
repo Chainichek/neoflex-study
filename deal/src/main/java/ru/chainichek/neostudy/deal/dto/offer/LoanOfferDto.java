@@ -11,4 +11,14 @@ public record LoanOfferDto(UUID statementId,
                            BigDecimal rate,
                            Boolean isInsuranceEnabled,
                            Boolean isSalaryClient) {
+    public LoanOfferDto withStatementId(UUID statementId) {
+        return new LoanOfferDto(statementId,
+                this.requestedAmount,
+                this.totalAmount,
+                this.term,
+                this.monthlyPayment,
+                this.rate,
+                this.isInsuranceEnabled,
+                this.isSalaryClient);
+    }
 }
