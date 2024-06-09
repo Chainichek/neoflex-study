@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
 import ru.chainichek.neostudy.deal.dto.offer.LoanOfferDto;
@@ -20,6 +21,7 @@ import ru.chainichek.neostudy.deal.model.client.Client;
 import ru.chainichek.neostudy.deal.model.credit.Credit;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,6 +29,7 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "statement")
+@NoArgsConstructor
 public class Statement {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -36,16 +39,16 @@ public class Statement {
     @JoinColumn(name = "client_id")
     private Client client;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "credit_id")
     private Credit credit;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ApplicationStatus status;
+    private ApplicationStatus status = ApplicationStatus.PREAPPROVAL;
 
     @Column(nullable = false)
-    private LocalDateTime creationDate;
+    private LocalDateTime creationDate = LocalDateTime.now();
 
     @Type(JsonType.class)
     private LoanOfferDto appliedOffer;
@@ -56,5 +59,9 @@ public class Statement {
 
     @Column(nullable = false)
     @Type(JsonType.class)
-    private List<ChangeType> statusHistory;
+    private List<StatusHistory> statusHistory = new ArrayList<>();
+
+    public Statement(Client client) {
+        this.client = client;
+    }
 }
