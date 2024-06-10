@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
 import ru.chainichek.neostudy.deal.dto.offer.LoanOfferDto;
+import ru.chainichek.neostudy.deal.dto.statement.StatementStatusHistoryDto;
 import ru.chainichek.neostudy.deal.model.client.Client;
 import ru.chainichek.neostudy.deal.model.credit.Credit;
 
@@ -59,9 +60,14 @@ public class Statement {
 
     @Column(nullable = false)
     @Type(JsonType.class)
-    private List<StatusHistory> statusHistory = new ArrayList<>();
+    private List<StatementStatusHistoryDto> statusHistory = new ArrayList<>();
 
     public Statement(Client client) {
         this.client = client;
+    }
+
+    public void setStatus(ApplicationStatus status) {
+        this.statusHistory.add(new StatementStatusHistoryDto(this.status));
+        this.status = status;
     }
 }
