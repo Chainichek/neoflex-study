@@ -3,6 +3,8 @@ package ru.chainichek.neostudy.deal.service;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.chainichek.neostudy.deal.dto.offer.LoanStatementRequestDto;
 import ru.chainichek.neostudy.deal.dto.statement.FinishRegistrationRequestDto;
@@ -14,11 +16,13 @@ import ru.chainichek.neostudy.deal.repo.ClientRepository;
 @Service
 @AllArgsConstructor
 public class ClientService {
+    private final static Logger LOG = LoggerFactory.getLogger(ClientService.class);
+
     private final ClientRepository clientRepository;
 
     @Transactional
     public Client createClient(@NotNull LoanStatementRequestDto loanStatementRequest) {
-        return clientRepository.save(new Client(loanStatementRequest.firstName(),
+        final Client client = clientRepository.save(new Client(loanStatementRequest.firstName(),
                 loanStatementRequest.lastName(),
                 loanStatementRequest.middleName(),
                 loanStatementRequest.birthdate(),
@@ -26,11 +30,18 @@ public class ClientService {
                 new Passport(loanStatementRequest.passportSeries(),
                         loanStatementRequest.passportNumber())
         ));
+
+        LOG.debug("Created a client: clientId = %s".formatted(client.getId()));
+
+        return client;
     }
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     public Client updateClientOnFinishRegistration(@NotNull Client client,
                                                    @NotNull FinishRegistrationRequestDto finishRegistrationRequest) {
+        LOG.debug("Interrupting statement update transaction with a new one in order to update client credentials: clientId = %s"
+                .formatted(client.getId()));
+
         client.setGender(finishRegistrationRequest.gender());
         client.setMaritalStatus(finishRegistrationRequest.maritalStatus());
         client.setDependentAmount(finishRegistrationRequest.dependentAmount());
@@ -49,6 +60,11 @@ public class ClientService {
         client.setEmployment(employment);
         client.setAccountNumber(finishRegistrationRequest.accountNumber());
 
-        return clientRepository.save(client);
+        final Client updatedClient = clientRepository.save(client);
+
+        LOG.debug("Updated a client, continuing the transaction: clientId = %s"
+                .formatted(updatedClient.getId()));
+
+        return updatedClient;
     }
 }

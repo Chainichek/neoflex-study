@@ -16,8 +16,8 @@ import java.util.List;
         configuration = FeignConfig.class)
 public interface CalculatorClient {
     @PostMapping("/offers")
-    List<LoanOfferDto> getOffers(@RequestBody LoanStatementRequestDto loanStatementRequest);
+    List<LoanOfferDto> getOffers(@RequestBody LoanStatementRequestDto request);
 
     @PostMapping("/calc")
-    CreditDto calculateCredit(@RequestBody ScoringDataDto scoringDataDto);
+    CreditDto calculateCredit(@RequestBody ScoringDataDto data);
 }

@@ -3,6 +3,8 @@ package ru.chainichek.neostudy.deal.service;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.chainichek.neostudy.deal.exception.NotFoundException;
 import ru.chainichek.neostudy.deal.model.client.Client;
@@ -15,6 +17,8 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 public class StatementService {
+    private final static Logger LOG = LoggerFactory.getLogger(StatementService.class);
+
     private final StatementRepository statementRepository;
 
     public Statement getStatement(@NotNull UUID statementId) {
@@ -24,17 +28,28 @@ public class StatementService {
 
     @Transactional
     public Statement createStatement(@NotNull Client client) {
-        return statementRepository.save(new Statement(client));
+        final Statement statement = statementRepository.save(new Statement(client));
+
+        LOG.debug("Created a statement: statementId = %s".formatted(statement.getId()));
+
+        return statement;
     }
 
     @Transactional
     public void updateStatement(@NotNull Statement statement) {
         statementRepository.save(statement);
+
+        LOG.debug("Updated a statement: statementId = %s".formatted(statement.getId()));
     }
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     public void updateStatementOnDenied(@NotNull Statement statement) {
+        LOG.debug("Interrupting statement update transaction with a new one in order to set status to CC_DENIED: statementId = %s"
+                .formatted(statement.getId()));
+
         statement.setStatus(ApplicationStatus.CC_DENIED);
         statementRepository.save(statement);
+
+        LOG.debug("Updated a statement, continuing the transaction: statementId = %s".formatted(statement.getId()));
     }
 }
