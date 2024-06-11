@@ -28,7 +28,7 @@ public class RestResponseEntityExceptionHandler {
     private final static Logger LOG = LoggerFactory.getLogger(RestResponseEntityExceptionHandler.class);
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Object> handleHttpMessageNotReadableException(HttpMessageNotReadableException exception,
+    public ResponseEntity<Object> httpMessageNotReadableException(HttpMessageNotReadableException exception,
                                                                         HttpServletRequest request) {
         final ErrorMessage message = new ErrorMessage(LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
