@@ -12,6 +12,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import ru.chainichek.neostudy.deal.model.client.Client;
 import ru.chainichek.neostudy.deal.model.client.Passport;
+import ru.chainichek.neostudy.deal.model.statement.Statement;
 
 import java.time.LocalDate;
 
@@ -21,8 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Testcontainers
-class ClientRepositoryTest {
-
+class StatementRepositoryTest {
     @Container
     static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16-alpine");
 
@@ -34,35 +34,38 @@ class ClientRepositoryTest {
     }
 
     @Autowired
+    StatementRepository statementRepository;
+    @Autowired
     ClientRepository clientRepository;
 
     @Test
     @Transactional
     void save() {
-        final Client client = new Client(
+        final Statement statement = new Statement(clientRepository.save(new Client(
                 "Fedorov",
                 "Ivan",
                 null,
                 LocalDate.of(2023, 3, 7),
                 "ivanfedorov@yandex",
                 new Passport("6161",
-                        "345678"));
+                        "345678")))
+        );
 
-        final Client savedClient = clientRepository.save(client);
-        final Client findedClient = clientRepository.findById(savedClient.getId()).orElse(null);
+        final Statement savedStatement = statementRepository.save(statement);
+        final Statement findedStatement = statementRepository.findById(savedStatement.getId()).orElse(null);
 
-        assertNotNull(savedClient);
-        assertNotNull(findedClient);
+        assertNotNull(savedStatement);
+        assertNotNull(findedStatement);
 
-        assertThat(savedClient)
+        assertThat(savedStatement)
                 .usingRecursiveComparison()
                 .ignoringFieldsMatchingRegexes(".*id")
-                .isEqualTo(client);
+                .isEqualTo(statement);
 
 
-        assertThat(findedClient)
+        assertThat(findedStatement)
                 .usingRecursiveComparison()
                 .ignoringFieldsMatchingRegexes(".*id")
-                .isEqualTo(client);
+                .isEqualTo(statement);
     }
 }
