@@ -7,3 +7,5 @@ databaseChangeLog:
       file: db/changelog/v1.0.0/2024-06-08--03-create-statement-table-and-add-foreign-keys-to-statement.sql
   - include:
       file: db/changelog/v1.0.0/2024-06-09--01-drop-not-null-when-preapproval.sql
+  - include:
+      file: db/changelog/v1.0.0/2024-06-12--01-change-account-number-length-from-default-to-20.sql

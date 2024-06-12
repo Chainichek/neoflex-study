@@ -19,6 +19,7 @@ import ru.chainichek.neostudy.deal.util.validation.Validation;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import static ru.chainichek.neostudy.deal.util.validation.client.ClientValidation.ACCOUNT_NUMBER_SIZE_MAX;
 import static ru.chainichek.neostudy.deal.util.validation.client.ClientValidation.EMAIL_SIZE_MAX;
 import static ru.chainichek.neostudy.deal.util.validation.client.ClientValidation.NAME_SIZE_MAX;
 
@@ -63,6 +64,7 @@ public class Client {
     @Type(JsonType.class)
     private Employment employment;
 
+    @Column(length = ACCOUNT_NUMBER_SIZE_MAX)
     private String accountNumber;
 
     public Client(String firstName,
