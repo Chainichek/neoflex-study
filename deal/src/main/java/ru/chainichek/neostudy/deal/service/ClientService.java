@@ -21,14 +21,14 @@ public class ClientService {
     private final ClientRepository clientRepository;
 
     @Transactional
-    public Client createClient(@NotNull LoanStatementRequestDto loanStatementRequest) {
-        final Client client = clientRepository.save(new Client(loanStatementRequest.firstName(),
-                loanStatementRequest.lastName(),
-                loanStatementRequest.middleName(),
-                loanStatementRequest.birthdate(),
-                loanStatementRequest.email(),
-                new Passport(loanStatementRequest.passportSeries(),
-                        loanStatementRequest.passportNumber())
+    public Client createClient(@NotNull LoanStatementRequestDto request) {
+        final Client client = clientRepository.save(new Client(request.firstName(),
+                request.lastName(),
+                request.middleName(),
+                request.birthdate(),
+                request.email(),
+                new Passport(request.passportSeries(),
+                        request.passportNumber())
         ));
 
         LOG.debug("Created a client: clientId = %s".formatted(client.getId()));
