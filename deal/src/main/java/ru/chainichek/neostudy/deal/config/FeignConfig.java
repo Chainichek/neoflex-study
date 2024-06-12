@@ -30,7 +30,7 @@ public class FeignConfig {
     }
 
     @AllArgsConstructor
-    public static class RestMessageErrorDecoder implements ErrorDecoder {
+    public static final class RestMessageErrorDecoder implements ErrorDecoder {
         private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(RestMessageErrorDecoder.class);
         private final ErrorDecoder errorDecoder = new Default();
         private final ObjectMapper mapper;
@@ -43,7 +43,7 @@ public class FeignConfig {
                     LOG.error("Resolved an unexpected error: methodKey = {}, message = {}", methodKey, message);
                     return new RuntimeException(message.detail());
                 } catch (IOException e) {
-                    return new RuntimeException(e);
+                    return e;
                 }
             }
 
@@ -52,7 +52,7 @@ public class FeignConfig {
                 try (InputStream bodyIs = response.body().asInputStream()) {
                     message = mapper.readValue(bodyIs, ErrorMessage.class);
                 } catch (IOException e) {
-                    return new RuntimeException(e);
+                    return e;
                 }
 
                 LOG.error("Resolved an error: methodKey = {}, message = {}", methodKey, message);
