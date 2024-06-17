@@ -13,6 +13,7 @@ import java.util.List;
 
 @FeignClient(name = "calculator-service",
         url = "${app.client.calculator.url}",
+        path = "/calculator",
         configuration = FeignConfig.class)
 public interface CalculatorClient {
     @PostMapping("/offers")
