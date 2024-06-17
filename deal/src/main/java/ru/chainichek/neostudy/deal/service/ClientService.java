@@ -21,7 +21,7 @@ public class ClientService {
 
     private final ClientMapper clientMapper;
 
-    @Transactional
+
     public Client createClient(@NonNull LoanStatementRequestDto request) {
         final Client client = clientRepository.save(clientMapper.mapToClient(request));
 

@@ -1,6 +1,5 @@
 package ru.chainichek.neostudy.deal.service;
 
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.slf4j.Logger;
@@ -21,7 +20,6 @@ public class CreditService {
 
     private final CreditMapper creditMapper;
 
-    @Transactional
     public Credit createCredit(@NonNull CreditDto creditDto) {
         Credit credit = creditMapper.mapToCredit(creditDto);
         credit.setCreditStatus(CreditStatus.CALCULATED);
