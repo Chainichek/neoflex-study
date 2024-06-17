@@ -1,8 +1,8 @@
 package ru.chainichek.neostudy.deal.service;
 
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class DealService {
     private final CreditService creditService;
 
     @Transactional
-    public List<LoanOfferDto> createStatement(@NotNull LoanStatementRequestDto request) {
+    public List<LoanOfferDto> createStatement(@NonNull LoanStatementRequestDto request) {
         LOG.debug("Starting a transaction in order to create statement");
 
         final Statement statement = statementService.createStatement(clientService.createClient(request));
@@ -42,7 +42,7 @@ public class DealService {
     }
 
     @Transactional
-    public void selectOffer(@NotNull LoanOfferDto loanOffer) {
+    public void selectOffer(@NonNull LoanOfferDto loanOffer) {
         LOG.debug("Starting a transaction in order to select offer for statement");
 
         final Statement statement = statementService.getStatement(loanOffer.statementId());
@@ -68,8 +68,8 @@ public class DealService {
     }
 
     @Transactional
-    public void completeStatement(@NotNull UUID statementId,
-                                  @NotNull FinishRegistrationRequestDto finishRegistrationRequest) {
+    public void completeStatement(@NonNull UUID statementId,
+                                  @NonNull FinishRegistrationRequestDto finishRegistrationRequest) {
         LOG.debug("Starting a transaction in order to complete the statement");
 
         final Statement statement = statementService.getStatement(statementId);

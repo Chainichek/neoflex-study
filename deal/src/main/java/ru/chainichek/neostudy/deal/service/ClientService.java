@@ -1,8 +1,8 @@
 package ru.chainichek.neostudy.deal.service;
 
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class ClientService {
     private final ClientMapper clientMapper;
 
     @Transactional
-    public Client createClient(@NotNull LoanStatementRequestDto request) {
+    public Client createClient(@NonNull LoanStatementRequestDto request) {
         final Client client = clientRepository.save(clientMapper.mapToClient(request));
 
         LOG.debug("Created a client: clientId = %s".formatted(client.getId()));
@@ -31,8 +31,8 @@ public class ClientService {
     }
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
-    public Client updateClientOnFinishRegistration(@NotNull Client client,
-                                                   @NotNull FinishRegistrationRequestDto finishRegistrationRequest) {
+    public Client updateClientOnFinishRegistration(@NonNull Client client,
+                                                   @NonNull FinishRegistrationRequestDto finishRegistrationRequest) {
         LOG.debug("Interrupting statement update transaction with a new one in order to update client credentials: clientId = %s"
                 .formatted(client.getId()));
 

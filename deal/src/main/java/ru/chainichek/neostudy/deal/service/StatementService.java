@@ -1,8 +1,8 @@
 package ru.chainichek.neostudy.deal.service;
 
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -21,13 +21,13 @@ public class StatementService {
 
     private final StatementRepository statementRepository;
 
-    public Statement getStatement(@NotNull UUID statementId) {
+    public Statement getStatement(@NonNull UUID statementId) {
         return statementRepository.findById(statementId)
                 .orElseThrow(() -> new NotFoundException(ExceptionMessage.STATEMENT_NOT_FOUND_EXCEPTION_MESSAGE, statementId));
     }
 
     @Transactional
-    public Statement createStatement(@NotNull Client client) {
+    public Statement createStatement(@NonNull Client client) {
         final Statement statement = statementRepository.save(Statement.builder().client(client).build());
 
         LOG.debug("Created a statement: statementId = %s".formatted(statement.getId()));
@@ -36,14 +36,14 @@ public class StatementService {
     }
 
     @Transactional
-    public void updateStatement(@NotNull Statement statement) {
+    public void updateStatement(@NonNull Statement statement) {
         statementRepository.save(statement);
 
         LOG.debug("Updated a statement: statementId = %s".formatted(statement.getId()));
     }
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
-    public void updateStatementOnDenied(@NotNull Statement statement) {
+    public void updateStatementOnDenied(@NonNull Statement statement) {
         LOG.debug("Interrupting statement update transaction with a new one in order to set status to CC_DENIED: statementId = %s"
                 .formatted(statement.getId()));
 

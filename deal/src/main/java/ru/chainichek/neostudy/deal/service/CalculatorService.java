@@ -1,6 +1,7 @@
 package ru.chainichek.neostudy.deal.service;
 
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -27,14 +28,16 @@ public class CalculatorService {
 
     private final CalculatorMapper calculatorMapper;
 
-    public List<LoanOfferDto> getOffers(LoanStatementRequestDto request, UUID statementId) {
+    public List<LoanOfferDto> getOffers(@NonNull LoanStatementRequestDto request,
+                                        @NonNull UUID statementId) {
         return calculatorClient.getOffers(request)
                 .stream()
                 .map(x -> x.withStatementId(statementId))
                 .toList();
     }
 
-    public CreditDto calculateCredit(Statement statement, EmploymentDto employment) {
+    public CreditDto calculateCredit(@NonNull Statement statement,
+                                     @NonNull EmploymentDto employment) {
         final Client client = statement.getClient();
         final Passport passport = client.getPassport();
         final LoanOfferDto loanOffer = statement.getAppliedOffer();

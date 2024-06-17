@@ -1,8 +1,8 @@
 package ru.chainichek.neostudy.deal.service;
 
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class CreditService {
     private final CreditMapper creditMapper;
 
     @Transactional
-    public Credit createCredit(@NotNull CreditDto creditDto) {
+    public Credit createCredit(@NonNull CreditDto creditDto) {
         Credit credit = creditMapper.mapToCredit(creditDto);
         credit.setCreditStatus(CreditStatus.CALCULATED);
         credit = creditRepository.save(credit);
