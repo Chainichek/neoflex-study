@@ -12,6 +12,8 @@ import ru.chainichek.neostudy.deal.model.statement.ApplicationStatus;
 import ru.chainichek.neostudy.deal.model.statement.Statement;
 import ru.chainichek.neostudy.deal.repo.StatementRepository;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.UUID;
 
 @Service
@@ -28,7 +30,12 @@ public class StatementService {
 
     @Transactional
     public Statement createStatement(@NonNull Client client) {
-        final Statement statement = statementRepository.save(Statement.builder().client(client).build());
+        final Statement statement = statementRepository.save(Statement.builder()
+                .client(client)
+                .status(ApplicationStatus.PREAPPROVAL)
+                .creationDate(LocalDateTime.now())
+                .statusHistory(new ArrayList<>())
+                .build());
 
         LOG.debug("Created a statement: statementId = %s".formatted(statement.getId()));
 

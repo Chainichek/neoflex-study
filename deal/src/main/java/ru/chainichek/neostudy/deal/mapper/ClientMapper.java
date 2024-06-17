@@ -47,5 +47,5 @@ public interface ClientMapper {
     @Mapping(target = "firstName", ignore = true)
     @Mapping(target = "email", ignore = true)
     @Mapping(target = "birthdate", ignore = true)
-    Client updateClient(@MappingTarget Client client, FinishRegistrationRequestDto finishRegistrationRequestDto);
+    void updateClient(@MappingTarget Client client, FinishRegistrationRequestDto finishRegistrationRequestDto);
 }

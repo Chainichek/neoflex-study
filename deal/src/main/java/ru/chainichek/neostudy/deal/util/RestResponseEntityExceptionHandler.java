@@ -17,6 +17,7 @@ import ru.chainichek.neostudy.deal.dto.util.InternalErrorMessage;
 import ru.chainichek.neostudy.deal.exception.ForbiddenException;
 import ru.chainichek.neostudy.deal.exception.NotFoundException;
 import ru.chainichek.neostudy.deal.exception.ValidationException;
+import ru.chainichek.neostudy.deal.exception.WrongStatusException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -70,6 +71,22 @@ public class RestResponseEntityExceptionHandler {
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ErrorMessage> validationException(ValidationException exception,
                                                             HttpServletRequest request) {
+        final ErrorMessage message = new ErrorMessage(LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                HttpStatus.BAD_REQUEST.value(),
+                exception.getMessage(),
+                request.getRequestURI());
+
+        LOG.error(exception.getMessage(), exception);
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(message);
+    }
+
+    @ExceptionHandler(WrongStatusException.class)
+    public ResponseEntity<ErrorMessage> wrongStatusException(WrongStatusException exception,
+                                                             HttpServletRequest request) {
         final ErrorMessage message = new ErrorMessage(LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 HttpStatus.BAD_REQUEST.value(),

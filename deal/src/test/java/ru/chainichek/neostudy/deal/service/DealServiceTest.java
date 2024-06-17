@@ -17,6 +17,7 @@ import ru.chainichek.neostudy.deal.dto.statement.EmploymentDto;
 import ru.chainichek.neostudy.deal.dto.statement.FinishRegistrationRequestDto;
 import ru.chainichek.neostudy.deal.exception.ForbiddenException;
 import ru.chainichek.neostudy.deal.exception.ValidationException;
+import ru.chainichek.neostudy.deal.exception.WrongStatusException;
 import ru.chainichek.neostudy.deal.model.client.Client;
 import ru.chainichek.neostudy.deal.model.statement.ApplicationStatus;
 import ru.chainichek.neostudy.deal.model.statement.Statement;
@@ -80,7 +81,7 @@ class DealServiceTest {
 
     @ParameterizedTest
     @ArgumentsSource(InvalidSelectApplicationStatusArgumentsProvider.class)
-    void selectOffer_whenStatementApplicationStatusIsNotPreapproval_ThenThrowForbiddenException(ApplicationStatus applicationStatus) {
+    void selectOffer_whenStatementApplicationStatusIsNotPreapproval_ThenThrowWrongStatusException(ApplicationStatus applicationStatus) {
         final LoanOfferDto offer = mock(LoanOfferDto.class);
         final Statement statement = mock(Statement.class);
         final UUID uuid = mock(UUID.class);
@@ -89,7 +90,7 @@ class DealServiceTest {
         when(statementService.getStatement(uuid)).thenReturn(statement);
         when(statement.getStatus()).thenReturn(applicationStatus);
 
-        assertThrows(ForbiddenException.class, () -> dealService.selectOffer(offer));
+        assertThrows(WrongStatusException.class, () -> dealService.selectOffer(offer));
     }
 
     static final class InvalidSelectApplicationStatusArgumentsProvider implements ArgumentsProvider {
@@ -124,7 +125,7 @@ class DealServiceTest {
 
     @ParameterizedTest
     @ArgumentsSource(InvalidCompleteApplicationStatusArgumentsProvider.class)
-    void completeStatement_whenStatementApplicationIsNotApproved_ThenThrowForbiddenException(ApplicationStatus applicationStatus) {
+    void completeStatement_whenStatementApplicationIsNotApproved_ThenThrowWrongStatusException(ApplicationStatus applicationStatus) {
         final Statement statement = mock(Statement.class);
         final UUID uuid = mock(UUID.class);
 
@@ -133,7 +134,7 @@ class DealServiceTest {
         when(statementService.getStatement(uuid)).thenReturn(statement);
         when(statement.getStatus()).thenReturn(applicationStatus);
 
-        assertThrows(ForbiddenException.class, () -> dealService.completeStatement(uuid, finishRegistrationRequest));
+        assertThrows(WrongStatusException.class, () -> dealService.completeStatement(uuid, finishRegistrationRequest));
     }
 
     static final class InvalidCompleteApplicationStatusArgumentsProvider implements ArgumentsProvider {

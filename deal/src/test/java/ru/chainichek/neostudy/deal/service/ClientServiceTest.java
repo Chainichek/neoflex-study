@@ -107,7 +107,20 @@ class ClientServiceTest {
                         0),
                 "Some bank account number");
 
-        final Client newClient = clientMapper.updateClient(oldClient, finishRegistrationRequest);
+        final Client newClient = Client.builder()
+                .lastName(oldClient.getLastName())
+                .firstName(oldClient.getFirstName())
+                .birthdate(oldClient.getBirthdate())
+                .email(oldClient.getEmail())
+                .passport(
+                        Passport.builder()
+                                .series(oldClient.getPassport().getSeries())
+                                .number(oldClient.getPassport().getNumber())
+                                .build()
+                )
+                .build();
+
+        clientMapper.updateClient(newClient, finishRegistrationRequest);
 
         when(clientRepository.save(ArgumentMatchers.any())).thenAnswer((Answer<Client>) invocation -> invocation.getArgument(0));
         final Client updatedClient = clientService.updateClientOnFinishRegistration(oldClient, finishRegistrationRequest);

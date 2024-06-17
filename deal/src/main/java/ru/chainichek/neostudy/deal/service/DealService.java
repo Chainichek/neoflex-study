@@ -12,6 +12,7 @@ import ru.chainichek.neostudy.deal.dto.statement.FinishRegistrationRequestDto;
 import ru.chainichek.neostudy.deal.exception.ForbiddenException;
 import ru.chainichek.neostudy.deal.exception.NotFoundException;
 import ru.chainichek.neostudy.deal.exception.ValidationException;
+import ru.chainichek.neostudy.deal.exception.WrongStatusException;
 import ru.chainichek.neostudy.deal.model.statement.ApplicationStatus;
 import ru.chainichek.neostudy.deal.model.statement.Statement;
 
@@ -55,7 +56,7 @@ public class DealService {
             LOG.debug("Can't proceed further and throwing exception because finishRegistrationRequest.status = %s and not PREAPPROVAL"
                     .formatted(statement.getStatus()));
 
-            throw new ForbiddenException(ExceptionMessage.EXPECTED_PREAPPROVAL_APPLICATION_STATUS_EXCEPTION_MESSAGE,
+            throw new WrongStatusException(ExceptionMessage.EXPECTED_PREAPPROVAL_APPLICATION_STATUS_EXCEPTION_MESSAGE,
                     statement.getId(),
                     statement.getStatus());
         }
@@ -82,7 +83,7 @@ public class DealService {
             LOG.debug("Can't proceed further and throwing exception because finishRegistrationRequest.status = %s and not APPROVED"
                     .formatted(statement.getStatus()));
 
-            throw new ForbiddenException(ExceptionMessage.EXPECTED_APPROVED_APPLICATION_STATUS_EXCEPTION_MESSAGE,
+            throw new WrongStatusException(ExceptionMessage.EXPECTED_APPROVED_APPLICATION_STATUS_EXCEPTION_MESSAGE,
                     statement.getId(),
                     statement.getStatus());
         }

@@ -70,21 +70,24 @@ public interface DealApi {
                                     schema = @Schema()
                             )
                     ),
-                    @ApiResponse(responseCode = "403",
+                    @ApiResponse(
+                            responseCode = "400",
                             description = "Statement has already been approved",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = ErrorMessage.class)
                             )
                     ),
-                    @ApiResponse(responseCode = "404",
+                    @ApiResponse(
+                            responseCode = "404",
                             description = "Statement was not found",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = ErrorMessage.class)
                             )
                     ),
-                    @ApiResponse(responseCode = "500",
+                    @ApiResponse(
+                            responseCode = "500",
                             description = "Internal server error",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -120,7 +123,7 @@ public interface DealApi {
                             schema = @Schema(implementation = ErrorMessage.class)
                     )
             ),
-            @ApiResponse(responseCode = "403",
+            @ApiResponse(responseCode = "400",
                     description = "Statement has not been already approved or has been already calculated",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -143,6 +146,6 @@ public interface DealApi {
             )
     })
     @PostMapping("/calculate/{statementId}")
-    ResponseEntity<Void> completeStatement(@PathVariable UUID statementId,
+    ResponseEntity<Void> completeStatement(@PathVariable("statementId") UUID statementId,
                                            @RequestBody @NotNull FinishRegistrationRequestDto finishRegistrationRequest);
 }

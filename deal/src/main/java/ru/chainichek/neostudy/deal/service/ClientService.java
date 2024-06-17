@@ -31,12 +31,13 @@ public class ClientService {
     }
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
-    public Client updateClientOnFinishRegistration(@NonNull Client client,
+    public Client updateClientOnFinishRegistration(Client client,
                                                    @NonNull FinishRegistrationRequestDto finishRegistrationRequest) {
         LOG.debug("Interrupting statement update transaction with a new one in order to update client credentials: clientId = %s"
                 .formatted(client.getId()));
 
-        final Client updatedClient = clientRepository.save(clientMapper.updateClient(client, finishRegistrationRequest));
+        clientMapper.updateClient(client, finishRegistrationRequest);
+        final Client updatedClient = clientRepository.save(client);
 
         LOG.debug("Updated a client, continuing the transaction: clientId = %s"
                 .formatted(updatedClient.getId()));

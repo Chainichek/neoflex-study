@@ -9,9 +9,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 import ru.chainichek.neostudy.deal.exception.NotFoundException;
 import ru.chainichek.neostudy.deal.model.client.Client;
+import ru.chainichek.neostudy.deal.model.statement.ApplicationStatus;
 import ru.chainichek.neostudy.deal.model.statement.Statement;
 import ru.chainichek.neostudy.deal.repo.StatementRepository;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -50,7 +53,12 @@ class StatementServiceTest {
     @Test
     void createStatement() {
         final Client client = mock(Client.class);
-        final Statement statement = Statement.builder().client(client).build();
+        final Statement statement = Statement.builder()
+                .client(client)
+                .status(ApplicationStatus.PREAPPROVAL)
+                .creationDate(LocalDateTime.now())
+                .statusHistory(new ArrayList<>())
+                .build();
 
         when(statementRepository.save(ArgumentMatchers.any())).thenAnswer((Answer<Statement>) invocation -> invocation.getArgument(0));
 
