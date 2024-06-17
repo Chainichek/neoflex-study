@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.chainichek.neostudy.deal.dto.calculation.CreditDto;
+import ru.chainichek.neostudy.deal.mapper.CreditMapper;
 import ru.chainichek.neostudy.deal.model.credit.Credit;
 import ru.chainichek.neostudy.deal.model.credit.CreditStatus;
 import ru.chainichek.neostudy.deal.repo.CreditRepository;
@@ -18,18 +19,13 @@ public class CreditService {
 
     private final CreditRepository creditRepository;
 
+    private final CreditMapper creditMapper;
+
     @Transactional
     public Credit createCredit(@NotNull CreditDto creditDto) {
-        final Credit credit = creditRepository.save(new Credit(creditDto.amount(),
-                creditDto.term(),
-                creditDto.monthlyPayment(),
-                creditDto.rate(),
-                creditDto.psk(),
-                creditDto.paymentSchedule(),
-                creditDto.isInsuranceEnabled(),
-                creditDto.isSalaryClient(),
-                CreditStatus.CALCULATED
-        ));
+        Credit credit = creditMapper.mapToCredit(creditDto);
+        credit.setCreditStatus(CreditStatus.CALCULATED);
+        credit = creditRepository.save(credit);
 
         LOG.debug("Created a credit: creditId = %s".formatted(credit.getId()));
 

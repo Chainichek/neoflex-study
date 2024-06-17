@@ -1,17 +1,21 @@
 package ru.chainichek.neostudy.deal.service;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import ru.chainichek.neostudy.deal.client.CalculatorClient;
 import ru.chainichek.neostudy.deal.dto.calculation.CreditDto;
 import ru.chainichek.neostudy.deal.dto.calculation.ScoringDataDto;
 import ru.chainichek.neostudy.deal.dto.offer.LoanOfferDto;
 import ru.chainichek.neostudy.deal.dto.offer.LoanStatementRequestDto;
 import ru.chainichek.neostudy.deal.dto.statement.EmploymentDto;
+import ru.chainichek.neostudy.deal.mapper.CalculatorMapper;
 import ru.chainichek.neostudy.deal.model.client.Client;
 import ru.chainichek.neostudy.deal.model.client.Passport;
 import ru.chainichek.neostudy.deal.model.statement.Statement;
@@ -33,6 +37,11 @@ class CalculatorServiceTest {
     CalculatorService calculatorService;
     @Mock
     CalculatorClient calculatorClient;
+
+    @BeforeEach
+    void setUp() {
+        ReflectionTestUtils.setField(calculatorService, "calculatorMapper", Mappers.getMapper(CalculatorMapper.class));
+    }
 
     @Test
     void getOffers() {

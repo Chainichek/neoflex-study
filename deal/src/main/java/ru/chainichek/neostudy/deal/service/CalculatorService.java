@@ -10,6 +10,7 @@ import ru.chainichek.neostudy.deal.dto.calculation.ScoringDataDto;
 import ru.chainichek.neostudy.deal.dto.offer.LoanOfferDto;
 import ru.chainichek.neostudy.deal.dto.offer.LoanStatementRequestDto;
 import ru.chainichek.neostudy.deal.dto.statement.EmploymentDto;
+import ru.chainichek.neostudy.deal.mapper.CalculatorMapper;
 import ru.chainichek.neostudy.deal.model.client.Client;
 import ru.chainichek.neostudy.deal.model.client.Passport;
 import ru.chainichek.neostudy.deal.model.statement.Statement;
@@ -24,6 +25,8 @@ public class CalculatorService {
 
     private final CalculatorClient calculatorClient;
 
+    private final CalculatorMapper calculatorMapper;
+
     public List<LoanOfferDto> getOffers(LoanStatementRequestDto request, UUID statementId) {
         return calculatorClient.getOffers(request)
                 .stream()
@@ -36,23 +39,7 @@ public class CalculatorService {
         final Passport passport = client.getPassport();
         final LoanOfferDto loanOffer = statement.getAppliedOffer();
 
-        final ScoringDataDto scoringData = new ScoringDataDto(loanOffer.totalAmount(),
-                loanOffer.term(),
-                client.getFirstName(),
-                client.getLastName(),
-                client.getMiddleName(),
-                client.getGender(),
-                client.getBirthdate(),
-                passport.getSeries(),
-                passport.getNumber(),
-                passport.getIssueDate(),
-                passport.getIssueBranch(),
-                client.getMaritalStatus(),
-                client.getDependentAmount(),
-                employment,
-                client.getAccountNumber(),
-                loanOffer.isInsuranceEnabled(),
-                loanOffer.isSalaryClient());
+        final ScoringDataDto scoringData = calculatorMapper.mapToScoringDataDto(client, passport, loanOffer, employment);
 
         LOG.debug("Sending request to 'calculate credit': scoringData = %s".formatted(scoringData));
 

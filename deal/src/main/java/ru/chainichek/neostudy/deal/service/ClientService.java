@@ -8,9 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.chainichek.neostudy.deal.dto.offer.LoanStatementRequestDto;
 import ru.chainichek.neostudy.deal.dto.statement.FinishRegistrationRequestDto;
+import ru.chainichek.neostudy.deal.mapper.ClientMapper;
 import ru.chainichek.neostudy.deal.model.client.Client;
-import ru.chainichek.neostudy.deal.model.client.Employment;
-import ru.chainichek.neostudy.deal.model.client.Passport;
 import ru.chainichek.neostudy.deal.repo.ClientRepository;
 
 @Service
@@ -20,16 +19,11 @@ public class ClientService {
 
     private final ClientRepository clientRepository;
 
+    private final ClientMapper clientMapper;
+
     @Transactional
     public Client createClient(@NotNull LoanStatementRequestDto request) {
-        final Client client = clientRepository.save(new Client(request.firstName(),
-                request.lastName(),
-                request.middleName(),
-                request.birthdate(),
-                request.email(),
-                new Passport(request.passportSeries(),
-                        request.passportNumber())
-        ));
+        final Client client = clientRepository.save(clientMapper.mapToClient(request));
 
         LOG.debug("Created a client: clientId = %s".formatted(client.getId()));
 
@@ -42,25 +36,7 @@ public class ClientService {
         LOG.debug("Interrupting statement update transaction with a new one in order to update client credentials: clientId = %s"
                 .formatted(client.getId()));
 
-        client.setGender(finishRegistrationRequest.gender());
-        client.setMaritalStatus(finishRegistrationRequest.maritalStatus());
-        client.setDependentAmount(finishRegistrationRequest.dependentAmount());
-
-        final Passport passport = client.getPassport();
-        passport.setIssueDate(finishRegistrationRequest.passportIssueDate());
-        passport.setIssueBranch(finishRegistrationRequest.passportIssueBranch());
-
-        final Employment employment = new Employment(finishRegistrationRequest.employment().employmentStatus(),
-                finishRegistrationRequest.employment().employerINN(),
-                finishRegistrationRequest.employment().salary(),
-                finishRegistrationRequest.employment().position(),
-                finishRegistrationRequest.employment().workExperienceTotal(),
-                finishRegistrationRequest.employment().workExperienceCurrent());
-
-        client.setEmployment(employment);
-        client.setAccountNumber(finishRegistrationRequest.accountNumber());
-
-        final Client updatedClient = clientRepository.save(client);
+        final Client updatedClient = clientRepository.save(clientMapper.updateClient(client, finishRegistrationRequest));
 
         LOG.debug("Updated a client, continuing the transaction: clientId = %s"
                 .formatted(updatedClient.getId()));

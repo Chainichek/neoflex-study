@@ -2,6 +2,7 @@ package ru.chainichek.neostudy.deal.model.client;
 
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
@@ -12,6 +13,7 @@ import static ru.chainichek.neostudy.deal.util.validation.client.PassportValidat
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class Passport {
 
     private UUID id = UUID.randomUUID();

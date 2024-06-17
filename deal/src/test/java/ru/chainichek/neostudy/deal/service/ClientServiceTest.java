@@ -1,15 +1,19 @@
 package ru.chainichek.neostudy.deal.service;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
+import org.springframework.test.util.ReflectionTestUtils;
 import ru.chainichek.neostudy.deal.dto.offer.LoanStatementRequestDto;
 import ru.chainichek.neostudy.deal.dto.statement.EmploymentDto;
 import ru.chainichek.neostudy.deal.dto.statement.FinishRegistrationRequestDto;
+import ru.chainichek.neostudy.deal.mapper.ClientMapper;
 import ru.chainichek.neostudy.deal.model.client.Client;
 import ru.chainichek.neostudy.deal.model.client.Employment;
 import ru.chainichek.neostudy.deal.model.client.EmploymentPosition;
@@ -32,6 +36,11 @@ class ClientServiceTest {
     ClientService clientService;
     @Mock
     ClientRepository clientRepository;
+
+    @BeforeEach
+    void setUp() {
+        ReflectionTestUtils.setField(clientService, "clientMapper", Mappers.getMapper(ClientMapper.class));
+    }
 
     @Test
     void createClient() {

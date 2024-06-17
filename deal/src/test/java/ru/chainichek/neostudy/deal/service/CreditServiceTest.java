@@ -1,14 +1,18 @@
 package ru.chainichek.neostudy.deal.service;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
+import org.springframework.test.util.ReflectionTestUtils;
 import ru.chainichek.neostudy.deal.dto.calculation.CreditDto;
 import ru.chainichek.neostudy.deal.dto.calculation.PaymentScheduleElementDto;
+import ru.chainichek.neostudy.deal.mapper.CreditMapper;
 import ru.chainichek.neostudy.deal.model.credit.Credit;
 import ru.chainichek.neostudy.deal.model.credit.CreditStatus;
 import ru.chainichek.neostudy.deal.repo.CreditRepository;
@@ -27,6 +31,11 @@ class CreditServiceTest {
     CreditService creditService;
     @Mock
     CreditRepository creditRepository;
+
+    @BeforeEach
+    void setUp() {
+        ReflectionTestUtils.setField(creditService, "creditMapper", Mappers.getMapper(CreditMapper.class));
+    }
 
     @Test
     void createCredit() {
