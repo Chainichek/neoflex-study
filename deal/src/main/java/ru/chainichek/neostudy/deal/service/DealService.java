@@ -10,6 +10,7 @@ import ru.chainichek.neostudy.deal.dto.offer.LoanOfferDto;
 import ru.chainichek.neostudy.deal.dto.offer.LoanStatementRequestDto;
 import ru.chainichek.neostudy.deal.dto.statement.FinishRegistrationRequestDto;
 import ru.chainichek.neostudy.deal.exception.ForbiddenException;
+import ru.chainichek.neostudy.deal.exception.NotFoundException;
 import ru.chainichek.neostudy.deal.exception.ValidationException;
 import ru.chainichek.neostudy.deal.model.statement.ApplicationStatus;
 import ru.chainichek.neostudy.deal.model.statement.Statement;
@@ -45,11 +46,16 @@ public class DealService {
         LOG.debug("Starting a transaction in order to select offer for statement");
 
         final Statement statement = statementService.getStatement(loanOffer.statementId());
+
+        if (statement == null) {
+            throw new NotFoundException(StatementService.ExceptionMessage.STATEMENT_NOT_FOUND_EXCEPTION_MESSAGE, loanOffer.statementId());
+        }
+
         if (statement.getStatus() != ApplicationStatus.PREAPPROVAL) {
             LOG.debug("Can't proceed further and throwing exception because finishRegistrationRequest.status = %s and not PREAPPROVAL"
                     .formatted(statement.getStatus()));
 
-            throw new ForbiddenException("Can't apply offer for statement that already was approved",
+            throw new ForbiddenException(ExceptionMessage.EXPECTED_PREAPPROVAL_APPLICATION_STATUS_EXCEPTION_MESSAGE,
                     statement.getId(),
                     statement.getStatus());
         }
@@ -68,11 +74,15 @@ public class DealService {
 
         final Statement statement = statementService.getStatement(statementId);
 
+        if (statement == null) {
+            throw new NotFoundException(StatementService.ExceptionMessage.STATEMENT_NOT_FOUND_EXCEPTION_MESSAGE, statementId);
+        }
+
         if (statement.getStatus() != ApplicationStatus.APPROVED) {
             LOG.debug("Can't proceed further and throwing exception because finishRegistrationRequest.status = %s and not APPROVED"
                     .formatted(statement.getStatus()));
 
-            throw new ForbiddenException("Can't complete statement that already was completed or not approved",
+            throw new ForbiddenException(ExceptionMessage.EXPECTED_APPROVED_APPLICATION_STATUS_EXCEPTION_MESSAGE,
                     statement.getId(),
                     statement.getStatus());
         }
@@ -95,5 +105,10 @@ public class DealService {
         statementService.updateStatement(statement);
 
         LOG.debug("Ending the transaction");
+    }
+
+    public static final class ExceptionMessage {
+        public static final String EXPECTED_PREAPPROVAL_APPLICATION_STATUS_EXCEPTION_MESSAGE = "Can't apply offer for statement that already was approved";
+        public static final String EXPECTED_APPROVED_APPLICATION_STATUS_EXCEPTION_MESSAGE = "Can't complete statement that already was completed or not approved";
     }
 }

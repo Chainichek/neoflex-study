@@ -23,7 +23,7 @@ public class StatementService {
 
     public Statement getStatement(@NotNull UUID statementId) {
         return statementRepository.findById(statementId)
-                .orElseThrow(() -> new NotFoundException("Can't find the specified statement", statementId));
+                .orElseThrow(() -> new NotFoundException(ExceptionMessage.STATEMENT_NOT_FOUND_EXCEPTION_MESSAGE, statementId));
     }
 
     @Transactional
@@ -51,5 +51,9 @@ public class StatementService {
         statementRepository.save(statement);
 
         LOG.debug("Updated a statement, continuing the transaction: statementId = %s".formatted(statement.getId()));
+    }
+
+    public final static class ExceptionMessage {
+        public final static String STATEMENT_NOT_FOUND_EXCEPTION_MESSAGE = "Can't find the specified statement";
     }
 }
