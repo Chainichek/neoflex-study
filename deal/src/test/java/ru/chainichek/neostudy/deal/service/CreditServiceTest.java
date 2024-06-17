@@ -97,16 +97,16 @@ class CreditServiceTest {
                                 new BigDecimal("0")
                         )
                 ));
-        final Credit credit = new Credit(creditDto.amount(),
-                creditDto.term(),
-                creditDto.monthlyPayment(),
-                creditDto.rate(),
-                creditDto.psk(),
-                creditDto.paymentSchedule(),
-                creditDto.isInsuranceEnabled(),
-                creditDto.isSalaryClient(),
-                CreditStatus.CALCULATED
-        );
+        final Credit credit = Credit.builder().amount(creditDto.amount())
+                .term(creditDto.term())
+                .monthlyPayment(creditDto.monthlyPayment())
+                .rate(creditDto.rate())
+                .psk(creditDto.psk())
+                .paymentSchedule(creditDto.paymentSchedule())
+                .isInsuranceEnabled(creditDto.isInsuranceEnabled())
+                .isSalaryClient(creditDto.isSalaryClient())
+                .creditStatus(CreditStatus.CALCULATED)
+                .build();
 
 
         when(creditRepository.save(ArgumentMatchers.any())).thenAnswer((Answer<Credit>) invocation -> invocation.getArgument(0));

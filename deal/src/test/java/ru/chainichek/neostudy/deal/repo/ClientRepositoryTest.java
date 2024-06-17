@@ -21,17 +21,22 @@ class ClientRepositoryTest {
     @Autowired
     ClientRepository clientRepository;
 
+
     @Test
     @Transactional
     void save() {
-        final Client client = new Client(
-                "Fedorov",
-                "Ivan",
-                null,
-                LocalDate.of(2023, 3, 7),
-                "ivanfedorov@yandex",
-                new Passport("6161",
-                        "345678"));
+        final Client client = Client.builder()
+                .lastName("Fedorov")
+                .firstName("Ivan")
+                .birthdate(LocalDate.of(2023, 3, 7))
+                .email("ivanfedorov@yandex")
+                .passport(
+                        Passport.builder()
+                        .series("6161")
+                        .number("345678")
+                        .build()
+                )
+                .build();
 
         final Client savedClient = clientRepository.save(client);
         final Client findedClient = clientRepository.findById(savedClient.getId()).orElse(null);

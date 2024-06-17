@@ -1,6 +1,8 @@
 package ru.chainichek.neostudy.deal.model.client;
 
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,6 +16,8 @@ import static ru.chainichek.neostudy.deal.util.validation.client.PassportValidat
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Passport {
 
     private UUID id = UUID.randomUUID();
@@ -27,10 +31,4 @@ public class Passport {
     private String issueBranch;
 
     private LocalDate issueDate;
-
-    public Passport(String series,
-                    String number) {
-        this.series = series;
-        this.number = number;
-    }
 }

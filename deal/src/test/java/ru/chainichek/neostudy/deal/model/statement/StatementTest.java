@@ -14,7 +14,7 @@ class StatementTest {
 
     @Test
     void setStatus() {
-        final Statement statement = new Statement(mock(Client.class));
+        final Statement statement = Statement.builder().client(mock(Client.class)).build();
         final StatementStatusHistoryDto statementStatusHistory = new StatementStatusHistoryDto(ApplicationStatus.PREAPPROVAL);
 
         statement.setStatus(ApplicationStatus.APPROVED);

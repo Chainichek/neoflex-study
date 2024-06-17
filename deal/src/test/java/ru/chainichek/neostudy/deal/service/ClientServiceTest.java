@@ -15,7 +15,6 @@ import ru.chainichek.neostudy.deal.dto.statement.EmploymentDto;
 import ru.chainichek.neostudy.deal.dto.statement.FinishRegistrationRequestDto;
 import ru.chainichek.neostudy.deal.mapper.ClientMapper;
 import ru.chainichek.neostudy.deal.model.client.Client;
-import ru.chainichek.neostudy.deal.model.client.Employment;
 import ru.chainichek.neostudy.deal.model.client.EmploymentPosition;
 import ru.chainichek.neostudy.deal.model.client.EmploymentStatus;
 import ru.chainichek.neostudy.deal.model.client.Gender;
@@ -36,10 +35,11 @@ class ClientServiceTest {
     ClientService clientService;
     @Mock
     ClientRepository clientRepository;
+    ClientMapper clientMapper = Mappers.getMapper(ClientMapper.class);
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(clientService, "clientMapper", Mappers.getMapper(ClientMapper.class));
+        ReflectionTestUtils.setField(clientService, "clientMapper", clientMapper);
     }
 
     @Test
@@ -54,14 +54,18 @@ class ClientServiceTest {
                 "6161",
                 "345678");
 
-        final Client client = new Client(request.firstName(),
-                request.lastName(),
-                request.middleName(),
-                request.birthdate(),
-                request.email(),
-                new Passport(request.passportSeries(),
-                        request.passportNumber())
-        );
+        final Client client = Client.builder()
+                .lastName("Fedorov")
+                .firstName("Ivan")
+                .birthdate(LocalDate.of(2023, 3, 7))
+                .email("ivanfedorov@yandex")
+                .passport(
+                        Passport.builder()
+                                .series("6161")
+                                .number("345678")
+                                .build()
+                )
+                .build();
 
         when(clientRepository.save(ArgumentMatchers.any())).thenAnswer((Answer<Client>) invocation -> invocation.getArgument(0));
 
@@ -78,14 +82,18 @@ class ClientServiceTest {
 
     @Test
     void updateClientOnFinishRegistration() {
-        final Client oldClient = new Client(
-                "Fedorov",
-                "Ivan",
-                null,
-                LocalDate.of(2023, 3, 7),
-                "ivanfedorov@yandex",
-                new Passport("6161",
-                        "345678"));
+        final Client oldClient = Client.builder()
+                .lastName("Fedorov")
+                .firstName("Ivan")
+                .birthdate(LocalDate.of(2023, 3, 7))
+                .email("ivanfedorov@yandex")
+                .passport(
+                        Passport.builder()
+                                .series("6161")
+                                .number("345678")
+                                .build()
+                )
+                .build();
         final FinishRegistrationRequestDto finishRegistrationRequest = new FinishRegistrationRequestDto(Gender.MALE,
                 MaritalStatus.SINGLE,
                 0,
@@ -99,25 +107,7 @@ class ClientServiceTest {
                         0),
                 "Some bank account number");
 
-        final Client newClient = new Client(oldClient.getFirstName(),
-                oldClient.getLastName(),
-                oldClient.getMiddleName(),
-                oldClient.getBirthdate(),
-                oldClient.getEmail(),
-                new Passport(oldClient.getPassport().getSeries(),
-                        oldClient.getPassport().getNumber()));
-        newClient.setGender(finishRegistrationRequest.gender());
-        newClient.setMaritalStatus(finishRegistrationRequest.maritalStatus());
-        newClient.setDependentAmount(finishRegistrationRequest.dependentAmount());
-        newClient.getPassport().setIssueDate(finishRegistrationRequest.passportIssueDate());
-        newClient.getPassport().setIssueBranch(finishRegistrationRequest.passportIssueBranch());
-        newClient.setEmployment(new Employment(finishRegistrationRequest.employment().employmentStatus(),
-                finishRegistrationRequest.employment().employerINN(),
-                finishRegistrationRequest.employment().salary(),
-                finishRegistrationRequest.employment().position(),
-                finishRegistrationRequest.employment().workExperienceTotal(),
-                finishRegistrationRequest.employment().workExperienceCurrent()));
-        newClient.setAccountNumber(finishRegistrationRequest.accountNumber());
+        final Client newClient = clientMapper.updateClient(oldClient, finishRegistrationRequest);
 
         when(clientRepository.save(ArgumentMatchers.any())).thenAnswer((Answer<Client>) invocation -> invocation.getArgument(0));
         final Client updatedClient = clientService.updateClientOnFinishRegistration(oldClient, finishRegistrationRequest);

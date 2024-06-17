@@ -28,7 +28,7 @@ public class StatementService {
 
     @Transactional
     public Statement createStatement(@NotNull Client client) {
-        final Statement statement = statementRepository.save(new Statement(client));
+        final Statement statement = statementRepository.save(Statement.builder().client(client).build());
 
         LOG.debug("Created a statement: statementId = %s".formatted(statement.getId()));
 

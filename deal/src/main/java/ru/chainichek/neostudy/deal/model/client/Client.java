@@ -9,6 +9,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,6 +30,8 @@ import static ru.chainichek.neostudy.deal.util.validation.client.ClientValidatio
 @Entity
 @Table(name = "client")
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -66,18 +70,4 @@ public class Client {
 
     @Column(length = ACCOUNT_NUMBER_SIZE_MAX)
     private String accountNumber;
-
-    public Client(String firstName,
-                  String lastName,
-                  String middleName,
-                  LocalDate birthdate,
-                  String email,
-                  Passport passport) {
-        this.lastName = lastName;
-        this.firstName = firstName;
-        this.middleName = middleName;
-        this.birthdate = birthdate;
-        this.email = email;
-        this.passport = passport;
-    }
 }

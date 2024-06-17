@@ -26,15 +26,19 @@ class StatementRepositoryTest {
     @Test
     @Transactional
     void save() {
-        final Statement statement = new Statement(clientRepository.save(new Client(
-                "Fedorov",
-                "Ivan",
-                null,
-                LocalDate.of(2023, 3, 7),
-                "ivanfedorov@yandex",
-                new Passport("6161",
-                        "345678")))
-        );
+        final Statement statement = Statement.builder().client(clientRepository.save(Client.builder()
+                .lastName("Fedorov")
+                .firstName("Ivan")
+                .birthdate(LocalDate.of(2023, 3, 7))
+                .email("ivanfedorov@yandex")
+                .passport(
+                        Passport.builder()
+                                .series("6161")
+                                .number("345678")
+                                .build()
+                )
+                .build())
+        ).build();
 
         final Statement savedStatement = statementRepository.save(statement);
         final Statement findedStatement = statementRepository.findById(savedStatement.getId()).orElse(null);

@@ -50,7 +50,7 @@ class StatementServiceTest {
     @Test
     void createStatement() {
         final Client client = mock(Client.class);
-        final Statement statement = new Statement(client);
+        final Statement statement = Statement.builder().client(client).build();
 
         when(statementRepository.save(ArgumentMatchers.any())).thenAnswer((Answer<Statement>) invocation -> invocation.getArgument(0));
 

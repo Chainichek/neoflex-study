@@ -12,6 +12,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,6 +33,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "statement")
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Statement {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -61,11 +65,6 @@ public class Statement {
     @Column(nullable = false)
     @Type(JsonType.class)
     private List<StatementStatusHistoryDto> statusHistory = new ArrayList<>();
-
-    public Statement(Client client) {
-        this.client = client;
-    }
-
     public void setStatus(ApplicationStatus status) {
         this.statusHistory.add(new StatementStatusHistoryDto(this.status));
         this.status = status;

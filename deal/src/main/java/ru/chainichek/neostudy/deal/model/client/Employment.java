@@ -1,6 +1,8 @@
 package ru.chainichek.neostudy.deal.model.client;
 
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +13,8 @@ import static ru.chainichek.neostudy.deal.util.validation.client.EmploymentValid
 
 @Getter
 @Setter
+@AllArgsConstructor
+@Builder
 public class Employment {
     private UUID id = UUID.randomUUID();
 
@@ -26,18 +30,4 @@ public class Employment {
     private Integer workExperienceTotal;
 
     private Integer workExperienceCurrent;
-
-    public Employment(EmploymentStatus status,
-                      String employerInn,
-                      BigDecimal salary,
-                      EmploymentPosition position,
-                      Integer workExperienceTotal,
-                      Integer workExperienceCurrent) {
-        this.status = status;
-        this.employerInn = employerInn;
-        this.salary = salary;
-        this.position = position;
-        this.workExperienceTotal = workExperienceTotal;
-        this.workExperienceCurrent = workExperienceCurrent;
-    }
 }

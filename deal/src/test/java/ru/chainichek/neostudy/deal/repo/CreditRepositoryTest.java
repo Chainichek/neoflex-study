@@ -26,12 +26,13 @@ class CreditRepositoryTest {
     @Test
     @Transactional
     void save() {
-        final Credit credit = new Credit(new BigDecimal("30000"),
-                        6,
-                        new BigDecimal("5176.45"),
-                        new BigDecimal("12"),
-                        new BigDecimal("7.06"),
-                List.of(
+        final Credit credit = Credit.builder()
+                .amount(new BigDecimal("30000"))
+                .term(6)
+                .monthlyPayment(new BigDecimal("5176.45"))
+                .rate(new BigDecimal("12"))
+                .psk(new BigDecimal("7.06"))
+                .paymentSchedule(List.of(
                         new PaymentScheduleElementDto(
                                 1,
                                 LocalDate.of(2024, 6, 1),
@@ -79,10 +80,12 @@ class CreditRepositoryTest {
                                 new BigDecimal("51.25"),
                                 new BigDecimal("5125.2"),
                                 new BigDecimal("0")
-                        )),
-                true,
-                true,
-                CreditStatus.CALCULATED);
+                        )
+                ))
+                .isInsuranceEnabled(true)
+                .isSalaryClient(true)
+                .creditStatus(CreditStatus.CALCULATED)
+                .build();
 
         final Credit savedCredit = creditRepository.save(credit);
         final Credit findedCredit = creditRepository.findById(savedCredit.getId()).orElse(null);
