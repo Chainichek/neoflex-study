@@ -25,6 +25,6 @@ public record FinishRegistrationRequestDto(@NotNull
                                            String passportIssueBranch,
                                            @NotNull
                                            EmploymentDto employment,
-                                           @NotNull @NotBlank @Size(max = ACCOUNT_NUMBER_SIZE_MAX)
+                                           @NotBlank @Size(max = ACCOUNT_NUMBER_SIZE_MAX)
                                            String accountNumber) {
 }

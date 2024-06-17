@@ -19,18 +19,18 @@ public record LoanStatementRequestDto(@NotNull
                                       BigDecimal amount,
                                       @NotNull
                                       Integer term,
-                                      @NotNull @NotBlank @Size(max = NAME_SIZE_MAX)
+                                      @NotBlank @Size(max = NAME_SIZE_MAX)
                                       String firstName,
-                                      @NotNull @NotBlank @Size(max = NAME_SIZE_MAX)
+                                      @NotBlank @Size(max = NAME_SIZE_MAX)
                                       String lastName,
                                       @Size(max = NAME_SIZE_MAX)
                                       String middleName,
-                                      @NotNull @NotBlank @Size(max = EMAIL_SIZE_MAX)
+                                      @NotBlank @Size(max = EMAIL_SIZE_MAX)
                                       String email,
                                       @NotNull @DateTimeFormat(pattern = Validation.DATE_FORMAT_PATTERN) @PastOrPresent
                                       LocalDate birthdate,
-                                      @NotNull @NotBlank @Size(max = PASSPORT_SERIES_SIZE_MAX)
+                                      @NotBlank @Size(max = PASSPORT_SERIES_SIZE_MAX)
                                       String passportSeries,
-                                      @NotNull @NotBlank @Size(max = PASSPORT_NUMBER_SIZE_MAX)
+                                      @NotBlank @Size(max = PASSPORT_NUMBER_SIZE_MAX)
                                       String passportNumber) {
 }
