@@ -88,8 +88,8 @@ public class RestResponseEntityExceptionHandler {
     public ResponseEntity<ErrorMessage> wrongStatusException(WrongStatusException exception,
                                                              HttpServletRequest request) {
         final ErrorMessage message = new ErrorMessage(LocalDateTime.now(),
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.PRECONDITION_FAILED.getReasonPhrase(),
+                HttpStatus.PRECONDITION_REQUIRED.value(),
                 exception.getMessage(),
                 request.getRequestURI());
 

@@ -71,7 +71,7 @@ public interface DealApi {
                             )
                     ),
                     @ApiResponse(
-                            responseCode = "400",
+                            responseCode = "412",
                             description = "Statement has already been approved",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -123,7 +123,7 @@ public interface DealApi {
                             schema = @Schema(implementation = ErrorMessage.class)
                     )
             ),
-            @ApiResponse(responseCode = "400",
+            @ApiResponse(responseCode = "412",
                     description = "Statement has not been already approved or has been already calculated",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
