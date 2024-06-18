@@ -1,9 +1,24 @@
 version: '3.8'
 services:
   calculator-app:
-    image: calculator:0.0.1
-    container_name: calculator-container
+    container_name: ${CALCULATOR_CONTAINER_NAME}
+    env_file:
+      - .env
     build:
       context: ./calculator
     ports:
-      - "8080:8080"
+      - "${CALCULATOR_SERVER_PORT}:${CALCULATOR_SERVER_PORT}"
+  deal-app:
+    container_name: ${DEAL_CONTAINER_NAME}
+    env_file:
+      - .env
+    build:
+      context: ./deal
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      CALCULATOR_SERVICE_HOST: "${CALCULATOR_CONTAINER_NAME}:${CALCULATOR_SERVER_PORT}"
+      SERVER_PORT: ${DEAL_SERVER_PORT}
