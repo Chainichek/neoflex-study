@@ -8,6 +8,8 @@ services:
       context: ./calculator
     ports:
       - "${CALCULATOR_SERVER_PORT}:${CALCULATOR_SERVER_PORT}"
+    environment:
+      SERVER_PORT: ${CALCULATOR_SERVER_PORT}
   deal-app:
     container_name: ${DEAL_CONTAINER_NAME}
     env_file:
@@ -15,10 +17,23 @@ services:
     build:
       context: ./deal
     ports:
-      - "8081:8081"
+      - "${DEAL_SERVER_PORT}:${DEAL_SERVER_PORT}"
     environment:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       CALCULATOR_SERVICE_HOST: "${CALCULATOR_CONTAINER_NAME}:${CALCULATOR_SERVER_PORT}"
       SERVER_PORT: ${DEAL_SERVER_PORT}
+    depends_on:
+      - calculator-app
+  statement-app:
+    container_name: ${STATEMENT_CONTAINER_NAME}
+    env_file:
+      - .env
+    build:
+      context: ./calculator
+    ports:
+      - "${STATEMENT_SERVER_PORT}:${STATEMENT_SERVER_PORT}"
+    environment:
+      DEAL_SERVICE_HOST: "${DEAL_CONTAINER_NAME}:${DEAL_SERVER_PORT}"
+      SERVER_PORT: ${STATEMENT_SERVER_PORT}
