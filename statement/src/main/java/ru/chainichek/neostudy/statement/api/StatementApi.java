@@ -55,7 +55,7 @@ public interface StatementApi {
                     )
             }
     )
-    @PostMapping("/offers")
+    @PostMapping("")
     ResponseEntity<List<LoanOfferDto>> getOffers(@RequestBody @Valid @NotNull LoanStatementRequestDto loanStatementRequest);
 
     @Operation(
