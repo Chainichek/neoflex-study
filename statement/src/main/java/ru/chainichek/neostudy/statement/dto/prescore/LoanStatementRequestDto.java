@@ -6,6 +6,7 @@ import ru.chainichek.neostudy.statement.annotation.Age;
 import ru.chainichek.neostudy.statement.annotation.Amount;
 import ru.chainichek.neostudy.statement.annotation.Email;
 import ru.chainichek.neostudy.statement.annotation.Name;
+import ru.chainichek.neostudy.statement.annotation.NotBlankName;
 import ru.chainichek.neostudy.statement.annotation.PassportNumber;
 import ru.chainichek.neostudy.statement.annotation.PassportSeries;
 import ru.chainichek.neostudy.statement.annotation.Term;
@@ -18,10 +19,10 @@ public record LoanStatementRequestDto(@Amount
                                       BigDecimal amount,
                                       @Term
                                       Integer term,
-                                      @Name
+                                      @NotBlankName
                                       @Schema(example = "Ivan")
                                       String firstName,
-                                      @Name
+                                      @NotBlankName
                                       @Schema(example = "Ivanov")
                                       String lastName,
                                       @Name
