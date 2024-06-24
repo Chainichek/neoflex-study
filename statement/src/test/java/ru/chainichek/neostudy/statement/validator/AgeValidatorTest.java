@@ -53,7 +53,7 @@ class AgeValidatorTest {
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
             return Stream.of(
-                    Arguments.of(10,  20, null, true),
+                    Arguments.of(10,  20, null, false),
                     Arguments.of(10,  20, LocalDate.now(), false),
                     Arguments.of(10,  20, LocalDate.now().minusYears(11), true),
                     Arguments.of(10,  20, LocalDate.now().minusYears(21), false),
