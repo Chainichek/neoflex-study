@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 
 @NotBlank
 @Pattern(regexp = Validation.EMAIL_PATTERN, message = ValidationMessage.EMAIL_MESSAGE)
-@Target({ElementType.FIELD})
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(
         validatedBy = {}

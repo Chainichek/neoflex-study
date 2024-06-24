@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 
 @NotNull
 @Min(value = Validation.TERM_MIN, message = ValidationMessage.TERM_MESSAGE)
-@Target({ElementType.FIELD})
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(
         validatedBy = {}
