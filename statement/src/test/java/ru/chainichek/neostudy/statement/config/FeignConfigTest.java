@@ -146,7 +146,7 @@ class FeignConfigTest {
 
     @SneakyThrows
     @Test
-    void restMessageErrorDecoderDecode_whenResponseStatusIsUnknown_thenReturnException() {
+    void restMessageErrorDecoderDecode_whenResponseStatusIsMoreThan400AndUnknown_thenReturnException() {
         ErrorDecoder decoder = mock(ErrorDecoder.class);
 
         try {
@@ -178,7 +178,32 @@ class FeignConfigTest {
 
     @SneakyThrows
     @Test
-    void restMessageErrorDecoderDecode_whenBodyAsInputStreamThrowsIOException_thenReturnIOException() {
+    void restMessageErrorDecoderDecode_whenResponseStatusIsLessThan400AndUnknown_thenReturnException() {
+        ErrorDecoder decoder = mock(ErrorDecoder.class);
+
+        try {
+            var decoderField = FeignConfig.RestMessageErrorDecoder.class.getDeclaredField("errorDecoder");
+            decoderField.setAccessible(true);
+            decoderField.set(errorDecoder, decoder);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        Response response = mock(Response.class);
+
+        when(response.status()).thenReturn(-1);
+
+        when(decoder.decode(null, response)).thenReturn(new Exception());
+
+        Exception exception = errorDecoder.decode(null, response);
+
+        assertNotNull(exception);
+        assertThat(exception).isInstanceOf(Exception.class);
+    }
+
+    @SneakyThrows
+    @Test
+    void restMessageErrorDecoderDecode_whenResponseStatusIsInternalServerErrorAndBodyAsInputStreamThrowsIOException_thenReturnIOException() {
         Response response = mock(Response.class);
         Response.Body body = mock(Response.Body.class);
 
@@ -197,7 +222,7 @@ class FeignConfigTest {
 
     @SneakyThrows
     @Test
-    void restMessageErrorDecoderDecode_whenMapperReadValueThrowsIOException_thenReturnIOException() {
+    void restMessageErrorDecoderDecode_whenResponseStatusIsInternalServerErrorAndMapperReadValueThrowsIOException_thenReturnIOException() {
         Response response = mock(Response.class);
         Response.Body body = mock(Response.Body.class);
         InputStream inputStream = mock(InputStream.class);
@@ -208,6 +233,46 @@ class FeignConfigTest {
 
         IOException e = mock(IOException.class);
         when(mapper.readValue(inputStream, InternalErrorMessage.class)).thenThrow(e);
+
+        Exception exception = errorDecoder.decode(null, response);
+
+        assertNotNull(exception);
+        assertThat(exception).isInstanceOf(IOException.class);
+        assertEquals(e, exception);
+    }
+
+    @SneakyThrows
+    @Test
+    void restMessageErrorDecoderDecode_whenResponseStatusIsClientServerErrorAndBodyAsInputStreamThrowsIOException_thenReturnIOException() {
+        Response response = mock(Response.class);
+        Response.Body body = mock(Response.Body.class);
+
+        when(response.status()).thenReturn(400);
+        when(response.body()).thenReturn(body);
+
+        IOException e = mock(IOException.class);
+        when(body.asInputStream()).thenThrow(e);
+
+        Exception exception = errorDecoder.decode(null, response);
+
+        assertNotNull(exception);
+        assertThat(exception).isInstanceOf(IOException.class);
+        assertEquals(e, exception);
+    }
+
+    @SneakyThrows
+    @Test
+    void restMessageErrorDecoderDecode_whenResponseStatusIsClientServerErrorAndMapperReadValueThrowsIOException_thenReturnIOException() {
+        Response response = mock(Response.class);
+        Response.Body body = mock(Response.Body.class);
+        InputStream inputStream = mock(InputStream.class);
+
+        when(response.status()).thenReturn(400);
+        when(response.body()).thenReturn(body);
+        when(body.asInputStream()).thenReturn(inputStream);
+
+        IOException e = mock(IOException.class);
+        when(mapper.readValue(inputStream, ErrorMessage.class)).thenThrow(e);
 
         Exception exception = errorDecoder.decode(null, response);
 
