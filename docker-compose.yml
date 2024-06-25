@@ -31,7 +31,7 @@ services:
     env_file:
       - .env
     build:
-      context: ./calculator
+      context: ./statement
     ports:
       - "${STATEMENT_SERVER_PORT}:${STATEMENT_SERVER_PORT}"
     environment:
