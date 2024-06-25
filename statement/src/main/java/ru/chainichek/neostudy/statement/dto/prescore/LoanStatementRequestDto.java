@@ -2,40 +2,44 @@ package ru.chainichek.neostudy.statement.dto.prescore;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.format.annotation.DateTimeFormat;
-import ru.chainichek.neostudy.statement.annotation.Age;
-import ru.chainichek.neostudy.statement.annotation.Amount;
-import ru.chainichek.neostudy.statement.annotation.Email;
-import ru.chainichek.neostudy.statement.annotation.Name;
-import ru.chainichek.neostudy.statement.annotation.NotBlankName;
-import ru.chainichek.neostudy.statement.annotation.PassportNumber;
-import ru.chainichek.neostudy.statement.annotation.PassportSeries;
-import ru.chainichek.neostudy.statement.annotation.Term;
+import ru.chainichek.neostudy.statement.annotation.IsAgeValid;
+import ru.chainichek.neostudy.statement.annotation.IsAmountValid;
+import ru.chainichek.neostudy.statement.annotation.IsEmailValid;
+import ru.chainichek.neostudy.statement.annotation.IsNameValid;
+import ru.chainichek.neostudy.statement.annotation.IsNameNotBlankAndValid;
+import ru.chainichek.neostudy.statement.annotation.IsPassportNumberValid;
+import ru.chainichek.neostudy.statement.annotation.IsPassportSeriesValid;
+import ru.chainichek.neostudy.statement.annotation.IsTermValid;
 import ru.chainichek.neostudy.statement.util.Validation;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public record LoanStatementRequestDto(@Amount
+public record LoanStatementRequestDto(@IsAmountValid
+                                      @Schema(example = "30000")
                                       BigDecimal amount,
-                                      @Term
+                                      @IsTermValid
+                                      @Schema(example = "6")
                                       Integer term,
-                                      @NotBlankName
+                                      @IsNameNotBlankAndValid
                                       @Schema(example = "Ivan")
                                       String firstName,
-                                      @NotBlankName
+                                      @IsNameNotBlankAndValid
                                       @Schema(example = "Ivanov")
                                       String lastName,
-                                      @Name
+                                      @IsNameValid
                                       @Schema(example = "Ivanovich")
                                       String middleName,
-                                      @Email
+                                      @IsEmailValid
                                       @Schema(example = "test@test.test")
                                       String email,
-                                      @Age
+                                      @IsAgeValid
                                       @DateTimeFormat(pattern = Validation.DATE_FORMAT_PATTERN)
                                       LocalDate birthdate,
-                                      @PassportSeries
+                                      @IsPassportSeriesValid
+                                      @Schema(example = "1234")
                                       String passportSeries,
-                                      @PassportNumber
+                                      @IsPassportNumberValid
+                                      @Schema(example = "123456")
                                       String passportNumber) {
 }

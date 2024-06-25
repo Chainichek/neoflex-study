@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.chainichek.neostudy.statement.annotation.Age;
+import ru.chainichek.neostudy.statement.annotation.IsAgeValid;
 
 import java.time.LocalDate;
 import java.util.stream.Stream;
@@ -20,29 +20,29 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith({MockitoExtension.class})
-class AgeValidatorTest {
+class IsAgeValidValidatorTest {
     AgeValidator ageValidator = new AgeValidator();
 
     @Test
     void initialize() {
-        final Age age = mock(Age.class);
+        final IsAgeValid isAgeValid = mock(IsAgeValid.class);
 
-        when(age.min()).thenReturn(0);
-        when(age.max()).thenReturn(20);
+        when(isAgeValid.min()).thenReturn(0);
+        when(isAgeValid.max()).thenReturn(20);
 
-        assertDoesNotThrow(() -> ageValidator.initialize(age));
+        assertDoesNotThrow(() -> ageValidator.initialize(isAgeValid));
     }
 
     @ParameterizedTest
     @ArgumentsSource(IsValidArgumentsProvider.class)
     void isValid(int min,  int max, LocalDate birthday, boolean expected) {
-        final Age age = mock(Age.class);
+        final IsAgeValid isAgeValid = mock(IsAgeValid.class);
         final ConstraintValidatorContext constraintValidatorContext = mock(ConstraintValidatorContext.class);
 
-        when(age.min()).thenReturn(min);
-        when(age.max()).thenReturn(max);
+        when(isAgeValid.min()).thenReturn(min);
+        when(isAgeValid.max()).thenReturn(max);
 
-        assertDoesNotThrow(() -> ageValidator.initialize(age));
+        assertDoesNotThrow(() -> ageValidator.initialize(isAgeValid));
 
         boolean result = ageValidator.isValid(birthday, constraintValidatorContext);
 

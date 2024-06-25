@@ -2,8 +2,7 @@ package ru.chainichek.neostudy.statement.annotation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import ru.chainichek.neostudy.statement.util.Validation;
 import ru.chainichek.neostudy.statement.util.ValidationMessage;
 
@@ -12,14 +11,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@NotNull
-@Min(value = Validation.TERM_MIN, message = ValidationMessage.TERM_MESSAGE)
+@Pattern(regexp = Validation.NAME_PATTERN, message = ValidationMessage.NAME_MESSAGE)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(
         validatedBy = {}
 )
-public @interface Term {
+public @interface IsNameValid {
     String message() default "";
 
     Class<?>[] groups() default {};

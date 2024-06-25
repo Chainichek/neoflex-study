@@ -4,19 +4,19 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.chainichek.neostudy.statement.annotation.Age;
+import ru.chainichek.neostudy.statement.annotation.IsAgeValid;
 
 import java.time.LocalDate;
 import java.time.Period;
 
-public class AgeValidator implements ConstraintValidator<Age, LocalDate> {
+public class AgeValidator implements ConstraintValidator<IsAgeValid, LocalDate> {
     private static final Logger LOG = LoggerFactory.getLogger(AgeValidator.class);
 
     private int min;
     private int max;
 
     @Override
-    public void initialize(Age constraintAnnotation) {
+    public void initialize(IsAgeValid constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
         this.min = constraintAnnotation.min();
         this.max = constraintAnnotation.max();
