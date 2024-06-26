@@ -19,8 +19,8 @@ System Workflow Logic
 10. If the received code matches the sent code, the Deal Microservice issues the credit (changes the status of the "Credit" entity to ISSUED, and the status of the application to CREDIT_ISSUED).
 ## Microservices
 The application consists of several MS applications:
-- [ ] Calculator
-- [ ] Deal
+- [x] Calculator
+- [x] Deal
 - [ ] Statement 
 - [ ] Dossier 
 ## Architecture and business-flow
