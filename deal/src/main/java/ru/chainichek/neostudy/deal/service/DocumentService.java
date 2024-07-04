@@ -90,7 +90,7 @@ public class DocumentService {
 
         statementService.updateStatement(statement);
 
-        dossierService.sendCreateDocuments(statement);
+        dossierService.sendCreditIssued(statement);
 
         log.debug("Ending the transaction");
     }
