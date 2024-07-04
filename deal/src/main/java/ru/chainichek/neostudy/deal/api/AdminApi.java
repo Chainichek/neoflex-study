@@ -15,6 +15,8 @@ import ru.chainichek.neostudy.deal.dto.util.ErrorMessage;
 import ru.chainichek.neostudy.deal.dto.util.InternalErrorMessage;
 import ru.chainichek.neostudy.deal.model.statement.ApplicationStatus;
 
+import java.util.UUID;
+
 @RequestMapping("/deal/admin")
 public interface AdminApi {
     @Operation(
@@ -50,6 +52,6 @@ public interface AdminApi {
             )
     })
     @PutMapping("/statement/{statementId}/status")
-    ResponseEntity<Void> updateStatus(@PathVariable("statementId") long statementId,
+    ResponseEntity<Void> updateStatus(@PathVariable("statementId") UUID statementId,
                                       @RequestParam("status") ApplicationStatus status);
 }

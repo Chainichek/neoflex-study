@@ -30,6 +30,8 @@ public class DealService {
     private final ClientService clientService;
     private final CreditService creditService;
 
+    private final DossierService dossierService;
+
     @Transactional
     public List<LoanOfferDto> createStatement(@NonNull LoanStatementRequestDto request) {
         LOG.debug("Starting a transaction in order to create statement");
@@ -46,14 +48,10 @@ public class DealService {
     public void selectOffer(@NonNull LoanOfferDto loanOffer) {
         LOG.debug("Starting a transaction in order to select offer for statement");
 
-        final Statement statement = statementService.getStatement(loanOffer.statementId());
-
-        if (statement == null) {
-            throw new NotFoundException(StatementService.ExceptionMessage.STATEMENT_NOT_FOUND_EXCEPTION_MESSAGE, loanOffer.statementId());
-        }
+        final Statement statement = getStatement(loanOffer.statementId());
 
         if (statement.getStatus() != ApplicationStatus.PREAPPROVAL) {
-            LOG.debug("Can't proceed further and throwing exception because finishRegistrationRequest.status = %s and not PREAPPROVAL"
+            LOG.debug("Can't proceed further and throwing exception because statement.status = %s and not PREAPPROVAL"
                     .formatted(statement.getStatus()));
 
             throw new WrongStatusException(ExceptionMessage.EXPECTED_PREAPPROVAL_APPLICATION_STATUS_EXCEPTION_MESSAGE,
@@ -65,6 +63,8 @@ public class DealService {
 
         statementService.updateStatement(statement);
 
+        dossierService.sendFinishRegistration(statement);
+
         LOG.debug("Ending the transaction");
     }
 
@@ -73,14 +73,10 @@ public class DealService {
                                   @NonNull FinishRegistrationRequestDto finishRegistrationRequest) {
         LOG.debug("Starting a transaction in order to complete the statement");
 
-        final Statement statement = statementService.getStatement(statementId);
-
-        if (statement == null) {
-            throw new NotFoundException(StatementService.ExceptionMessage.STATEMENT_NOT_FOUND_EXCEPTION_MESSAGE, statementId);
-        }
+        final Statement statement = getStatement(statementId);
 
         if (statement.getStatus() != ApplicationStatus.APPROVED) {
-            LOG.debug("Can't proceed further and throwing exception because finishRegistrationRequest.status = %s and not APPROVED"
+            LOG.debug("Can't proceed further and throwing exception because statement.status = %s and not APPROVED"
                     .formatted(statement.getStatus()));
 
             throw new WrongStatusException(ExceptionMessage.EXPECTED_APPROVED_APPLICATION_STATUS_EXCEPTION_MESSAGE,
@@ -105,11 +101,22 @@ public class DealService {
         statement.setStatus(ApplicationStatus.CC_APPROVED);
         statementService.updateStatement(statement);
 
+        dossierService.sendCreateDocuments(statement);
+
         LOG.debug("Ending the transaction");
     }
 
-    public static final class ExceptionMessage {
+
+    private static final class ExceptionMessage {
         public static final String EXPECTED_PREAPPROVAL_APPLICATION_STATUS_EXCEPTION_MESSAGE = "Can't apply offer for statement that already was approved";
         public static final String EXPECTED_APPROVED_APPLICATION_STATUS_EXCEPTION_MESSAGE = "Can't complete statement that already was completed or not approved";
+    }
+
+    private Statement getStatement(@NonNull UUID statementId) {
+        final Statement statement = statementService.getStatement(statementId);
+        if (statement == null) {
+            throw new NotFoundException(StatementService.ExceptionMessage.STATEMENT_NOT_FOUND_EXCEPTION_MESSAGE, statementId);
+        }
+        return statement;
     }
 }
