@@ -49,19 +49,4 @@ public class DealController implements DealApi {
 
         return ResponseEntity.ok().build();
     }
-
-    @Override
-    public ResponseEntity<Void> sendDocuments(UUID statementId) {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<Void> signDocuments(UUID statementId) {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<Void> verifyCode(UUID statementId) {
-        return null;
-    }
 }
