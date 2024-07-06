@@ -20,7 +20,7 @@ public class AdminService {
         final Statement statement = getStatement(statementId);
         statement.setStatus(status);
         statementService.updateStatement(statement);
-        log.info("Update status for statement {}", statementId);
+        log.debug("Update status for statement {}", statementId);
     }
 
     private Statement getStatement(@NonNull UUID statementId) {

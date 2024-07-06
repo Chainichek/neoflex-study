@@ -10,6 +10,7 @@ import ru.chainichek.neostudy.deal.exception.NotFoundException;
 import ru.chainichek.neostudy.deal.exception.WrongStatusException;
 import ru.chainichek.neostudy.deal.model.statement.ApplicationStatus;
 import ru.chainichek.neostudy.deal.model.statement.Statement;
+import ru.chainichek.neostudy.loggerutils.annotation.TransactionLoggable;
 
 import java.util.UUID;
 
@@ -23,9 +24,9 @@ public class DocumentService {
 
     private final SignatureService signatureService;
 
+    @Transactional
+    @TransactionLoggable
     public void sendDocuments(@NonNull UUID statementId) {
-        log.debug("Starting a transaction in order to send documents");
-
         final Statement statement = getStatement(statementId);
         if (statement.getStatus() != ApplicationStatus.CC_APPROVED) {
             log.debug(LogMessage.EXPECTED_CC_APPROVED_APPLICATION_STATUS_LOG_MESSAGE,
@@ -36,16 +37,14 @@ public class DocumentService {
                     statement.getId(),
                     statement.getStatus());
         }
+        statement.setStatus(ApplicationStatus.PREPARE_DOCUMENTS);
 
         dossierService.sendSendDocuments(statement);
-
-        log.debug("Ending the transaction");
     }
 
     @Transactional
+    @TransactionLoggable
     public void signDocuments(@NonNull UUID statementId) {
-        log.debug("Starting a transaction in order to sign documents");
-
         final Statement statement = getStatement(statementId);
         if (statement.getStatus() != ApplicationStatus.DOCUMENTS_CREATED) {
             log.debug(LogMessage.EXPECTED_DOCUMENTS_CREATED_APPLICATION_STATUS_LOG_MESSAGE,
@@ -61,14 +60,11 @@ public class DocumentService {
         statementService.updateStatement(statement);
 
         dossierService.sendSendSes(statement);
-
-        log.debug("Ending the transaction");
     }
 
     @Transactional
+    @TransactionLoggable
     public void verifyCode(@NonNull UUID statementId, @NonNull String code) {
-        log.debug("Starting a transaction in order to verify code");
-
         final Statement statement = getStatement(statementId);
         if (statement.getStatus() != ApplicationStatus.DOCUMENTS_CREATED) {
             log.debug(LogMessage.EXPECTED_DOCUMENTS_CREATED_APPLICATION_STATUS_LOG_MESSAGE,
@@ -91,8 +87,6 @@ public class DocumentService {
         statementService.updateStatement(statement);
 
         dossierService.sendCreditIssued(statement);
-
-        log.debug("Ending the transaction");
     }
 
     private static final class ExceptionMessage {
