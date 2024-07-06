@@ -14,12 +14,20 @@
 	<name>deal</name>
 	<description>deal</description>
 	<properties>
+		<!--Compiler-->
 		<java.version>17</java.version>
+
+		<!--Spring Cloud-->
 		<spring-cloud.version>2023.0.2</spring-cloud.version>
+
+		<!--Database-->
 		<hypersistence-utils.version>3.7.6</hypersistence-utils.version>
+
+		<!--Dev-->
 		<org.projectloombok.version>1.18.32</org.projectloombok.version>
 		<org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
 		<springdoc.version>2.0.4</springdoc.version>
+		<ru.chainichek.neoustudy.logger-utils>1.0-SNAPSHOT</ru.chainichek.neoustudy.logger-utils>
 	</properties>
 	<dependencies>
 		<!--Spring Boot-->
@@ -72,6 +80,11 @@
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>${springdoc.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>ru.chainichek.neostudy</groupId>
+			<artifactId>logger-utils</artifactId>
+			<version>${ru.chainichek.neoustudy.logger-utils}</version>
+		</dependency>
 		<!--Cloud-->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -99,6 +112,7 @@
 			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
