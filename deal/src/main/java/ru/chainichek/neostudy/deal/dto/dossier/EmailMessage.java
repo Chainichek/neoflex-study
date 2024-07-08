@@ -8,5 +8,5 @@ public record EmailMessage(String address,
                            EmailTheme theme,
                            UUID statementId,
                            String payload,
-                           ClientDossier recipient) {
+                           ClientDTO recipient) {
 }
