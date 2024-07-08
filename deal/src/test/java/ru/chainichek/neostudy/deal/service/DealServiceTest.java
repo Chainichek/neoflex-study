@@ -40,13 +40,14 @@ class DealServiceTest {
 
     @Mock
     CalculatorService calculatorService;
-
     @Mock
     StatementService statementService;
     @Mock
     ClientService clientService;
     @Mock
     CreditService creditService;
+    @Mock
+    DossierService dossierService;
 
     @Test
     void createStatement() {
