@@ -1,4 +1,4 @@
-package ru.chainichek.neostudy.loggerutils.annotation;
+package ru.chainichek.neostudy.lib.loggerutils.annotation;
 
 import org.slf4j.event.Level;
 
