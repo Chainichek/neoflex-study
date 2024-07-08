@@ -1,4 +1,4 @@
-package ru.chainichek.neostudy.loggerutils.aspect;
+package ru.chainichek.neostudy.lib.loggerutils.aspect;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -8,26 +8,36 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
-import ru.chainichek.neostudy.loggerutils.annotation.ControllerLoggable;
-import ru.chainichek.neostudy.loggerutils.annotation.Loggable;
-import ru.chainichek.neostudy.loggerutils.annotation.TransactionLoggable;
+import ru.chainichek.neostudy.lib.loggerutils.annotation.ConsumerLoggable;
+import ru.chainichek.neostudy.lib.loggerutils.annotation.ControllerLoggable;
+import ru.chainichek.neostudy.lib.loggerutils.annotation.Loggable;
+import ru.chainichek.neostudy.lib.loggerutils.annotation.ProducerLoggable;
+import ru.chainichek.neostudy.lib.loggerutils.annotation.TransactionLoggable;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.List;
 
 @Aspect
 public class LoggableAspect {
+    private static final List<Class<? extends Annotation>> LOGGABLE_ANNOTATIONS = List.of(
+            Loggable.class,
+            TransactionLoggable.class,
+            ControllerLoggable.class,
+            ConsumerLoggable.class,
+            ProducerLoggable.class);
 
     @Pointcut("""
-            within(@ru.chainichek.neostudy.loggerutils.annotation.Loggable *)
-            || within(@ru.chainichek.neostudy.loggerutils.annotation.ControllerLoggable *)
-            || within(@ru.chainichek.neostudy.loggerutils.annotation.TransactionLoggable *)
+            within(@ru.chainichek.neostudy.lib.loggerutils.annotation.Loggable *)
+            || within(@ru.chainichek.neostudy.lib.loggerutils.annotation.ControllerLoggable *)
+            || within(@ru.chainichek.neostudy.lib.loggerutils.annotation.TransactionLoggable *)
             """)
     public void loggableTarget() {}
 
     @Pointcut("""
-            @annotation(ru.chainichek.neostudy.loggerutils.annotation.Loggable)
-            || @annotation(ru.chainichek.neostudy.loggerutils.annotation.ControllerLoggable)
-            || @annotation(ru.chainichek.neostudy.loggerutils.annotation.TransactionLoggable)
+            @annotation(ru.chainichek.neostudy.lib.loggerutils.annotation.Loggable)
+            || @annotation(ru.chainichek.neostudy.lib.loggerutils.annotation.ControllerLoggable)
+            || @annotation(ru.chainichek.neostudy.lib.loggerutils.annotation.TransactionLoggable)
             """)
     public void loggableMethod() {}
 
@@ -74,24 +84,24 @@ public class LoggableAspect {
     }
 
     private Loggable getEffectiveLoggable(Method method, Class<?> targetClass) {
-        if (method.isAnnotationPresent(Loggable.class)) {
-            return method.getDeclaringClass().getAnnotation(Loggable.class);
-        }
-        if (method.isAnnotationPresent(TransactionLoggable.class)) {
-            return method.getDeclaringClass().getAnnotation(TransactionLoggable.class).annotationType().getAnnotation(Loggable.class);
-        }
-        if (method.isAnnotationPresent(ControllerLoggable.class)) {
-            return method.getDeclaringClass().getAnnotation(ControllerLoggable.class).annotationType().getAnnotation(Loggable.class);
+        for (Class<? extends Annotation> annotationClass : LOGGABLE_ANNOTATIONS) {
+            if (method.isAnnotationPresent(annotationClass)) {
+                if (annotationClass == Loggable.class) {
+                    return method.getAnnotation(Loggable.class);
+                } else {
+                    return annotationClass.cast(method.getAnnotation(annotationClass)).annotationType().getAnnotation(Loggable.class);
+                }
+            }
         }
 
-        if (targetClass.isAnnotationPresent(Loggable.class)) {
-            return targetClass.getAnnotation(Loggable.class);
-        }
-        if (targetClass.isAnnotationPresent(TransactionLoggable.class)) {
-            return targetClass.getAnnotation(TransactionLoggable.class).annotationType().getAnnotation(Loggable.class);
-        }
-        if (targetClass.isAnnotationPresent(ControllerLoggable.class)) {
-            return targetClass.getAnnotation(ControllerLoggable.class).annotationType().getAnnotation(Loggable.class);
+        for (Class<? extends Annotation> annotationClass : LOGGABLE_ANNOTATIONS) {
+            if (targetClass.isAnnotationPresent(annotationClass)) {
+                if (annotationClass == Loggable.class) {
+                    return targetClass.getAnnotation(Loggable.class);
+                } else {
+                    return annotationClass.cast(targetClass.getAnnotation(annotationClass)).annotationType().getAnnotation(Loggable.class);
+                }
+            }
         }
 
         return null;
