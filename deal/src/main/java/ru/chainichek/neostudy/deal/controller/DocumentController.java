@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import ru.chainichek.neostudy.deal.api.DocumentApi;
 import ru.chainichek.neostudy.deal.service.DocumentService;
-import ru.chainichek.neostudy.loggerutils.annotation.ControllerLoggable;
+import ru.chainichek.neostudy.lib.loggerutils.annotation.ControllerLoggable;
 
 import java.util.UUID;
 

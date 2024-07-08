@@ -10,7 +10,7 @@ import ru.chainichek.neostudy.deal.exception.NotFoundException;
 import ru.chainichek.neostudy.deal.exception.WrongStatusException;
 import ru.chainichek.neostudy.deal.model.statement.ApplicationStatus;
 import ru.chainichek.neostudy.deal.model.statement.Statement;
-import ru.chainichek.neostudy.loggerutils.annotation.TransactionLoggable;
+import ru.chainichek.neostudy.lib.loggerutils.annotation.TransactionLoggable;
 
 import java.util.UUID;
 

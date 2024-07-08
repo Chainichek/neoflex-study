@@ -10,9 +10,11 @@ import ru.chainichek.neostudy.deal.dto.dossier.EmailMessage;
 import ru.chainichek.neostudy.deal.mapper.DossierMapper;
 import ru.chainichek.neostudy.deal.model.dossier.EmailTheme;
 import ru.chainichek.neostudy.deal.model.statement.Statement;
+import ru.chainichek.neostudy.lib.loggerutils.annotation.ProducerLoggable;
 
 @Service
 @RequiredArgsConstructor
+@ProducerLoggable
 public class DossierService {
     private final KafkaTemplate<String, EmailMessage> kafkaTemplate;
     private final DossierMapper dossierMapper;

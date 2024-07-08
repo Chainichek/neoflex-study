@@ -8,7 +8,7 @@ import ru.chainichek.neostudy.deal.dto.offer.LoanOfferDto;
 import ru.chainichek.neostudy.deal.dto.offer.LoanStatementRequestDto;
 import ru.chainichek.neostudy.deal.dto.statement.FinishRegistrationRequestDto;
 import ru.chainichek.neostudy.deal.service.DealService;
-import ru.chainichek.neostudy.loggerutils.annotation.ControllerLoggable;
+import ru.chainichek.neostudy.lib.loggerutils.annotation.ControllerLoggable;
 
 import java.util.List;
 import java.util.UUID;

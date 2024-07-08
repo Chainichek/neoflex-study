@@ -14,7 +14,7 @@ import ru.chainichek.neostudy.deal.exception.ValidationException;
 import ru.chainichek.neostudy.deal.exception.WrongStatusException;
 import ru.chainichek.neostudy.deal.model.statement.ApplicationStatus;
 import ru.chainichek.neostudy.deal.model.statement.Statement;
-import ru.chainichek.neostudy.loggerutils.annotation.TransactionLoggable;
+import ru.chainichek.neostudy.lib.loggerutils.annotation.TransactionLoggable;
 
 import java.util.List;
 import java.util.UUID;
