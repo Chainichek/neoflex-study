@@ -1,6 +1,6 @@
 package ru.chainichek.neostudy.deal.dto.dossier;
 
-public record ClientDTO(String firstName,
+public record ClientDto(String firstName,
                         String lastName,
                         String middleName) {
 }

@@ -3,7 +3,7 @@ package ru.chainichek.neostudy.deal.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.chainichek.neostudy.deal.dto.calculation.CreditDto;
-import ru.chainichek.neostudy.deal.dto.dossier.ClientDTO;
+import ru.chainichek.neostudy.deal.dto.dossier.ClientDto;
 import ru.chainichek.neostudy.deal.dto.dossier.EmailMessage;
 import ru.chainichek.neostudy.deal.model.client.Client;
 import ru.chainichek.neostudy.deal.model.credit.Credit;
@@ -12,7 +12,7 @@ import ru.chainichek.neostudy.deal.model.statement.Statement;
 
 @Mapper
 public interface DossierMapper {
-    ClientDTO mapToClientDossier(Client client);
+    ClientDto mapToClientDossier(Client client);
     CreditDto mapToCreditDto(Credit credit);
 
     @Mapping(target = "statementId", source = "statement.id")
