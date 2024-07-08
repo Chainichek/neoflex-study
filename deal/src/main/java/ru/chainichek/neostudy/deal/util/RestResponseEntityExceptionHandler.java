@@ -89,14 +89,14 @@ public class RestResponseEntityExceptionHandler {
                                                              HttpServletRequest request) {
         final ErrorMessage message = new ErrorMessage(LocalDateTime.now(),
                 HttpStatus.PRECONDITION_FAILED.getReasonPhrase(),
-                HttpStatus.PRECONDITION_REQUIRED.value(),
+                HttpStatus.PRECONDITION_FAILED.value(),
                 exception.getMessage(),
                 request.getRequestURI());
 
         LOG.error(exception.getMessage(), exception);
 
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
+                .status(HttpStatus.PRECONDITION_FAILED)
                 .body(message);
     }
 
