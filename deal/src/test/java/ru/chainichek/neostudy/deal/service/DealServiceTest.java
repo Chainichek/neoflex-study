@@ -1,5 +1,6 @@
 package ru.chainichek.neostudy.deal.service;
 
+import feign.FeignException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -15,8 +16,6 @@ import ru.chainichek.neostudy.deal.dto.offer.LoanOfferDto;
 import ru.chainichek.neostudy.deal.dto.offer.LoanStatementRequestDto;
 import ru.chainichek.neostudy.deal.dto.statement.EmploymentDto;
 import ru.chainichek.neostudy.deal.dto.statement.FinishRegistrationRequestDto;
-import ru.chainichek.neostudy.deal.exception.ForbiddenException;
-import ru.chainichek.neostudy.deal.exception.ValidationException;
 import ru.chainichek.neostudy.deal.exception.WrongStatusException;
 import ru.chainichek.neostudy.deal.model.client.Client;
 import ru.chainichek.neostudy.deal.model.statement.ApplicationStatus;
@@ -147,9 +146,8 @@ class DealServiceTest {
         }
     }
 
-    @ParameterizedTest
-    @ArgumentsSource(CalcularorServiceExceptionArgumentsProvider.class)
-    void completeStatement_whenStatementApplicationIsApprovedAndCalculatorServiceThrows_ThenThrowThisException(Class<? extends RuntimeException> exceptionClass) {
+    @Test
+    void completeStatement_whenStatementApplicationIsApprovedAndCalculatorServiceThrowsFeignException_ThenThrowThisException() {
         final Statement statement = mock(Statement.class);
         final UUID uuid = mock(UUID.class);
 
@@ -161,21 +159,9 @@ class DealServiceTest {
         when(statementService.getStatement(uuid)).thenReturn(statement);
         when(statement.getStatus()).thenReturn(ApplicationStatus.APPROVED);
 
-        when(clientService.updateClientOnFinishRegistration(statement.getClient(), finishRegistrationRequest)).thenReturn(null);
+        when(calculatorService.calculateCredit(statement, finishRegistrationRequest.employment())).thenThrow(FeignException.class);
 
-        when(calculatorService.calculateCredit(statement, finishRegistrationRequest.employment())).thenThrow(exceptionClass);
-
-        assertThrows(exceptionClass, () -> dealService.completeStatement(uuid, finishRegistrationRequest));
+        assertThrows(FeignException.class, () -> dealService.completeStatement(uuid, finishRegistrationRequest));
     }
 
-
-    static final class CalcularorServiceExceptionArgumentsProvider implements ArgumentsProvider {
-        @Override
-        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
-            return Stream.of(
-                    Arguments.of(ValidationException.class),
-                    Arguments.of(ForbiddenException.class)
-            );
-        }
-    }
 }

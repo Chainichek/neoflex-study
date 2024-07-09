@@ -125,31 +125,29 @@ public class RestResponseEntityExceptionHandler {
     @ExceptionHandler(FeignException.class)
     public ResponseEntity<?> feignException(FeignException exception,
                                             HttpServletRequest request) {
-        if (!exception.contentUTF8().isEmpty()) {
 
-            if (exception.status() == 500) {
-                final InternalErrorMessage message = mapper.readValue(exception.contentUTF8(), InternalErrorMessage.class);
-                LOG.error(LogMessage.FEIGN_UNEXPECTED_EXCEPTION_LOG_MESSAGE, exception.request().url(), message);
-                return ResponseEntity
-                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(message);
-            }
+        if (exception.status() >= 500 && exception.status() < 600) {
+            final InternalErrorMessage message = mapper.readValue(exception.contentUTF8(), InternalErrorMessage.class);
+            LOG.error(LogMessage.FEIGN_UNEXPECTED_EXCEPTION_LOG_MESSAGE, exception.request().url(), message);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(message);
+        }
 
-            if (exception.status() >= 400) {
-                final ErrorMessage message = mapper.readValue(exception.contentUTF8(), ErrorMessage.class);
-                LOG.error(LogMessage.FEIGN_EXCEPTION_LOG_MESSAGE, exception.request().url(), message);
+        if (exception.status() >= 400) {
+            final ErrorMessage message = mapper.readValue(exception.contentUTF8(), ErrorMessage.class);
+            LOG.error(LogMessage.FEIGN_EXCEPTION_LOG_MESSAGE, exception.request().url(), message);
 
-                switch (exception.status()) {
-                    case 400 -> {
-                        return ResponseEntity
-                                .status(HttpStatus.BAD_REQUEST)
-                                .body(message);
-                    }
-                    case 403 -> {
-                        return ResponseEntity
-                                .status(HttpStatus.FORBIDDEN)
-                                .body(message);
-                    }
+            switch (exception.status()) {
+                case 400 -> {
+                    return ResponseEntity
+                            .status(HttpStatus.BAD_REQUEST)
+                            .body(message);
+                }
+                case 403 -> {
+                    return ResponseEntity
+                            .status(HttpStatus.FORBIDDEN)
+                            .body(message);
                 }
             }
         }
