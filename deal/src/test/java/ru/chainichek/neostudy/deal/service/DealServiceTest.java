@@ -16,6 +16,7 @@ import ru.chainichek.neostudy.deal.dto.offer.LoanOfferDto;
 import ru.chainichek.neostudy.deal.dto.offer.LoanStatementRequestDto;
 import ru.chainichek.neostudy.deal.dto.statement.EmploymentDto;
 import ru.chainichek.neostudy.deal.dto.statement.FinishRegistrationRequestDto;
+import ru.chainichek.neostudy.deal.exception.NotFoundException;
 import ru.chainichek.neostudy.deal.exception.WrongStatusException;
 import ru.chainichek.neostudy.deal.model.client.Client;
 import ru.chainichek.neostudy.deal.model.statement.ApplicationStatus;
@@ -29,7 +30,9 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -77,6 +80,19 @@ class DealServiceTest {
         when(statement.getStatus()).thenReturn(ApplicationStatus.PREAPPROVAL);
 
         assertDoesNotThrow(() -> dealService.selectOffer(offer));
+
+        verify(dossierService).sendFinishRegistration(eq(statement));
+    }
+
+    @Test
+    void selectOffer_whenStatementIsNull_ThenThrowNotFoundException() {
+        final LoanOfferDto offer = mock(LoanOfferDto.class);
+        final UUID uuid = mock(UUID.class);
+
+        when(offer.statementId()).thenReturn(uuid);
+        when(statementService.getStatement(uuid)).thenReturn(null);
+
+        assertThrows(NotFoundException.class, () -> dealService.selectOffer(offer));
     }
 
     @ParameterizedTest
@@ -121,6 +137,18 @@ class DealServiceTest {
         when(creditService.createCredit(any(CreditDto.class))).thenReturn(null);
 
         assertDoesNotThrow(() -> dealService.completeStatement(uuid, finishRegistrationRequest));
+
+        verify(dossierService).sendCreateDocuments(eq(statement));
+    }
+
+    @Test
+    void completeStatement_whenStatementIsNull_ThenThrowNotFoundException() {
+        final UUID uuid = mock(UUID.class);
+
+        final FinishRegistrationRequestDto finishRegistrationRequest = mock(FinishRegistrationRequestDto.class);
+
+        when(statementService.getStatement(uuid)).thenReturn(null);
+        assertThrows(NotFoundException.class, () -> dealService.completeStatement(uuid, finishRegistrationRequest));
     }
 
     @ParameterizedTest
@@ -147,21 +175,54 @@ class DealServiceTest {
     }
 
     @Test
-    void completeStatement_whenStatementApplicationIsApprovedAndCalculatorServiceThrowsFeignException_ThenThrowThisException() {
+    void completeStatement_whenStatementApplicationIsApprovedAndCalculatorServiceThrowsFeignExceptionWith400Status_ThenThrowThisException() {
         final Statement statement = mock(Statement.class);
         final UUID uuid = mock(UUID.class);
 
         final FinishRegistrationRequestDto finishRegistrationRequest = mock(FinishRegistrationRequestDto.class);
         final EmploymentDto employment = mock(EmploymentDto.class);
 
+        final FeignException feignException = mock(FeignException.class);
+
         when(finishRegistrationRequest.employment()).thenReturn(employment);
 
         when(statementService.getStatement(uuid)).thenReturn(statement);
         when(statement.getStatus()).thenReturn(ApplicationStatus.APPROVED);
 
-        when(calculatorService.calculateCredit(statement, finishRegistrationRequest.employment())).thenThrow(FeignException.class);
+        when(calculatorService.calculateCredit(statement, finishRegistrationRequest.employment())).thenThrow(feignException);
+        when(feignException.status()).thenReturn(400);
 
         assertThrows(FeignException.class, () -> dealService.completeStatement(uuid, finishRegistrationRequest));
+
+        verify(statementService).updateStatementOnDenied(eq(statement));
     }
+
+
+    @Test
+    void completeStatement_whenStatementApplicationIsApprovedAndCalculatorServiceThrowsFeignExceptionWith403Status_ThenThrowThisException() {
+        final Statement statement = mock(Statement.class);
+        final UUID uuid = mock(UUID.class);
+
+        final FinishRegistrationRequestDto finishRegistrationRequest = mock(FinishRegistrationRequestDto.class);
+        final EmploymentDto employment = mock(EmploymentDto.class);
+
+        final FeignException feignException = mock(FeignException.class);
+
+        when(finishRegistrationRequest.employment()).thenReturn(employment);
+
+        when(statementService.getStatement(uuid)).thenReturn(statement);
+        when(statement.getStatus()).thenReturn(ApplicationStatus.APPROVED);
+
+        when(calculatorService.calculateCredit(statement, finishRegistrationRequest.employment())).thenThrow(feignException);
+        when(feignException.status()).thenReturn(403);
+
+        assertThrows(FeignException.class, () -> dealService.completeStatement(uuid, finishRegistrationRequest));
+
+        verify(clientService).updateClientOnFinishRegistration(eq(statement.getClient()), eq(finishRegistrationRequest));
+        verify(statementService).updateStatementOnDenied(eq(statement));
+
+    }
+
+
 
 }

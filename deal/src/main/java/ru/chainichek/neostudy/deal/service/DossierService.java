@@ -1,6 +1,5 @@
 package ru.chainichek.neostudy.deal.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +17,6 @@ import ru.chainichek.neostudy.lib.loggerutils.annotation.ProducerLoggable;
 public class DossierService {
     private final KafkaTemplate<String, EmailMessage> kafkaTemplate;
     private final DossierMapper dossierMapper;
-    private final ObjectMapper objectMapper;
 
     @Value("${app.kafka.topic.finish-registration}")
     private String finishRegistration;

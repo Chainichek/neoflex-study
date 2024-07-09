@@ -38,6 +38,7 @@ public class DocumentService {
                     statement.getStatus());
         }
         statement.setStatus(ApplicationStatus.PREPARE_DOCUMENTS);
+        statementService.updateStatement(statement);
 
         dossierService.sendSendDocuments(statement);
     }
