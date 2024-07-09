@@ -31,13 +31,16 @@ public class LoggableAspect {
             within(@ru.chainichek.neostudy.lib.loggerutils.annotation.Loggable *)
             || within(@ru.chainichek.neostudy.lib.loggerutils.annotation.ControllerLoggable *)
             || within(@ru.chainichek.neostudy.lib.loggerutils.annotation.TransactionLoggable *)
-            """)
+            || within(@ru.chainichek.neostudy.lib.loggerutils.annotation.ConsumerLoggable *)
+            || within(@ru.chainichek.neostudy.lib.loggerutils.annotation.ProducerLoggable *) """)
     public void loggableTarget() {}
 
     @Pointcut("""
             @annotation(ru.chainichek.neostudy.lib.loggerutils.annotation.Loggable)
             || @annotation(ru.chainichek.neostudy.lib.loggerutils.annotation.ControllerLoggable)
             || @annotation(ru.chainichek.neostudy.lib.loggerutils.annotation.TransactionLoggable)
+            || @annotation(ru.chainichek.neostudy.lib.loggerutils.annotation.ConsumerLoggable)
+            || @annotation(ru.chainichek.neostudy.lib.loggerutils.annotation.ProducerLoggable)
             """)
     public void loggableMethod() {}
 
