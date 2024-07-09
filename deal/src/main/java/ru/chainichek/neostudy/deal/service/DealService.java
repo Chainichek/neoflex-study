@@ -1,5 +1,6 @@
 package ru.chainichek.neostudy.deal.service;
 
+import feign.FeignException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -8,9 +9,7 @@ import org.springframework.stereotype.Service;
 import ru.chainichek.neostudy.deal.dto.offer.LoanOfferDto;
 import ru.chainichek.neostudy.deal.dto.offer.LoanStatementRequestDto;
 import ru.chainichek.neostudy.deal.dto.statement.FinishRegistrationRequestDto;
-import ru.chainichek.neostudy.deal.exception.ForbiddenException;
 import ru.chainichek.neostudy.deal.exception.NotFoundException;
-import ru.chainichek.neostudy.deal.exception.ValidationException;
 import ru.chainichek.neostudy.deal.exception.WrongStatusException;
 import ru.chainichek.neostudy.deal.model.statement.ApplicationStatus;
 import ru.chainichek.neostudy.deal.model.statement.Statement;
@@ -74,20 +73,25 @@ public class DealService {
                     statement.getStatus());
         }
 
-        statement.setClient(clientService.updateClientOnFinishRegistration(statement.getClient(), finishRegistrationRequest));
-
         try {
             statement.setCredit(
                     creditService.createCredit(calculatorService.calculateCredit(statement, finishRegistrationRequest.employment()))
             );
-        } catch (ValidationException | ForbiddenException e) {
-            log.debug(LogMessage.STATEMENT_WAS_REJECTED_LOG_MESSAGE);
+        } catch (FeignException e) {
+            if (e.status() == 400 || e.status() == 403) {
+                log.debug(LogMessage.STATEMENT_WAS_REJECTED_LOG_MESSAGE);
 
-            statementService.updateStatementOnDenied(statement);
+                if (e.status() == 400) {
+                    statement.setClient(clientService.updateClientOnFinishRegistration(statement.getClient(), finishRegistrationRequest));
+                }
+
+                statementService.updateStatementOnDenied(statement);
+            }
 
             throw e;
         }
 
+        statement.setClient(clientService.updateClientOnFinishRegistration(statement.getClient(), finishRegistrationRequest));
         statement.setStatus(ApplicationStatus.CC_APPROVED);
         statementService.updateStatement(statement);
 
