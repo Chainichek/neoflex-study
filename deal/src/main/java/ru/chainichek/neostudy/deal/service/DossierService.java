@@ -6,7 +6,7 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-import ru.chainichek.neostudy.deal.dto.dossier.EmailMessage;
+import ru.chainichek.neostudy.deal.dto.message.EmailMessage;
 import ru.chainichek.neostudy.deal.mapper.DossierMapper;
 import ru.chainichek.neostudy.deal.model.dossier.EmailTheme;
 import ru.chainichek.neostudy.deal.model.statement.Statement;
@@ -34,39 +34,27 @@ public class DossierService {
     private String statementDenied;
 
     public void sendFinishRegistration(Statement statement) {
-        kafkaTemplate.send(finishRegistration, dossierMapper.mapToEmailMessage(statement,
-                EmailTheme.FINISH_REGISTRATION,
-                null));
+        kafkaTemplate.send(finishRegistration, dossierMapper.mapToEmailMessage(statement, EmailTheme.FINISH_REGISTRATION));
     }
 
     public void sendCreateDocuments(Statement statement) {
-        kafkaTemplate.send(createDocuments, dossierMapper.mapToEmailMessage(statement,
-                EmailTheme.CREATE_DOCUMENTS,
-                null));
+        kafkaTemplate.send(createDocuments, dossierMapper.mapToEmailMessage(statement, EmailTheme.CREATE_DOCUMENTS));
     }
 
     @SneakyThrows
     public void sendSendDocuments(Statement statement) {
-        kafkaTemplate.send(sendDocuments, dossierMapper.mapToEmailMessage(statement,
-                EmailTheme.SEND_DOCUMENTS,
-                objectMapper.writeValueAsString(dossierMapper.mapToCreditDto(statement.getCredit()))));
+        kafkaTemplate.send(sendDocuments, dossierMapper.mapToEmailMessage(statement, EmailTheme.SEND_DOCUMENTS));
     }
 
     public void sendSendSes(Statement statement) {
-        kafkaTemplate.send(sendSes, dossierMapper.mapToEmailMessage(statement,
-                EmailTheme.SEND_SES,
-                statement.getSesCode()));
+        kafkaTemplate.send(sendSes, dossierMapper.mapToEmailMessage(statement, EmailTheme.SEND_SES));
     }
 
     public void sendCreditIssued(Statement statement) {
-        kafkaTemplate.send(creditIssued, dossierMapper.mapToEmailMessage(statement,
-                EmailTheme.CREDIT_ISSUED,
-                null));
+        kafkaTemplate.send(creditIssued, dossierMapper.mapToEmailMessage(statement, EmailTheme.CREDIT_ISSUED));
     }
 
     public void sendStatementDenied(Statement statement) {
-        kafkaTemplate.send(statementDenied, dossierMapper.mapToEmailMessage(statement,
-                EmailTheme.STATEMENT_DENIED,
-                null));
+        kafkaTemplate.send(statementDenied, dossierMapper.mapToEmailMessage(statement, EmailTheme.STATEMENT_DENIED));
     }
 }
