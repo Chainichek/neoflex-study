@@ -32,8 +32,8 @@ public class MailService {
 
     public void sendSimpleMail(@NonNull String to,
                                @NonNull EmailTheme theme) {
-        String subject = null;
-        String body = null;
+        String subject;
+        String body;
 
         switch (theme) {
             case FINISH_REGISTRATION -> {
@@ -54,7 +54,7 @@ public class MailService {
             }
             default -> {
                 log.debug("Can't go further and throwing exception because followed theme is not allowed in this method: {}", theme);
-                throw new IllegalStateException("Unexpected value of email theme: %s".formatted(theme));
+                throw new IllegalArgumentException("Unexpected value of email theme: %s".formatted(theme));
             }
         }
 
