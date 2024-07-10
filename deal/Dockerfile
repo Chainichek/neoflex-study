@@ -2,7 +2,7 @@ FROM maven:3.8.5-openjdk-17-slim AS build
 
 WORKDIR /app
 
-COPY --from=neostudy-lib /app/lib/logger-utils.jar ./lib/logger-utils.jar
+COPY --from=neostudy_lib /app/lib/logger-utils.jar ./lib/logger-utils.jar
 
 RUN mvn install:install-file  \
     -Dfile=/app/lib/logger-utils.jar  \
