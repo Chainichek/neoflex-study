@@ -8,6 +8,6 @@ public enum ApplicationStatus {
     PREPARE_DOCUMENTS,
     DOCUMENTS_CREATED,
     CLIENT_DENIED,
-    DOCUMENT_SIGNED,
+    DOCUMENTS_SIGNED,
     CREDIT_ISSUED
 }

@@ -15,7 +15,7 @@ import ru.chainichek.neostudy.calculator.exception.ForbiddenException;
 import ru.chainichek.neostudy.calculator.model.EmploymentStatus;
 import ru.chainichek.neostudy.calculator.model.Gender;
 import ru.chainichek.neostudy.calculator.model.MaritalStatus;
-import ru.chainichek.neostudy.calculator.model.Position;
+import ru.chainichek.neostudy.calculator.model.EmploymentPosition;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -287,7 +287,7 @@ class LoanCalculationServiceTest {
     @ParameterizedTest
     @ArgumentsSource(ScoreRateArgumentsProvider.class)
     void calculateScoreRate(EmploymentStatus employmentStatus,
-                            Position position,
+                            EmploymentPosition position,
                             MaritalStatus maritalStatus,
                             Gender gender,
                             LocalDate birthdate,
@@ -317,18 +317,18 @@ class LoanCalculationServiceTest {
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
             return Stream.of(
-                    Arguments.of(EmploymentStatus.EMPLOYED, Position.OTHER, MaritalStatus.SINGLE, Gender.MALE, LocalDate.now().minusYears(20), false, false, BigDecimal.valueOf(16)),
-                    Arguments.of(EmploymentStatus.SELF_EMPLOYED, Position.OTHER, MaritalStatus.SINGLE, Gender.MALE, LocalDate.now().minusYears(20), false, false, BigDecimal.valueOf(18)),
-                    Arguments.of(EmploymentStatus.BUSINESS_OWNER, Position.OTHER, MaritalStatus.SINGLE, Gender.MALE, LocalDate.now().minusYears(20), false, false, BigDecimal.valueOf(19)),
-                    Arguments.of(EmploymentStatus.EMPLOYED, Position.MIDDLE_MANAGER, MaritalStatus.SINGLE, Gender.MALE, LocalDate.now().minusYears(20), false, false, BigDecimal.valueOf(14)),
-                    Arguments.of(EmploymentStatus.EMPLOYED, Position.TOP_MANAGER, MaritalStatus.SINGLE, Gender.MALE, LocalDate.now().minusYears(20), false, false, BigDecimal.valueOf(13)),
-                    Arguments.of(EmploymentStatus.EMPLOYED, Position.OTHER, MaritalStatus.SINGLE, Gender.FEMALE, LocalDate.now().minusYears(20), false, false, BigDecimal.valueOf(16)),
-                    Arguments.of(EmploymentStatus.EMPLOYED, Position.OTHER, MaritalStatus.SINGLE, Gender.MALE, LocalDate.now().minusYears(40), false, false, BigDecimal.valueOf(13)),
-                    Arguments.of(EmploymentStatus.EMPLOYED, Position.OTHER, MaritalStatus.SINGLE, Gender.FEMALE, LocalDate.now().minusYears(40), false, false, BigDecimal.valueOf(13)),
-                    Arguments.of(EmploymentStatus.EMPLOYED, Position.OTHER, MaritalStatus.MARRIED, Gender.MALE, LocalDate.now().minusYears(20), false, false, BigDecimal.valueOf(13)),
-                    Arguments.of(EmploymentStatus.EMPLOYED, Position.OTHER, MaritalStatus.DIVORCED, Gender.MALE, LocalDate.now().minusYears(20), false, false, BigDecimal.valueOf(17)),
-                    Arguments.of(EmploymentStatus.EMPLOYED, Position.OTHER, MaritalStatus.SINGLE, Gender.MALE, LocalDate.now().minusYears(20), true, false, BigDecimal.valueOf(13)),
-                    Arguments.of(EmploymentStatus.EMPLOYED, Position.OTHER, MaritalStatus.SINGLE, Gender.MALE, LocalDate.now().minusYears(20), false, true, BigDecimal.valueOf(15))
+                    Arguments.of(EmploymentStatus.EMPLOYED, EmploymentPosition.WORKER, MaritalStatus.SINGLE, Gender.MALE, LocalDate.now().minusYears(20), false, false, BigDecimal.valueOf(16)),
+                    Arguments.of(EmploymentStatus.SELF_EMPLOYED, EmploymentPosition.WORKER, MaritalStatus.SINGLE, Gender.MALE, LocalDate.now().minusYears(20), false, false, BigDecimal.valueOf(18)),
+                    Arguments.of(EmploymentStatus.BUSINESS_OWNER, EmploymentPosition.WORKER, MaritalStatus.SINGLE, Gender.MALE, LocalDate.now().minusYears(20), false, false, BigDecimal.valueOf(19)),
+                    Arguments.of(EmploymentStatus.EMPLOYED, EmploymentPosition.MIDDLE_MANAGER, MaritalStatus.SINGLE, Gender.MALE, LocalDate.now().minusYears(20), false, false, BigDecimal.valueOf(14)),
+                    Arguments.of(EmploymentStatus.EMPLOYED, EmploymentPosition.TOP_MANAGER, MaritalStatus.SINGLE, Gender.MALE, LocalDate.now().minusYears(20), false, false, BigDecimal.valueOf(13)),
+                    Arguments.of(EmploymentStatus.EMPLOYED, EmploymentPosition.WORKER, MaritalStatus.SINGLE, Gender.FEMALE, LocalDate.now().minusYears(20), false, false, BigDecimal.valueOf(16)),
+                    Arguments.of(EmploymentStatus.EMPLOYED, EmploymentPosition.WORKER, MaritalStatus.SINGLE, Gender.MALE, LocalDate.now().minusYears(40), false, false, BigDecimal.valueOf(13)),
+                    Arguments.of(EmploymentStatus.EMPLOYED, EmploymentPosition.WORKER, MaritalStatus.SINGLE, Gender.FEMALE, LocalDate.now().minusYears(40), false, false, BigDecimal.valueOf(13)),
+                    Arguments.of(EmploymentStatus.EMPLOYED, EmploymentPosition.WORKER, MaritalStatus.MARRIED, Gender.MALE, LocalDate.now().minusYears(20), false, false, BigDecimal.valueOf(13)),
+                    Arguments.of(EmploymentStatus.EMPLOYED, EmploymentPosition.WORKER, MaritalStatus.DIVORCED, Gender.MALE, LocalDate.now().minusYears(20), false, false, BigDecimal.valueOf(17)),
+                    Arguments.of(EmploymentStatus.EMPLOYED, EmploymentPosition.WORKER, MaritalStatus.SINGLE, Gender.MALE, LocalDate.now().minusYears(20), true, false, BigDecimal.valueOf(13)),
+                    Arguments.of(EmploymentStatus.EMPLOYED, EmploymentPosition.WORKER, MaritalStatus.SINGLE, Gender.MALE, LocalDate.now().minusYears(20), false, true, BigDecimal.valueOf(15))
             );
         }
     }

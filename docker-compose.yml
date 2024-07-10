@@ -1,5 +1,10 @@
 version: '3.8'
 services:
+  neostudy_lib:
+    image: neostudy_lib
+    container_name: neostudy-lib-container
+    build:
+      context: ./lib
   calculator-app:
     container_name: ${CALCULATOR_CONTAINER_NAME}
     env_file:
@@ -10,6 +15,8 @@ services:
       - "${CALCULATOR_SERVER_PORT}:${CALCULATOR_SERVER_PORT}"
     environment:
       SERVER_PORT: ${CALCULATOR_SERVER_PORT}
+    depends_on:
+      - neostudy_lib
   deal-app:
     container_name: ${DEAL_CONTAINER_NAME}
     env_file:
@@ -25,7 +32,9 @@ services:
       CALCULATOR_SERVICE_HOST: "${CALCULATOR_CONTAINER_NAME}:${CALCULATOR_SERVER_PORT}"
       SERVER_PORT: ${DEAL_SERVER_PORT}
     depends_on:
+      - neostudy_lib
       - calculator-app
+      - kafka
   statement-app:
     container_name: ${STATEMENT_CONTAINER_NAME}
     env_file:
@@ -37,3 +46,61 @@ services:
     environment:
       DEAL_SERVICE_HOST: "${DEAL_CONTAINER_NAME}:${DEAL_SERVER_PORT}"
       SERVER_PORT: ${STATEMENT_SERVER_PORT}
+    depends_on:
+      - neostudy_lib
+      - deal-app
+#  dossier-app:
+#    container_name: ${DOSSIER_CONTAINER_NAME}
+#    env_file:
+#      - .env
+#    build:
+#      context: ./statement
+#    ports:
+#      - "${DOSSIER_SERVER_PORT}:${DOSSIER_SERVER_PORT}"
+#    environment:
+#      DEAL_SERVICE_HOST: "${DEAL_CONTAINER_NAME}:${DEAL_SERVER_PORT}"
+#      SERVER_PORT: ${DOSSIER_SERVER_PORT}
+#    depends_on:
+#      - neostudy-lib
+#      - deal-app
+#      - kafka
+#  zookeeper:
+#    image: wurstmeister/zookeeper:latest
+#    ports:
+#      - "2181:2181"
+#  kafka:
+#    image: wurstmeister/kafka:latest
+#    ports:
+#      - "9092:9092"
+#    expose:
+#      - "9093"
+#    environment:
+#      KAFKA_LISTENERS: INSIDE://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
+#      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9093,OUTSIDE://localhost:9092
+#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+#      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+#    depends_on:
+#      - zookeeper
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    ports:
+      - "2181:2181"
+  kafka:
+    image: wurstmeister/kafka:latest
+    ports:
+      - "9092:9092"
+    expose:
+      - "9093"
+    environment:
+      KAFKA_LISTENERS: INSIDE://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9093,OUTSIDE://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    depends_on:
+      - zookeeper
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

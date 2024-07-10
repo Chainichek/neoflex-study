@@ -24,15 +24,15 @@ import ru.chainichek.neostudy.calculator.dto.util.InternalErrorMessage;
 import java.util.List;
 
 @RequestMapping("/calculator")
-@Tag(name = "Calculator", description = "Вычисляет условия и график кредитования")
+@Tag(name = "Calculator", description = "Calculates loan terms and schedule")
 public interface CalculatorApi {
 
-    @Operation(summary = "Расчёт возможных условий кредита",
-            description = "Принимает заявку на кредит и возвращает список возможных условий кредитования")
+    @Operation(summary = "Calculation of possible loan terms",
+            description = "Accepts a loan application and returns a list of possible loan terms")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200",
-                            description = "Список возможных условий кредита",
+                            description = "List of possible loan terms",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                                     array = @ArraySchema(
@@ -41,14 +41,14 @@ public interface CalculatorApi {
                             )
                     ),
                     @ApiResponse(responseCode = "400",
-                            description = "Некорректные данные запроса",
+                            description = "Invalid request data",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = ErrorMessage.class)
                             )
                     ),
                     @ApiResponse(responseCode = "500",
-                            description = "Внутренняя ошибка сервера",
+                            description = "Internal server error",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = InternalErrorMessage.class)
@@ -59,30 +59,30 @@ public interface CalculatorApi {
     @PostMapping("/offers")
     ResponseEntity<List<LoanOfferDto>> getOffers(@RequestBody @Valid @NotNull LoanStatementRequestDto loanStatementRequest);
 
-    @Operation(summary = "Валидация присланных данных + полный расчет параметров кредита",
-            description = "Проводит валидацию данных заявки на кредит и выполняет полный расчет параметров кредита")
+    @Operation(summary = "Validation of submitted data + full calculation of loan parameters",
+            description = "Validates the loan application data and performs a full calculation of loan parameters")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
-                    description = "Параметры кредита",
+                    description = "Loan parameters",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = CreditDto.class)
                     )
             ),
             @ApiResponse(responseCode = "400",
-                    description = "Некорректные данные запроса",
+                    description = "Invalid request data",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorMessage.class)
                     )
             ),
             @ApiResponse(responseCode = "403",
-                    description = "Отказ заявки на кредит",
+                    description = "Loan application rejection",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorMessage.class)
                     )
             ),
             @ApiResponse(responseCode = "500",
-                    description = "Внутренняя ошибка сервера",
+                    description = "Internal server error",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = InternalErrorMessage.class)
