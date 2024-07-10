@@ -35,3 +35,4 @@ build/
 /mvnw
 /mvnw.cmd
 /.env
+/k8s/secret.yaml

@@ -148,4 +148,5 @@ public interface DealApi {
     @PostMapping("/calculate/{statementId}")
     ResponseEntity<Void> completeStatement(@PathVariable("statementId") UUID statementId,
                                            @RequestBody @NotNull FinishRegistrationRequestDto finishRegistrationRequest);
+
 }
