@@ -115,6 +115,18 @@ class WebMvcDealControllerTest {
 
     @SneakyThrows
     @Test
+    void createStatement_whenRequestIsWrongFormat_ThenReturnBadRequestErrorMessage() {
+        String response = mockMvc.perform(post("/deal/statement")
+                        .content("\"term\": sa")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andReturn().getResponse().getContentAsString();
+
+        assertDoesNotThrow(() -> objectMapper.readValue(response, ErrorMessage.class));
+    }
+
+    @SneakyThrows
+    @Test
     void createStatement_whenServiceThrowsRuntimeException_ThenReturnInternalErrorMessage() {
         doThrow(RuntimeException.class).when(dealService).createStatement(any());
 

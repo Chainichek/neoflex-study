@@ -32,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -223,6 +224,30 @@ class DealServiceTest {
 
     }
 
+    @Test
+    void completeStatement_whenStatementApplicationIsApprovedAndCalculatorServiceThrowsFeignExceptionWithAnotherStatus_ThenThrowThisException() {
+        final Statement statement = mock(Statement.class);
+        final UUID uuid = mock(UUID.class);
+
+        final FinishRegistrationRequestDto finishRegistrationRequest = mock(FinishRegistrationRequestDto.class);
+        final EmploymentDto employment = mock(EmploymentDto.class);
+
+        final FeignException feignException = mock(FeignException.class);
+
+        when(finishRegistrationRequest.employment()).thenReturn(employment);
+
+        when(statementService.getStatement(uuid)).thenReturn(statement);
+        when(statement.getStatus()).thenReturn(ApplicationStatus.APPROVED);
+
+        when(calculatorService.calculateCredit(statement, finishRegistrationRequest.employment())).thenThrow(feignException);
+        when(feignException.status()).thenReturn(500);
+
+        assertThrows(FeignException.class, () -> dealService.completeStatement(uuid, finishRegistrationRequest));
+
+        verify(clientService, never()).updateClientOnFinishRegistration(eq(statement.getClient()), eq(finishRegistrationRequest));
+        verify(statementService, never()).updateStatementOnDenied(eq(statement));
+
+    }
 
 
 }
