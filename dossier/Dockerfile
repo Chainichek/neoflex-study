@@ -2,7 +2,7 @@ FROM maven:3.8.5-openjdk-17-slim AS build
 
 WORKDIR /app
 
-COPY --from=neostudy-lib /app/lib/logger-utils.jar ./lib/logger-utils.jar
+COPY --from=neostudy_lib /app/lib/logger-utils.jar ./lib/logger-utils.jar
 
 RUN mvn install:install-file  \
     -Dfile=/app/lib/logger-utils.jar  \
@@ -20,7 +20,7 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-COPY --from=build /app/target/dossier-0.0.1-SNAPSHOT.jar ./dossier.jar
+COPY --from=build /app/target/dossier-1.0.0-SNAPSHOT.jar ./dossier.jar
 
 EXPOSE 8080
 
