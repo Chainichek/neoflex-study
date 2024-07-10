@@ -87,6 +87,7 @@ public class EmbeddedKafkaDossierServiceTest {
         consumerProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         consumerProps.put(JsonDeserializer.VALUE_DEFAULT_TYPE, EmailMessage.class);
+        consumerProps.put(JsonDeserializer.TYPE_MAPPINGS, "EmailMessage:%s".formatted(EmailMessage.class.getCanonicalName()));
 
         DefaultKafkaConsumerFactory<String, EmailMessage> consumerFactory = new DefaultKafkaConsumerFactory<>(consumerProps);
 
