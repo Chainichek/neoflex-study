@@ -13,7 +13,7 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-COPY --from=build /app/target/calculator-0.0.1-SNAPSHOT.jar ./calculator.jar
+COPY --from=build /app/target/calculator-1.0.1-SNAPSHOT.jar ./calculator.jar
 
 EXPOSE 8080
 
