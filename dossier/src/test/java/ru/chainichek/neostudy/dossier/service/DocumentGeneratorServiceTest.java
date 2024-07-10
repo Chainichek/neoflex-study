@@ -10,6 +10,11 @@ import ru.chainichek.neostudy.dossier.dto.admin.ClientDto;
 import ru.chainichek.neostudy.dossier.dto.admin.CreditDto;
 import ru.chainichek.neostudy.dossier.dto.admin.PassportDto;
 import ru.chainichek.neostudy.dossier.dto.admin.StatementDto;
+import ru.chainichek.neostudy.dossier.dto.calculation.PaymentScheduleElementDto;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -33,10 +38,24 @@ class DocumentGeneratorServiceTest {
         ClientDto client = mock(ClientDto.class);
         PassportDto passport = mock(PassportDto.class);
         CreditDto credit = mock(CreditDto.class);
+        PaymentScheduleElementDto paymentScheduleElement = mock(PaymentScheduleElementDto.class);
+        List<PaymentScheduleElementDto> paymentSchedule = List.of(
+                paymentScheduleElement,
+                paymentScheduleElement,
+                paymentScheduleElement
+        );
 
         when(statement.credit()).thenReturn(credit);
         when(statement.client()).thenReturn(client);
         when(client.passport()).thenReturn(passport);
+        when(credit.paymentSchedule()).thenReturn(paymentSchedule);
+
+        when(paymentScheduleElement.number()).thenReturn(1);
+        when(paymentScheduleElement.date()).thenReturn(LocalDate.now());
+        when(paymentScheduleElement.debtPayment()).thenReturn(BigDecimal.ZERO);
+        when(paymentScheduleElement.interestPayment()).thenReturn(BigDecimal.ZERO);
+        when(paymentScheduleElement.totalPayment()).thenReturn(BigDecimal.ZERO);
+        when(paymentScheduleElement.remainingDebt()).thenReturn(BigDecimal.ZERO);
 
         when(documentMessageSource.getMessage(any(), any(), any())).thenReturn("");
 

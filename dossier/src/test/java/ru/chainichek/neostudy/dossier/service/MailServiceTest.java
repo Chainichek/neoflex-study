@@ -57,7 +57,7 @@ class MailServiceTest {
         public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
             return Stream.of(Arguments.of(EmailTheme.FINISH_REGISTRATION),
                     Arguments.of(EmailTheme.CREATE_DOCUMENTS),
-                    Arguments.of(EmailTheme.CREATE_DOCUMENTS),
+                    Arguments.of(EmailTheme.CREDIT_ISSUED),
                     Arguments.of(EmailTheme.STATEMENT_DENIED));
         }
     }

@@ -41,10 +41,8 @@ class DealServiceTest {
 
     @Test
     void updateStatementStatus() {
-        ApplicationStatus applicationStatus = mock(ApplicationStatus.class);
+        dealService.updateStatementStatus(statementId);
 
-        dealClient.updateStatus(statementId, applicationStatus);
-
-        verify(dealClient).updateStatus(eq(statementId), eq(applicationStatus));
+        verify(dealClient).updateStatus(eq(statementId), eq(ApplicationStatus.DOCUMENTS_CREATED));
     }
 }
