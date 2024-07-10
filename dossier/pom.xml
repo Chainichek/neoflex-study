@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>ru.chainichek.neostudy</groupId>
 	<artifactId>dossier</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>dossier</name>
 	<description>dossier</description>
 	<url/>
