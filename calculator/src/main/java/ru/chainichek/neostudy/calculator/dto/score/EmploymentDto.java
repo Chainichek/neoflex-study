@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import ru.chainichek.neostudy.calculator.model.EmploymentStatus;
-import ru.chainichek.neostudy.calculator.model.Position;
+import ru.chainichek.neostudy.calculator.model.EmploymentPosition;
 import ru.chainichek.neostudy.calculator.util.Validation;
 import ru.chainichek.neostudy.calculator.util.ValidationMessage;
 
@@ -26,7 +26,7 @@ public record EmploymentDto(@NotNull
                             @NotNull @DecimalMin(value = Validation.SALARY_MIN, message = ValidationMessage.SALARY_MESSAGE)
                             BigDecimal salary,
                             @NotNull
-                            Position position,
+                            EmploymentPosition position,
                             @NotNull @Min(value = Validation.WORK_EXPERIENCE_MIN, message = ValidationMessage.WORK_EXPERIENCE_MESSAGE)
                             @Schema(example = "18")
                             Integer workExperienceTotal,
