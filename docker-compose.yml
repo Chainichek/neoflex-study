@@ -1,7 +1,7 @@
 version: '3.8'
 services:
-  neostudy-lib:
-    image: neostudy-lib:latest
+  neostudy_lib:
+    image: neostudy_lib
     container_name: neostudy-lib-container
     build:
       context: ./lib
@@ -16,7 +16,7 @@ services:
     environment:
       SERVER_PORT: ${CALCULATOR_SERVER_PORT}
     depends_on:
-      - neostudy-lib
+      - neostudy_lib
   deal-app:
     container_name: ${DEAL_CONTAINER_NAME}
     env_file:
@@ -32,7 +32,7 @@ services:
       CALCULATOR_SERVICE_HOST: "${CALCULATOR_CONTAINER_NAME}:${CALCULATOR_SERVER_PORT}"
       SERVER_PORT: ${DEAL_SERVER_PORT}
     depends_on:
-      - neostudy-lib
+      - neostudy_lib
       - calculator-app
       - kafka
   statement-app:
@@ -47,7 +47,7 @@ services:
       DEAL_SERVICE_HOST: "${DEAL_CONTAINER_NAME}:${DEAL_SERVER_PORT}"
       SERVER_PORT: ${STATEMENT_SERVER_PORT}
     depends_on:
-      - neostudy-lib
+      - neostudy_lib
       - deal-app
 #  dossier-app:
 #    container_name: ${DOSSIER_CONTAINER_NAME}
