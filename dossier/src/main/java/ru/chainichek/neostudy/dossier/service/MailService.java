@@ -25,6 +25,8 @@ public class MailService {
     private final MessageSource mailMessageSource;
     private final Locale defaultLocale;
 
+    @Value("${app.message.send-ses.api-path}")
+    private String sendSesApiPath;
     @Value("${app.message.send-ses.base-path}")
     private String sendSesBasePath;
     @Value("${app.message.send-ses.send-path}")
@@ -86,7 +88,7 @@ public class MailService {
         message.setTo(to);
         message.setSubject(mailMessageSource.getMessage("mail.send-ses.subject", null, defaultLocale));
         message.setText(mailMessageSource.getMessage("mail.send-ses.body",
-                new Object[]{"%s/%s/%s".formatted(sendSesBasePath, statementId, sendSesSendPath), sesCode},
+                new Object[]{"%s%s/%s%s".formatted(sendSesApiPath, sendSesBasePath, statementId, sendSesSendPath), sesCode},
                 defaultLocale));
         mailSender.send(message);
     }
