@@ -18,7 +18,7 @@ import ru.chainichek.neostudy.calculator.dto.score.ScoringDataDto;
 import ru.chainichek.neostudy.calculator.model.EmploymentStatus;
 import ru.chainichek.neostudy.calculator.model.Gender;
 import ru.chainichek.neostudy.calculator.model.MaritalStatus;
-import ru.chainichek.neostudy.calculator.model.Position;
+import ru.chainichek.neostudy.calculator.model.EmploymentPosition;
 import ru.chainichek.neostudy.calculator.service.CalculatorService;
 
 import java.math.BigDecimal;
@@ -94,7 +94,7 @@ class WebMvcCalculatorControllerTest {
                         EmploymentStatus.SELF_EMPLOYED,
                         "251112724508",
                         new BigDecimal("19242"),
-                        Position.MIDDLE_MANAGER,
+                        EmploymentPosition.MIDDLE_MANAGER,
                         18,
                         3
                 ),
