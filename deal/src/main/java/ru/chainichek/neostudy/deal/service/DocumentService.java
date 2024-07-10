@@ -12,6 +12,7 @@ import ru.chainichek.neostudy.deal.model.statement.ApplicationStatus;
 import ru.chainichek.neostudy.deal.model.statement.Statement;
 import ru.chainichek.neostudy.lib.loggerutils.annotation.TransactionLoggable;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Slf4j
@@ -82,6 +83,7 @@ public class DocumentService {
             throw new ForbiddenException(ExceptionMessage.INVALID_SES_CODE_MESSAGE.formatted(statement.getId()));
         }
 
+        statement.setSignDate(LocalDateTime.now());
         statement.setStatus(ApplicationStatus.DOCUMENTS_SIGNED);
         statement.setStatus(ApplicationStatus.CREDIT_ISSUED);
 
