@@ -1,0 +1,26 @@
+package ru.chainichek.neostudy.dossier.service;
+
+import lombok.AllArgsConstructor;
+import org.slf4j.event.Level;
+import org.springframework.stereotype.Service;
+import ru.chainichek.neostudy.dossier.client.DealClient;
+import ru.chainichek.neostudy.dossier.model.statement.ApplicationStatus;
+import ru.chainichek.neostudy.dossier.dto.admin.StatementDto;
+import ru.chainichek.neostudy.lib.loggerutils.annotation.Loggable;
+
+import java.util.UUID;
+
+@Service
+@AllArgsConstructor
+@Loggable(Level.DEBUG)
+public class DealService {
+    private final DealClient dealClient;
+
+    public StatementDto getStatement(UUID statementId) {
+        return dealClient.getStatement(statementId);
+    }
+
+    public void updateStatementStatus(UUID statementId) {
+        dealClient.updateStatus(statementId, ApplicationStatus.DOCUMENTS_CREATED);
+    }
+}
