@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import ru.chainichek.neostudy.deal.dto.admin.StatementDto;
 import ru.chainichek.neostudy.deal.dto.util.ErrorMessage;
 import ru.chainichek.neostudy.deal.dto.util.InternalErrorMessage;
 import ru.chainichek.neostudy.deal.model.statement.ApplicationStatus;
@@ -54,7 +55,7 @@ public interface AdminApi {
             )
     })
     @GetMapping("/statement/{statementId}")
-    ResponseEntity<Statement> getStatement(@PathVariable("statementId") UUID statementId);
+    ResponseEntity<StatementDto> getStatement(@PathVariable("statementId") UUID statementId);
     @Operation(
             summary = "Updating statement status",
             description = "Updates statement status with following id"

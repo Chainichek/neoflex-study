@@ -5,8 +5,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ru.chainichek.neostudy.deal.dto.admin.StatementDto;
 import ru.chainichek.neostudy.deal.model.statement.ApplicationStatus;
-import ru.chainichek.neostudy.deal.model.statement.Statement;
 import ru.chainichek.neostudy.deal.service.AdminService;
 
 import java.util.UUID;
@@ -30,11 +30,11 @@ class AdminControllerTest {
 
     @Test
     void getStatement() {
-        Statement statement = mock(Statement.class);
+        StatementDto statement = mock(StatementDto.class);
 
         when(adminService.getStatement(statementId)).thenReturn(statement);
 
-        Statement result = adminController.getStatement(statementId).getBody();
+        StatementDto result = adminController.getStatement(statementId).getBody();
 
         assertEquals(statement, result);
         verify(adminService).getStatement(eq(statementId));

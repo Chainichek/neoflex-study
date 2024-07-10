@@ -73,6 +73,8 @@ public class DealService {
                     statement.getStatus());
         }
 
+        statement.setClient(clientService.updateClientOnFinishRegistration(statement.getClient(), finishRegistrationRequest));
+
         try {
             statement.setCredit(
                     creditService.createCredit(calculatorService.calculateCredit(statement, finishRegistrationRequest.employment()))
@@ -81,17 +83,12 @@ public class DealService {
             if (e.status() == 400 || e.status() == 403) {
                 log.debug(LogMessage.STATEMENT_WAS_REJECTED_LOG_MESSAGE);
 
-                if (e.status() == 403) {
-                    statement.setClient(clientService.updateClientOnFinishRegistration(statement.getClient(), finishRegistrationRequest));
-                }
-
                 statementService.updateStatementOnDenied(statement);
             }
 
             throw e;
         }
 
-        statement.setClient(clientService.updateClientOnFinishRegistration(statement.getClient(), finishRegistrationRequest));
         statement.setStatus(ApplicationStatus.CC_APPROVED);
         statementService.updateStatement(statement);
 

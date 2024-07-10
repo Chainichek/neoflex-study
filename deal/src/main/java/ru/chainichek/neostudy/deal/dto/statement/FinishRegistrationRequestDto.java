@@ -1,5 +1,6 @@
 package ru.chainichek.neostudy.deal.dto.statement;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
@@ -26,5 +27,6 @@ public record FinishRegistrationRequestDto(@NotNull
                                            @NotNull
                                            EmploymentDto employment,
                                            @NotBlank @Size(max = ACCOUNT_NUMBER_SIZE_MAX)
+                                           @Schema(example = "56124077316637873701")
                                            String accountNumber) {
 }

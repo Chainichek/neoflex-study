@@ -5,7 +5,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ru.chainichek.neostudy.deal.dto.admin.StatementDto;
 import ru.chainichek.neostudy.deal.exception.NotFoundException;
+import ru.chainichek.neostudy.deal.mapper.AdminMapper;
 import ru.chainichek.neostudy.deal.model.statement.ApplicationStatus;
 import ru.chainichek.neostudy.deal.model.statement.Statement;
 
@@ -24,12 +26,15 @@ class AdminServiceTest {
     AdminService adminService;
     @Mock
     StatementService statementService;
+    @Mock
+    AdminMapper adminMapper;
 
     @Test
     void getStatement_whenStatementIsNotNull_returnStatement() {
-        Statement statement = mock(Statement.class);
-        when(statementService.getStatement(any())).thenReturn(statement);
-
+        Statement statementEntity = mock(Statement.class);
+        StatementDto statement = mock(StatementDto.class);
+        when(statementService.getStatement(any())).thenReturn(statementEntity);
+        when(adminMapper.mapToStatementDto(statementEntity)).thenReturn(statement);
         assertEquals(statement, adminService.getStatement(mock(UUID.class)));
     }
 

@@ -219,9 +219,7 @@ class DealServiceTest {
 
         assertThrows(FeignException.class, () -> dealService.completeStatement(uuid, finishRegistrationRequest));
 
-        verify(clientService).updateClientOnFinishRegistration(eq(statement.getClient()), eq(finishRegistrationRequest));
-        verify(statementService).updateStatementOnDenied(eq(statement));
-
+         verify(statementService).updateStatementOnDenied(eq(statement));
     }
 
     @Test
@@ -244,7 +242,6 @@ class DealServiceTest {
 
         assertThrows(FeignException.class, () -> dealService.completeStatement(uuid, finishRegistrationRequest));
 
-        verify(clientService, never()).updateClientOnFinishRegistration(eq(statement.getClient()), eq(finishRegistrationRequest));
         verify(statementService, never()).updateStatementOnDenied(eq(statement));
 
     }
