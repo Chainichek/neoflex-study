@@ -1,6 +1,7 @@
 package ru.chainichek.neostudy.dossier.service;
 
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,18 +18,18 @@ public class DossierService {
     private final DocumentGeneratorService documentGeneratorService;
 
     @KafkaListener(topics = "${app.kafka.topic.finish-registration}", groupId = "${spring.kafka.consumer.group-id}")
-    public void listenFinishRegistration(EmailMessage message) {
+    public void listenFinishRegistration(@NonNull EmailMessage message) {
         mailService.sendSimpleMail(message.address(), message.theme());
     }
 
     @KafkaListener(topics = "${app.kafka.topic.create-documents}", groupId = "${spring.kafka.consumer.group-id}")
-    public void listenCreateDocuments(EmailMessage message) {
+    public void listenCreateDocuments(@NonNull EmailMessage message) {
         mailService.sendSimpleMail(message.address(), message.theme());
     }
 
     @KafkaListener(topics = "${app.kafka.topic.send-documents}", groupId = "${spring.kafka.consumer.group-id}")
     @Transactional
-    public void listenSendDocuments(EmailMessage message) {
+    public void listenSendDocuments(@NonNull EmailMessage message) {
         final StatementDto statement = dealService.getStatement(message.statementId());
         mailService.sendDocumentMail(message.address(), message.statementId(),
                 documentGeneratorService.generateDocument(statement));
@@ -37,18 +38,18 @@ public class DossierService {
 
     @KafkaListener(topics = "${app.kafka.topic.send-ses}", groupId = "${spring.kafka.consumer.group-id}")
     @Transactional
-    public void listenSendSes(EmailMessage message) {
+    public void listenSendSes(@NonNull EmailMessage message) {
         final StatementDto statement = dealService.getStatement(message.statementId());
         mailService.sendSesMail(message.address(), message.statementId(), statement.sesCode());
     }
 
     @KafkaListener(topics = "${app.kafka.topic.credit-issued}", groupId = "${spring.kafka.consumer.group-id}")
-    public void listenCreditIssued(EmailMessage message) {
+    public void listenCreditIssued(@NonNull EmailMessage message) {
         mailService.sendSimpleMail(message.address(),message.theme());
     }
 
     @KafkaListener(topics = "${app.kafka.topic.statement-denied}", groupId = "${spring.kafka.consumer.group-id}")
-    public void listenStatementDenied(EmailMessage message) {
+    public void listenStatementDenied(@NonNull EmailMessage message) {
         mailService.sendSimpleMail(message.address(), message.theme());
     }
 }

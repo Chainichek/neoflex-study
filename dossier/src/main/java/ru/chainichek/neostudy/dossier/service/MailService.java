@@ -1,8 +1,10 @@
 package ru.chainichek.neostudy.dossier.service;
 
 import jakarta.mail.internet.MimeMessage;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
@@ -15,6 +17,7 @@ import ru.chainichek.neostudy.dossier.model.dossier.EmailTheme;
 import java.util.Locale;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MailService {
@@ -27,8 +30,8 @@ public class MailService {
     @Value("${app.message.send-ses.send-path}")
     private String sendSesSendPath;
 
-    public void sendSimpleMail(String to,
-                               EmailTheme theme) {
+    public void sendSimpleMail(@NonNull String to,
+                               @NonNull EmailTheme theme) {
         String subject = null;
         String body = null;
 
@@ -49,6 +52,10 @@ public class MailService {
                 subject = mailMessageSource.getMessage("mail.statement-denied.subject", null, defaultLocale);
                 body = mailMessageSource.getMessage("mail.statement-denied.body", null, defaultLocale);
             }
+            default -> {
+                log.debug("Can't go further and throwing exception because followed theme is not allowed in this method: {}", theme);
+                throw new IllegalStateException("Unexpected value of email theme: %s".formatted(theme));
+            }
         }
 
         final SimpleMailMessage message = new SimpleMailMessage();
@@ -59,9 +66,9 @@ public class MailService {
     }
 
     @SneakyThrows
-    public void sendDocumentMail(String to,
-                                 UUID statementId,
-                                 byte[] file) {
+    public void sendDocumentMail(@NonNull String to,
+                                 @NonNull UUID statementId,
+                                 byte @NonNull [] file) {
         final MimeMessage message = mailSender.createMimeMessage();
         final MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
         helper.setTo(to);
@@ -72,9 +79,9 @@ public class MailService {
         mailSender.send(message);
     }
 
-    public void sendSesMail(String to,
-                            UUID statementId,
-                            String sesCode) {
+    public void sendSesMail(@NonNull String to,
+                            @NonNull UUID statementId,
+                            @NonNull String sesCode) {
         final SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject(mailMessageSource.getMessage("mail.send-ses.subject", null, defaultLocale));

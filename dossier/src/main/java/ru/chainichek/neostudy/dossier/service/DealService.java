@@ -1,6 +1,7 @@
 package ru.chainichek.neostudy.dossier.service;
 
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.slf4j.event.Level;
 import org.springframework.stereotype.Service;
 import ru.chainichek.neostudy.dossier.client.DealClient;
@@ -16,11 +17,11 @@ import java.util.UUID;
 public class DealService {
     private final DealClient dealClient;
 
-    public StatementDto getStatement(UUID statementId) {
+    public StatementDto getStatement(@NonNull UUID statementId) {
         return dealClient.getStatement(statementId);
     }
 
-    public void updateStatementStatus(UUID statementId) {
+    public void updateStatementStatus(@NonNull UUID statementId) {
         dealClient.updateStatus(statementId, ApplicationStatus.DOCUMENTS_CREATED);
     }
 }
