@@ -15,6 +15,7 @@ spec:
     spec:
       containers:
         - name: dossier
+          image: dossier:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080

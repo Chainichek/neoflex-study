@@ -15,6 +15,7 @@ spec:
     spec:
       containers:
         - name: deal
+          image: deal:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
