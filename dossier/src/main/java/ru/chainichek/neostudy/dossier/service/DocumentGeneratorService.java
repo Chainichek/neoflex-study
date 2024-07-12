@@ -8,11 +8,13 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import jakarta.validation.Valid;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import ru.chainichek.neostudy.dossier.dto.admin.StatementDto;
 import ru.chainichek.neostudy.dossier.util.validation.Validation;
 
@@ -24,6 +26,7 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
+@Validated
 public class DocumentGeneratorService {
     private final MessageSource documentMessageSource;
     private final Locale defaultLocale;
@@ -35,11 +38,7 @@ public class DocumentGeneratorService {
     private final Font contentFont;
 
     @SneakyThrows
-    public byte[] generateDocument(@NonNull StatementDto statement) {
-
-        if (statement.client() == null || statement.client().passport() == null || statement.credit() == null) {
-            throw new IllegalArgumentException("Statement is invalid: document generation requires client, passport and credit be not null");
-        }
+    public byte[] generateDocument(@Valid @NonNull StatementDto statement) {
 
         final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         final Document document = new Document();

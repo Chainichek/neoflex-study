@@ -1,5 +1,6 @@
 package ru.chainichek.neostudy.dossier.dto.admin;
 
+import jakarta.validation.constraints.NotNull;
 import ru.chainichek.neostudy.dossier.model.client.Gender;
 import ru.chainichek.neostudy.dossier.model.client.MaritalStatus;
 
@@ -16,6 +17,7 @@ public record ClientDto(
         Gender gender,
         MaritalStatus maritalStatus,
         Integer dependentAmount,
+        @NotNull
         PassportDto passport,
         EmploymentDto employment,
         String accountNumber
