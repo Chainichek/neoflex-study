@@ -11,3 +11,5 @@
 * Updated logging for neostudy-lib usage
 * Updated tests for Mockito.verify usage
 * Add kubernetes + skaffold support
+### 1.1.1
+* Updating logger-utils with lib-starter
