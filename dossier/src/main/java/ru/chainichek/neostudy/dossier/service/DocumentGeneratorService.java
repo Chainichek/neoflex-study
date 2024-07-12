@@ -13,7 +13,6 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-import ru.chainichek.neostudy.dossier.dto.calculation.PaymentScheduleElementDto;
 import ru.chainichek.neostudy.dossier.dto.admin.StatementDto;
 import ru.chainichek.neostudy.dossier.util.validation.Validation;
 
@@ -80,15 +79,14 @@ public class DocumentGeneratorService {
         table.setWidthPercentage(100);
         addTableHeader(table);
 
-
-        for (PaymentScheduleElementDto element : statement.credit().paymentSchedule()) {
+        statement.credit().paymentSchedule().forEach(element -> {
             table.addCell(element.number().toString());
             table.addCell(element.date().format(DateTimeFormatter.ofPattern(Validation.DATE_FORMAT_PATTERN)));
             table.addCell(element.totalPayment().toString());
             table.addCell(element.interestPayment().toString());
             table.addCell(element.debtPayment().toString());
             table.addCell(element.remainingDebt().toString());
-        }
+        });
 
         document.add(table);
         document.close();
