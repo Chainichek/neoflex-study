@@ -45,9 +45,15 @@
 		<!--Lib-->
 		<dependency>
 			<groupId>ru.chainichek.neostudy.lib</groupId>
+			<artifactId>neostudy-lib-spring-boot-starter</artifactId>
+			<version>${ru.chainichek.neoustudy.lib.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>ru.chainichek.neostudy.lib</groupId>
 			<artifactId>logger-utils</artifactId>
 			<version>${ru.chainichek.neoustudy.lib.version}</version>
 		</dependency>
+
 		<!--Spring Boot-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
