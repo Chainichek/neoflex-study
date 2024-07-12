@@ -21,7 +21,7 @@ RUN mvn install:install-file  \
 COPY pom.xml ./
 COPY src ./src
 
-RUN mvn clean package -Dmaven.test.skip=true
+RUN mvn clean package
 
 FROM openjdk:17-jdk-slim
 
