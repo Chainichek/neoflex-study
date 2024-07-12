@@ -1,16 +1,16 @@
 package ru.chainichek.neostudy.dossier.service;
 
-import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.chainichek.neostudy.dossier.dto.message.EmailMessage;
 import ru.chainichek.neostudy.dossier.dto.admin.StatementDto;
+import ru.chainichek.neostudy.dossier.dto.message.EmailMessage;
 import ru.chainichek.neostudy.lib.loggerutils.annotation.ConsumerLoggable;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @ConsumerLoggable
 public class DossierService {
     private final DealService dealService;
