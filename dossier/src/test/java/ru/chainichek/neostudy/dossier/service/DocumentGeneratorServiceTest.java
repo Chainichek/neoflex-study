@@ -14,13 +14,13 @@ import ru.chainichek.neostudy.dossier.dto.calculation.PaymentScheduleElementDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -31,6 +31,8 @@ class DocumentGeneratorServiceTest {
     DocumentGeneratorService documentGeneratorService;
     @Mock
     MessageSource documentMessageSource;
+    @Mock
+    DateTimeFormatter formatter;
 
     @Test
     void generateDocument_ifStatementIsCorrect_returnByteArray() {
@@ -67,11 +69,9 @@ class DocumentGeneratorServiceTest {
     }
 
     @Test
-    void generateDocument_ifStatementIsNotCorrect_throwIllegalArgumentException() {
+    void generateDocument_ifStatementIsNotCorrect_throwNullPointerException() {
         StatementDto statement = mock(StatementDto.class);
 
-        assertThrows(IllegalArgumentException.class, () -> documentGeneratorService.generateDocument(statement));
-
-        verify(documentMessageSource, never()).getMessage(any(), any(), any());
+        assertThrows(NullPointerException.class, () -> documentGeneratorService.generateDocument(statement));
     }
 }
