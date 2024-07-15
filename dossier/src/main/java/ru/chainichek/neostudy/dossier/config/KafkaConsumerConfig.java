@@ -12,7 +12,6 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.DefaultErrorHandler;
-import org.springframework.util.backoff.BackOff;
 import org.springframework.util.backoff.FixedBackOff;
 import ru.chainichek.neostudy.dossier.dto.message.EmailMessage;
 import ru.chainichek.neostudy.dossier.properties.KafkaConsumerProperties;
@@ -30,17 +29,17 @@ public class KafkaConsumerConfig {
 
     @Bean
     public DefaultErrorHandler errorHandler() {
-        final BackOff backOff = new FixedBackOff(properties.getBackOff().getInterval(),
-                properties.getBackOff().getAttempts());
         final DefaultErrorHandler errorHandler = new DefaultErrorHandler(
                 (record, ex) -> {
                     log.error("Failed to process record with key = {} and value = {}",
                             record.key(),
                             record.value());
                     log.error("Last threw exception was: %s".formatted(ex.getMessage()), ex);
-                }, backOff
+                }, new FixedBackOff(
+                properties.getBackOff().getInterval(),
+                properties.getBackOff().getAttempts()
+        )
         );
-
         errorHandler.addRetryableExceptions(
                 ConnectException.class,
                 SocketTimeoutException.class);
