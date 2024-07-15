@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: deal
+  name: dossier
 spec:
   selector:
-    app: deal
+    app: dossier
   ports:
     - port: 8080
       targetPort: 8080

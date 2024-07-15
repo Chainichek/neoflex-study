@@ -21,8 +21,9 @@ System Workflow Logic
 The application consists of several MS applications:
 - [x] Calculator
 - [x] Deal
-- [ ] Statement 
-- [ ] Dossier 
+- [x] Statement 
+- [x] Dossier 
+- [ ] Gateway
 ## Architecture and business-flow
 ![img.png](assets/arch.png "Architecture")
 ![img.png](assets/bpm.png "Business flow")
