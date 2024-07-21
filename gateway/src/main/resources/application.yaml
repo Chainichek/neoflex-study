@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      routes:
+        - id: deal
+          uri: ${DEAL_SERVICE_HOST}
+          predicates:
+            - Path=/deal/calculate/*, /deal/document/*, /deal/admin/statement/*
+          filters:
+            - RewritePath=/deal/(?<path>.*), /$\{path}
+        - id: statement
+          uri: ${STATEMENT_SERVICE_HOST}
+          predicates:
+            - Path=/statement/**
+          filters:
+            - RewritePath=/statement/(?<path>.*), /$\{path}
+springdoc:
+  swagger-ui:
+    path: /swagger-docs
+    urls:
+      - url: /deal/api-docs
+        name: Deal
+      - url: /statement/api-docs
+        name: Statement
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
