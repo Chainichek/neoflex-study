@@ -7,7 +7,7 @@ spring:
         - id: deal
           uri: ${DEAL_SERVICE_HOST}
           predicates:
-            - Path=/deal/calculate/*, /deal/document/*, /deal/admin/statement/*
+            - Path=/deal/api-docs, /deal/calculate/*, /deal/document/*, /deal/admin/statement/*
           filters:
             - RewritePath=/deal/(?<path>.*), /$\{path}
         - id: statement
