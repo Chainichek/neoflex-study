@@ -11,6 +11,7 @@ import org.springframework.context.MessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.method.ParameterValidationResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -33,6 +34,7 @@ public class RestResponseEntityExceptionHandler {
     private final static Logger LOG = LoggerFactory.getLogger(RestResponseEntityExceptionHandler.class);
     private final ObjectMapper mapper;
 
+    //400
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Object> httpMessageNotReadableException(HttpMessageNotReadableException exception,
                                                                   HttpServletRequest request) {
@@ -73,19 +75,33 @@ public class RestResponseEntityExceptionHandler {
                 .body(message);
     }
 
-    @ExceptionHandler(WrongStatusException.class)
-    public ResponseEntity<ErrorMessage> wrongStatusException(WrongStatusException exception,
-                                                             HttpServletRequest request) {
+    //401
+    public ResponseEntity<ErrorMessage> unauthorizedException(String unauthorizedMessage, HttpServletRequest request) {
         final ErrorMessage message = new ErrorMessage(LocalDateTime.now(),
-                HttpStatus.PRECONDITION_FAILED.getReasonPhrase(),
-                HttpStatus.PRECONDITION_FAILED.value(),
+                HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                HttpStatus.UNAUTHORIZED.value(),
+                unauthorizedMessage,
+                request.getRequestURI());
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(message);
+    }
+
+    //403
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorMessage> badCredentialsException(BadCredentialsException exception,
+                                                                HttpServletRequest request) {
+        final ErrorMessage message = new ErrorMessage(LocalDateTime.now(),
+                HttpStatus.FORBIDDEN.getReasonPhrase(),
+                HttpStatus.FORBIDDEN.value(),
                 exception.getMessage(),
                 request.getRequestURI());
 
         LOG.error(exception.getMessage(), exception);
 
         return ResponseEntity
-                .status(HttpStatus.PRECONDITION_FAILED)
+                .status(HttpStatus.FORBIDDEN)
                 .body(message);
     }
 
@@ -105,6 +121,7 @@ public class RestResponseEntityExceptionHandler {
                 .body(message);
     }
 
+    //404
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorMessage> notFoundException(NotFoundException exception,
                                                           HttpServletRequest request) {
@@ -118,6 +135,23 @@ public class RestResponseEntityExceptionHandler {
 
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(message);
+    }
+
+    //412
+    @ExceptionHandler(WrongStatusException.class)
+    public ResponseEntity<ErrorMessage> wrongStatusException(WrongStatusException exception,
+                                                             HttpServletRequest request) {
+        final ErrorMessage message = new ErrorMessage(LocalDateTime.now(),
+                HttpStatus.PRECONDITION_FAILED.getReasonPhrase(),
+                HttpStatus.PRECONDITION_FAILED.value(),
+                exception.getMessage(),
+                request.getRequestURI());
+
+        LOG.error(exception.getMessage(), exception);
+
+        return ResponseEntity
+                .status(HttpStatus.PRECONDITION_FAILED)
                 .body(message);
     }
 
@@ -167,6 +201,7 @@ public class RestResponseEntityExceptionHandler {
 
     }
 
+    //500
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<InternalErrorMessage> otherException(RuntimeException exception,
                                                                HttpServletRequest request) {
