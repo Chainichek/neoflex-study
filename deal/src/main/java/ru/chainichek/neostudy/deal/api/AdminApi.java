@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +22,7 @@ import ru.chainichek.neostudy.deal.model.statement.Statement;
 import java.util.UUID;
 
 @RequestMapping("/deal/admin")
+@SecurityRequirement(name = "X_API_KEY")
 public interface AdminApi {
     @Operation(
             summary = "Getting statement by id",
@@ -33,12 +35,18 @@ public interface AdminApi {
                             schema = @Schema(implementation = Statement.class)
                     )
             ),
-//            @ApiResponse(responseCode = "403",
-//                    content = @Content(
-//                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-//                            schema = @Schema(implementation = ErrorMessage.class)
-//                    )
-//            ),
+            @ApiResponse(responseCode = "401",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorMessage.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "403",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorMessage.class)
+                    )
+            ),
             @ApiResponse(responseCode = "404",
                     description = "Statement was not found",
                     content = @Content(
@@ -67,12 +75,18 @@ public interface AdminApi {
                             schema = @Schema()
                     )
             ),
-//            @ApiResponse(responseCode = "403",
-//                    content = @Content(
-//                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-//                            schema = @Schema(implementation = ErrorMessage.class)
-//                    )
-//            ),
+            @ApiResponse(responseCode = "401",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorMessage.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "403",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorMessage.class)
+                    )
+            ),
             @ApiResponse(responseCode = "404",
                     description = "Statement was not found",
                     content = @Content(

@@ -5,7 +5,7 @@ services:
     container_name: neostudy-lib-container
     build:
       context: ./lib
-  calculator-app:
+  calculator:
     container_name: ${CALCULATOR_CONTAINER_NAME}
     env_file:
       - .env
@@ -17,7 +17,7 @@ services:
       SERVER_PORT: ${CALCULATOR_SERVER_PORT}
     depends_on:
       - neostudy_lib
-  deal-app:
+  deal:
     container_name: ${DEAL_CONTAINER_NAME}
     env_file:
       - .env
@@ -31,11 +31,12 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       CALCULATOR_SERVICE_HOST: "${CALCULATOR_CONTAINER_NAME}:${CALCULATOR_SERVER_PORT}"
       SERVER_PORT: ${DEAL_SERVER_PORT}
+      APP_SECURITY_AUTH_TOKEN: ${APP_SECURITY_AUTH_TOKEN}
     depends_on:
       - neostudy_lib
-      - calculator-app
+      - calculator
       - kafka
-  statement-app:
+  statement:
     container_name: ${STATEMENT_CONTAINER_NAME}
     env_file:
       - .env
@@ -48,8 +49,8 @@ services:
       SERVER_PORT: ${STATEMENT_SERVER_PORT}
     depends_on:
       - neostudy_lib
-      - deal-app
-  dossier-app:
+      - deal
+  dossier:
     container_name: ${DOSSIER_CONTAINER_NAME}
     env_file:
       - .env
@@ -62,7 +63,7 @@ services:
       SERVER_PORT: ${DOSSIER_SERVER_PORT}
     depends_on:
       - neostudy_lib
-      - deal-app
+      - deal
       - kafka
   zookeeper:
     image: bitnami/zookeeper:latest
