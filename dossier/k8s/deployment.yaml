@@ -75,4 +75,9 @@ spec:
                 secretKeyRef:
                   name: dossier
                   key: SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_REQUIRED
+            - name: APP_CLIENT_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: deal
+                  key: APP_SECURITY_AUTH_TOKEN
       restartPolicy: Always
