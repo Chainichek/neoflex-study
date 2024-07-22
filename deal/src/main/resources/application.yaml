@@ -1,0 +1,64 @@
+# General
+spring:
+  application:
+    name: deal
+
+  # JPA
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+  # Liquibase
+  liquibase:
+    change-log: classpath:/db/changelog/changelog.yaml
+
+  # Kafka
+  kafka:
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.value.default.type: ru.chainichek.neostudy.deal.dto.message.EmailMessage
+        spring.json.type.mapping: EmailMessage:ru.chainichek.neostudy.deal.dto.message.EmailMessage
+
+# Application
+app:
+  client:
+    calculator:
+      url: ${CALCULATOR_SERVICE_HOST:localhost:8080}
+      path:
+        base-path: /calculator
+        get-offers: /offers
+        calculate-credit: /calc
+
+  kafka:
+    topic:
+      finish-registration: finish-registration
+      create-documents: create-documents
+      send-documents: send-documents
+      send-ses: send-ses
+      credit-issued: credit-issued
+      statement-denied: statement-denied
+
+  security:
+    auth-token: ${APP_SECURITY_AUTH_TOKEN}
+
+  ses:
+    length: 6
+
+# Dev
+springdoc:
+  swagger-ui:
+    path: /swagger-docs
+
+# Lib
+neostudy:
+  lib:
+    loggerutils:
+      enabled: true
+
+# Logging
+logging:
+  level:
+    ru.chainichek.neostudy.deal.client: DEBUG
