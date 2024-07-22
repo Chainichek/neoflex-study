@@ -14,7 +14,7 @@ import java.util.List;
 
 @FeignClient(name = "calculator-service",
         url = "${app.client.calculator.url}",
-        path = "${app.client.calculator.path}",
+        path = "${app.client.calculator.path.base-path}",
         configuration = FeignConfig.class)
 public interface CalculatorClient {
     @RequestMapping(method = RequestMethod.POST, value = "${app.client.calculator.path.get-offers}")
