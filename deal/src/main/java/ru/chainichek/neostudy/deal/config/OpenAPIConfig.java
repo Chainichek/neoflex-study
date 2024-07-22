@@ -20,7 +20,7 @@ import org.springframework.core.annotation.Order;
         paramName = "X-API-KEY"
 )
 public class OpenAPIConfig {
-    private static final String APP_VERSION = "v1.1.0";
+    private static final String APP_VERSION = "v1.2.0";
     private static final String APP_NAME = "MS 'Deal'";
     private static final String APP_DESCRIPTION = """
             Microservice 'Deal' as part of the 'Credit Bank' application, designed for long-term storage of information about deals
