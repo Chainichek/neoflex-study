@@ -5,7 +5,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.validation.annotation.Validated;
 import ru.chainichek.neostudy.dossier.dto.admin.StatementDto;
 import ru.chainichek.neostudy.dossier.dto.message.EmailMessage;
@@ -31,7 +31,7 @@ public class DossierService {
     }
 
     @KafkaListener(topics = "${app.kafka.topic.send-documents}", groupId = "${spring.kafka.consumer.group-id}")
-    @Transactional
+    @TransactionalEventListener
     public void listenSendDocuments(@Valid @NonNull EmailMessage message) {
         final StatementDto statement = dealService.getStatement(message.statementId());
         mailService.sendDocumentMail(message.address(), message.statementId(),
@@ -40,7 +40,7 @@ public class DossierService {
     }
 
     @KafkaListener(topics = "${app.kafka.topic.send-ses}", groupId = "${spring.kafka.consumer.group-id}")
-    @Transactional
+    @TransactionalEventListener
     public void listenSendSes(@Valid @NonNull EmailMessage message) {
         final StatementDto statement = dealService.getStatement(message.statementId());
         mailService.sendSesMail(message.address(), message.statementId(), statement.sesCode());
