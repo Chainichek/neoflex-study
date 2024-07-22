@@ -13,7 +13,7 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-COPY --from=build /app/target/statement-0.0.1-SNAPSHOT.jar ./statement.jar
+COPY --from=build /app/target/statement-1.0.1-SNAPSHOT.jar ./statement.jar
 
 EXPOSE 8080
 

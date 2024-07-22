@@ -1,0 +1,26 @@
+# General
+spring:
+  application:
+    name: statement
+
+# Application
+app:
+  client:
+    deal:
+      url: ${DEAL_SERVICE_HOST:localhost:8081}
+      path:
+        base-path: /deal
+        create-statement: /statement
+        select-offer: /offer/select
+
+# Dev
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-docs
+
+# Logging
+logging:
+  level:
+    ru.chainichek.neostudy.statement.client: DEBUG

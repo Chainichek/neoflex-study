@@ -12,7 +12,7 @@ import java.util.List;
 
 @FeignClient(name = "calculator-service",
         url = "${app.client.deal.url}",
-        path = "${app.client.deal.path}",
+        path = "${app.client.deal.path.base-path}",
         configuration = FeignConfig.class)
 public interface DealClient {
     @RequestMapping(method = RequestMethod.POST, value = "${app.client.deal.path.create-statement}")
