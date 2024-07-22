@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuthProvider {
     @Value("${app.security.auth-token}")
-    private String AUTH_TOKEN;
+    private String authToken;
 
     public Authentication getAuthentication(String authToken) {
-        if (authToken == null || !authToken.equals(AUTH_TOKEN)) {
+        if (authToken == null || !authToken.equals(this.authToken)) {
             throw new BadCredentialsException("Invalid authentication token");
         }
 
