@@ -11,7 +11,7 @@ import org.springframework.core.annotation.Order;
 @Configuration
 @OpenAPIDefinition
 public class OpenAPIConfig {
-    private static final String APP_VERSION = "v1.0.0";
+    private static final String APP_VERSION = "v1.0.1";
     private static final String APP_NAME = "MS 'Statement'";
     private static final String APP_DESCRIPTION = """
             Microservice 'Statement' as part of the 'Credit Bank' application, designed for loan offers validation and prescore

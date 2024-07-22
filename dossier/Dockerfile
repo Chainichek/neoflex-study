@@ -28,7 +28,7 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-COPY --from=build /app/target/dossier-1.0.0-SNAPSHOT.jar ./dossier.jar
+COPY --from=build /app/target/dossier-1.0.1-SNAPSHOT.jar ./dossier.jar
 
 EXPOSE 8080
 

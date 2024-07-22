@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>ru.chainichek.neostudy</groupId>
 	<artifactId>deal</artifactId>
-	<version>1.1.1-SNAPSHOT</version>
+	<version>1.2.0-SNAPSHOT</version>
 	<name>deal</name>
 	<description>deal</description>
 	<properties>
@@ -71,6 +71,11 @@
 			<artifactId>hypersistence-utils-hibernate-63</artifactId>
 			<version>${hypersistence-utils.version}</version>
 		</dependency>
+		<!--Security-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
 		<!--Dev-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -118,6 +123,11 @@
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
