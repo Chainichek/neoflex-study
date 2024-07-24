@@ -13,5 +13,7 @@
 * Add kubernetes + skaffold support
 ### 1.1.1
 * Updating logger-utils with lib-starter
-### 1.2.0
+## 1.2.0
 * Adding secure to /deal/admin endpoints
+### 1.2.1
+* Fixing integrated tests
