@@ -27,7 +27,7 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-COPY --from=build /app/target/deal-1.2.0-SNAPSHOT.jar ./deal.jar
+COPY --from=build /app/target/deal-1.2.1-SNAPSHOT.jar ./deal.jar
 
 EXPOSE 8080
 
