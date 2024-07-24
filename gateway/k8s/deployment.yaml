@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      name: gateway
+      labels:
+        app: gateway
+    spec:
+      containers:
+        - name: gateway
+          image: gateway:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DEAL_SERVICE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: gateway
+                  key: DEAL_SERVICE_HOST
+            - name: STATEMENT_SERVICE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: gateway
+                  key: STATEMENT_SERVICE_HOST
+      restartPolicy: Always
