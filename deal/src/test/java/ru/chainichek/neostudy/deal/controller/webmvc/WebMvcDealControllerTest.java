@@ -5,6 +5,7 @@ import feign.FeignException;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -22,6 +23,8 @@ import ru.chainichek.neostudy.deal.model.client.EmploymentPosition;
 import ru.chainichek.neostudy.deal.model.client.EmploymentStatus;
 import ru.chainichek.neostudy.deal.model.client.Gender;
 import ru.chainichek.neostudy.deal.model.client.MaritalStatus;
+import ru.chainichek.neostudy.deal.security.AuthProvider;
+import ru.chainichek.neostudy.deal.security.SecuredUri;
 import ru.chainichek.neostudy.deal.service.DealService;
 
 import java.math.BigDecimal;
@@ -40,6 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(DealController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class WebMvcDealControllerTest {
 
     public static final FinishRegistrationRequestDto FIRST_REGISTRATION_REQUEST = new FinishRegistrationRequestDto(
@@ -78,6 +82,11 @@ class WebMvcDealControllerTest {
     MockMvc mockMvc;
     @Autowired
     ObjectMapper objectMapper;
+
+    @MockBean
+    AuthProvider authProvider;
+    @MockBean
+    SecuredUri securedUri;
 
     @MockBean
     DealService dealService;

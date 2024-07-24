@@ -7,11 +7,14 @@ import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest
 @EmbeddedKafka
-@TestPropertySource(properties = "spring.liquibase.enabled=false")
+@TestPropertySource(properties = {
+        "spring.liquibase.enabled=false",
+        "spring.jpa.hibernate.ddl-auto=none"
+})
 class DealApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+    @Test
+    void contextLoads() {
+    }
 
 }

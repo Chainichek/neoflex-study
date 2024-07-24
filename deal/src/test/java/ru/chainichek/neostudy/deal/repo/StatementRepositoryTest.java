@@ -15,7 +15,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DataJpaTest
-@TestPropertySource(properties = "spring.liquibase.enabled=false")
+@TestPropertySource(properties = {
+        "spring.liquibase.enabled=false",
+        "spring.jpa.hibernate.ddl-auto=none"
+})
 class StatementRepositoryTest {
 
     @Autowired
