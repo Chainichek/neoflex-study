@@ -31,6 +31,11 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
+        
+    - name: Install dependencies
+      run: mvn install
+      working-directory: ./lib
+    
     - name: Test with Maven
       run: mvn clean test
       working-directory: ./deal
