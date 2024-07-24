@@ -42,7 +42,7 @@ app:
       statement-denied: statement-denied
 
   security:
-    auth-token: ${APP_SECURITY_AUTH_TOKEN}
+    auth-token: ${APP_SECURITY_AUTH_TOKEN:example}
 
   ses:
     length: 6
