@@ -43,7 +43,10 @@ import static org.mockito.Mockito.when;
         "${app.kafka.topic.credit-issued}",
         "${app.kafka.topic.statement-denied}"})
 @DirtiesContext
-@TestPropertySource(properties = "spring.liquibase.enabled=false")
+@TestPropertySource(properties = {
+        "spring.liquibase.enabled=false",
+        "spring.jpa.hibernate.ddl-auto=none"
+})
 public class EmbeddedKafkaDossierServiceTest {
     @Autowired
     DossierService dossierService;
