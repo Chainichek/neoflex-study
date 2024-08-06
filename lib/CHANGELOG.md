@@ -14,3 +14,5 @@
 ## 1.1.1
 * logger-utils
   * Add tests
+* neostudy-lib-spring-boot-starter
+  * Update dependencies and scopes
