@@ -4,4 +4,4 @@ Library utils are jar packages used by many microservices to simplify the execut
 * **neostudy-lib-spring-boot-starter** for dependency autoconfiguration 
 * **logger-utils** for logging aspects
 ### Versioning
-All lib utils are sharing one stable version
+All lib utils can be accessed through stable starter version

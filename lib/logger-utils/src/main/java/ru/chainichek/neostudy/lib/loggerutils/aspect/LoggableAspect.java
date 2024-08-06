@@ -86,7 +86,7 @@ public class LoggableAspect {
         return result;
     }
 
-    private Loggable getEffectiveLoggable(Method method, Class<?> targetClass) {
+    Loggable getEffectiveLoggable(Method method, Class<?> targetClass) {
         for (Class<? extends Annotation> annotationClass : LOGGABLE_ANNOTATIONS) {
             if (method.isAnnotationPresent(annotationClass)) {
                 if (annotationClass == Loggable.class) {
@@ -110,7 +110,7 @@ public class LoggableAspect {
         return null;
     }
 
-    private String getMethodName(Method method) {
+    String getMethodName(Method method) {
         final String name = method.getName();
         return name.replaceAll(String.format("%s|%s|%s",
                         "(?<=[A-Z])(?=[A-Z][a-z])",
