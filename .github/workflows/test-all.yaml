@@ -6,13 +6,13 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Test logger-utils
+name: Test all
 
 on:
-  push:
+  pull_request:
     branches:
-      - 'release/logger-utils/**'
-      - 'fixbug/logger-utils/**'
+      - main
+      - develop
   workflow_dispatch:
 
 
@@ -32,14 +32,34 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Install dependencies
+        run: mvn install --no-transfer-progress
+        working-directory: ./lib
+
       - name: Test with Maven
         run: mvn clean test
-        working-directory: ./logger-utils
+        working-directory: ./calculator
+
+      - name: Test with Maven
+        run: mvn clean test
+        working-directory: ./deal
+
+      - name: Test with Maven
+        run: mvn clean test
+        working-directory: ./dossier
+
+      - name: Test with Maven
+        run: mvn clean test
+        working-directory: ./statement
+
+      - name: Test with Maven
+        run: mvn clean test
+        working-directory: ./gateway
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
         with:
-        token: ${{ secrets.CODECOV_TOKEN }}
+          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2.3.0

@@ -6,13 +6,13 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Test deal app
+name: Test gateway app
 
 on:
   push:
     branches:
-      - 'release/deal/**'
-      - 'fixbug/deal/**'
+      - 'release/gateway/**'
+      - 'fixbug/gateway/**'
   workflow_dispatch:
 
 
@@ -50,12 +50,12 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
       - name: Build and analyze
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Chainichek_neoflex-study
-        working-directory: ./deal
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Chainichek_neoflex-study
+        working-directory: ./gateway
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4.0.1
         with:
           file: '**/target/site/jacoco/jacoco.xml'
           token: ${{ secrets.CODECOV_TOKEN }}
