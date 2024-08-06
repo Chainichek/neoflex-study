@@ -10,15 +10,16 @@
 	</parent>
 	<groupId>ru.chainichek.neostudy</groupId>
 	<artifactId>deal</artifactId>
-	<version>1.2.1-SNAPSHOT</version>
+	<version>1.2.2-SNAPSHOT</version>
 	<name>deal</name>
 	<description>deal</description>
 	<properties>
 		<!--Compiler-->
 		<java.version>17</java.version>
+		<org.jacoco.maven-plugin.version>0.8.12</org.jacoco.maven-plugin.version>
 
 		<!--Lib-->
-		<ru.chainichek.neoustudy.lib>1.1-SNAPSHOT</ru.chainichek.neoustudy.lib>
+		<ru.chainichek.neoustudy.lib>1.1.1-SNAPSHOT</ru.chainichek.neoustudy.lib>
 
 		<!--Spring Cloud-->
 		<spring-cloud.version>2023.0.2</spring-cloud.version>
@@ -30,6 +31,10 @@
 		<org.projectloombok.version>1.18.32</org.projectloombok.version>
 		<org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
 		<springdoc.version>2.0.4</springdoc.version>
+
+		<!--Sonar Cloud-->
+		<sonar.organization>chainichek</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
 	<dependencies>
 		<!--Lib-->
@@ -144,6 +149,7 @@
 	</dependencyManagement>
 
 	<build>
+		<finalName>deal</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -190,6 +196,26 @@
 					</compilerArgs>
 
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${org.jacoco.maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
