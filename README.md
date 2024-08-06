@@ -23,7 +23,7 @@ The application consists of several MS applications:
 - [x] Deal
 - [x] Statement 
 - [x] Dossier 
-- [ ] Gateway
+- [x] Gateway
 ## Architecture and business-flow
 ![img.png](assets/arch.png "Architecture")
 ![img.png](assets/bpm.png "Business flow")
