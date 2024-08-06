@@ -6,13 +6,13 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Test calculator app
+name: Test statement app
 
 on:
   push:
     branches:
-      - 'feature/calculator/**'
-      - 'fixbug/calculator/**'
+      - 'feature/statement/**'
+      - 'fixbug/statement/**'
   workflow_dispatch:
 
 
@@ -53,7 +53,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Chainichek_neoflex-study
-        working-directory: ./calculator
+        working-directory: ./statement
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
         with:
