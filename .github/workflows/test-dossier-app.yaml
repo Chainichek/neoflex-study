@@ -6,13 +6,13 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Test logger-utils
+name: Test dossier app
 
 on:
   push:
     branches:
-      - 'release/logger-utils/**'
-      - 'fixbug/logger-utils/**'
+      - 'release/dossier/**'
+      - 'fixbug/dossier/**'
   workflow_dispatch:
 
 
@@ -32,16 +32,23 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Install dependencies
+        run: mvn install --no-transfer-progress -DskipTests=true
+        working-directory: ./lib
+
       - name: Test with Maven
         run: mvn clean test
-        working-directory: ./logger-utils
+        working-directory: ./dossier
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
         with:
-        token: ${{ secrets.CODECOV_TOKEN }}
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ./dossier
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2.3.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: ./dossier
