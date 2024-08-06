@@ -17,3 +17,6 @@
 * Adding secure to /deal/admin endpoints
 ### 1.2.1
 * Fixing integrated tests
+### 1.2.2
+* Updated Dockerfile (no build + lightweight jre)
+* Added Github actions pipelines
