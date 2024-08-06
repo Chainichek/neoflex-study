@@ -35,7 +35,7 @@ app:
         base-path: /deal
         get-statement: admin/statement/{statementId}
         update-status: admin/statement/{statementId}/status
-      auth-token: ${APP_CLIENT_AUTH_TOKEN}
+      auth-token: ${APP_CLIENT_AUTH_TOKEN:secret}
 
   kafka:
     topic:
