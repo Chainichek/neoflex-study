@@ -11,3 +11,6 @@
 * logger-utils
   * Added new annotations for KafkaProducer and KafkaConsumer
   * Added Docker image support
+## 1.1.1
+* logger-utils
+  * Add tests
