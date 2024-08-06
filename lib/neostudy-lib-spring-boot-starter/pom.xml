@@ -5,11 +5,11 @@
     <parent>
         <groupId>ru.chainichek.neostudy</groupId>
         <artifactId>lib</artifactId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.1.1-SNAPSHOT</version>
     </parent>
     <groupId>ru.chainichek.neostudy.lib</groupId>
     <artifactId>neostudy-lib-spring-boot-starter</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1.1-SNAPSHOT</version>
     <name>starter</name>
     <description>starter</description>
     <url/>
@@ -32,6 +32,7 @@
         <dependency>
             <groupId>ru.chainichek.neostudy.lib</groupId>
             <artifactId>logger-utils</artifactId>
+            <scope>compile</scope>
         </dependency>
         <!--Spring Boot-->
         <dependency>
@@ -62,6 +63,7 @@
     </dependencies>
 
     <build>
+        <finalName>${project.name}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.chainichek.neostudy</groupId>
     <artifactId>lib</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>lib</name>
     <description>lib</description>
@@ -36,12 +36,12 @@
             <dependency>
                 <groupId>ru.chainichek.neostudy.lib</groupId>
                 <artifactId>neostudy-lib-spring-boot-starter</artifactId>
-                <version>${project.version}</version>
+                <version>1.1.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>ru.chainichek.neostudy.lib</groupId>
                 <artifactId>logger-utils</artifactId>
-                <version>${project.version}</version>
+                <version>1.1.1-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
