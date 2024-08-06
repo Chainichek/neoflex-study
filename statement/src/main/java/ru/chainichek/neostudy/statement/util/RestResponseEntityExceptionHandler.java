@@ -3,6 +3,7 @@ package ru.chainichek.neostudy.statement.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -29,8 +30,8 @@ public class RestResponseEntityExceptionHandler {
 
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Object> httpMessageNotReadableException(HttpMessageNotReadableException exception,
-                                                                  HttpServletRequest request) {
+    public ResponseEntity<Object> httpMessageNotReadableException(@NonNull HttpMessageNotReadableException exception,
+                                                                  @NonNull HttpServletRequest request) {
         final ErrorMessage message = new ErrorMessage(LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 HttpStatus.BAD_REQUEST.value(),
@@ -45,8 +46,8 @@ public class RestResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(HandlerMethodValidationException.class)
-    public ResponseEntity<ErrorMessage> handlerMethodValidationException(HandlerMethodValidationException exception,
-                                                                         HttpServletRequest request) {
+    public ResponseEntity<ErrorMessage> handlerMethodValidationException(@NonNull HandlerMethodValidationException exception,
+                                                                         @NonNull HttpServletRequest request) {
         final List<String> errors = exception.getAllValidationResults().stream()
                 .flatMap(result -> result.getResolvableErrors().stream())
                 .filter(messageError -> messageError instanceof ObjectError)
@@ -76,8 +77,8 @@ public class RestResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(FeignException.BadRequest.class)
-    public ResponseEntity<ErrorMessage> validationException(FeignException.BadRequest exception,
-                                                            HttpServletRequest request) {
+    public ResponseEntity<ErrorMessage> badRequestException(@NonNull FeignException.BadRequest exception,
+                                                            @NonNull HttpServletRequest request) {
         final ErrorMessage message = new ErrorMessage(LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 HttpStatus.BAD_REQUEST.value(),
@@ -91,25 +92,9 @@ public class RestResponseEntityExceptionHandler {
                 .body(message);
     }
 
-    @ExceptionHandler(FeignException.Conflict.class)
-    public ResponseEntity<ErrorMessage> conflictException(FeignException.Conflict exception,
-                                                          HttpServletRequest request) {
-        final ErrorMessage message = new ErrorMessage(LocalDateTime.now(),
-                HttpStatus.PRECONDITION_FAILED.getReasonPhrase(),
-                HttpStatus.PRECONDITION_REQUIRED.value(),
-                exception.getMessage(),
-                request.getRequestURI());
-
-        log.error(exception.getMessage(), exception);
-
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(message);
-    }
-
     @ExceptionHandler(FeignException.Forbidden.class)
-    public ResponseEntity<ErrorMessage> forbiddenException(FeignException.Forbidden exception,
-                                                           HttpServletRequest request) {
+    public ResponseEntity<ErrorMessage> forbiddenException(@NonNull FeignException.Forbidden exception,
+                                                           @NonNull HttpServletRequest request) {
         final ErrorMessage message = new ErrorMessage(LocalDateTime.now(),
                 HttpStatus.FORBIDDEN.getReasonPhrase(),
                 HttpStatus.FORBIDDEN.value(),
@@ -124,8 +109,8 @@ public class RestResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(FeignException.NotFound.class)
-    public ResponseEntity<ErrorMessage> notFoundException(FeignException.NotFound exception,
-                                                          HttpServletRequest request) {
+    public ResponseEntity<ErrorMessage> notFoundException(@NonNull FeignException.NotFound exception,
+                                                          @NonNull HttpServletRequest request) {
         final ErrorMessage message = new ErrorMessage(LocalDateTime.now(),
                 HttpStatus.NOT_FOUND.getReasonPhrase(),
                 HttpStatus.NOT_FOUND.value(),
@@ -141,8 +126,8 @@ public class RestResponseEntityExceptionHandler {
 
     @SneakyThrows
     @ExceptionHandler(FeignException.class)
-    public ResponseEntity<?> feignException(FeignException exception,
-                                            HttpServletRequest request) {
+    public ResponseEntity<?> feignException(@NonNull FeignException exception,
+                                            @NonNull HttpServletRequest request) {
 
         if (exception.status() >= 500 && exception.status() < 600) {
             final InternalErrorMessage message = mapper.readValue(exception.contentUTF8(), InternalErrorMessage.class);
@@ -179,8 +164,8 @@ public class RestResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<InternalErrorMessage> otherException(RuntimeException exception,
-                                                               HttpServletRequest request) {
+    public ResponseEntity<InternalErrorMessage> otherException(@NonNull RuntimeException exception,
+                                                               @NonNull HttpServletRequest request) {
         final InternalErrorMessage message = new InternalErrorMessage(LocalDateTime.now(),
                 HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),

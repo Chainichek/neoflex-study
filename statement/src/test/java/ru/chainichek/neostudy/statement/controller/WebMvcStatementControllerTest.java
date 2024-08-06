@@ -1,7 +1,9 @@
 package ru.chainichek.neostudy.statement.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import feign.FeignException;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,11 +22,14 @@ import ru.chainichek.neostudy.statement.service.StatementService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -40,10 +45,12 @@ public class WebMvcStatementControllerTest {
     @MockBean
     StatementService statementService;
 
-    @SneakyThrows
-    @Test
-    void getOffers_whenRequestIsValid_ThenReturnListOfOffers() {
-        LoanStatementRequestDto request = new LoanStatementRequestDto(BigDecimal.valueOf(30000),
+
+    LoanStatementRequestDto loanStatementRequest;
+    LoanOfferDto loanOffer;
+    @BeforeEach
+    void setUp() {
+        loanStatementRequest = new LoanStatementRequestDto(BigDecimal.valueOf(30000),
                 6,
                 "Ivan",
                 "Fedorov",
@@ -52,6 +59,19 @@ public class WebMvcStatementControllerTest {
                 LocalDate.now().minusYears(20),
                 "6161",
                 "345678");
+        loanOffer = new LoanOfferDto(null,
+                BigDecimal.valueOf(30000),
+                BigDecimal.valueOf(300000),
+                6,
+                BigDecimal.valueOf(5235.91),
+                BigDecimal.valueOf(16),
+                false,
+                false);
+    }
+
+    @SneakyThrows
+    @Test
+    void getOffers_whenRequestIsValid_ThenReturnListOfOffers() {
         List<LoanOfferDto> offers = List.of(
                 new LoanOfferDto(null, BigDecimal.valueOf(30000), BigDecimal.valueOf(300000), 6, BigDecimal.valueOf(5235.91), BigDecimal.valueOf(16), false, false),
                 new LoanOfferDto(null, BigDecimal.valueOf(30000), BigDecimal.valueOf(300000), 6, BigDecimal.valueOf(5221.01), BigDecimal.valueOf(15), false, true),
@@ -62,7 +82,7 @@ public class WebMvcStatementControllerTest {
         when(statementService.getOffers(any(LoanStatementRequestDto.class))).thenReturn(offers);
 
         mockMvc.perform(post("/statement")
-                        .content(objectMapper.writeValueAsString(request))
+                        .content(objectMapper.writeValueAsString(loanStatementRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(offers)));
@@ -88,6 +108,54 @@ public class WebMvcStatementControllerTest {
                         .content(objectMapper.writeValueAsString(invalidRequest))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
+                .andReturn().getResponse().getContentAsString();
+
+        assertDoesNotThrow(() -> objectMapper.readValue(response, ErrorMessage.class));
+    }
+
+    @SneakyThrows
+    @Test
+    void getStatement_whenRequestIsPassedAsValidButActuallyInvalidFromDeal_ThenReturnBadRequestErrorMessage() {
+        when(statementService.getOffers(loanStatementRequest)).thenThrow(FeignException.BadRequest.class);
+        String response = mockMvc.perform(post("/statement")
+                        .content(objectMapper.writeValueAsString(loanStatementRequest))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andReturn().getResponse().getContentAsString();
+
+        assertDoesNotThrow(() -> objectMapper.readValue(response, ErrorMessage.class));
+    }
+
+    @SneakyThrows
+    @Test
+    void getStatement_whenUnexpectedErrorFromDeal_ThenReturnInternalErrorMessage() {
+        FeignException exception = mock(FeignException.class);
+        when(exception.status()).thenReturn(500);
+
+        String exceptionContentUtf8 = objectMapper.writeValueAsString(new ErrorMessage(LocalDateTime.now(), "", 500, "", ""));
+        feign.Request request = mock(feign.Request.class);
+        when(exception.contentUTF8()).thenReturn(exceptionContentUtf8);
+        when(exception.request()).thenReturn(request);
+        when(request.url()).thenReturn("");
+
+        when(statementService.getOffers(loanStatementRequest)).thenThrow(exception);
+        String response = mockMvc.perform(post("/statement")
+                        .content(objectMapper.writeValueAsString(loanStatementRequest))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError())
+                .andReturn().getResponse().getContentAsString();
+
+        assertDoesNotThrow(() -> objectMapper.readValue(response, ErrorMessage.class));
+    }
+
+    @SneakyThrows
+    @Test
+    void getStatement_whenUnexpectedError_ThenReturnInternalErrorMessage() {
+        when(statementService.getOffers(loanStatementRequest)).thenThrow(RuntimeException.class);
+        String response = mockMvc.perform(post("/statement")
+                        .content(objectMapper.writeValueAsString(loanStatementRequest))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError())
                 .andReturn().getResponse().getContentAsString();
 
         assertDoesNotThrow(() -> objectMapper.readValue(response, ErrorMessage.class));
@@ -187,17 +255,8 @@ public class WebMvcStatementControllerTest {
     @SneakyThrows
     @Test
     void selectOffer_whenRequestIsValid_ThenReturnOk() {
-        final LoanOfferDto offer = new LoanOfferDto(null,
-                BigDecimal.valueOf(30000),
-                BigDecimal.valueOf(300000),
-                6,
-                BigDecimal.valueOf(5235.91),
-                BigDecimal.valueOf(16),
-                false,
-                false);
-
         mockMvc.perform(post("/statement/offer")
-                        .content(objectMapper.writeValueAsString(offer))
+                        .content(objectMapper.writeValueAsString(loanOffer))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
@@ -209,6 +268,118 @@ public class WebMvcStatementControllerTest {
                         .content(objectMapper.writeValueAsString(null))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
+                .andReturn().getResponse().getContentAsString();
+
+        assertDoesNotThrow(() -> objectMapper.readValue(response, ErrorMessage.class));
+    }
+
+    @SneakyThrows
+    @Test
+    void selectOffer_whenRequestFailsAccess_ThenReturnForbiddenErrorMessage() {
+
+        doThrow(FeignException.Forbidden.class).when(statementService).selectOffer(any());
+
+        String response = mockMvc.perform(post("/statement/offer")
+                        .content(objectMapper.writeValueAsString(loanOffer))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andReturn().getResponse().getContentAsString();
+
+        assertDoesNotThrow(() -> objectMapper.readValue(response, ErrorMessage.class));
+    }
+
+    @SneakyThrows
+    @Test
+    void selectOffer_whenRequestStatementIsNotFound_ThenReturnNotFoundErrorMessage() {
+
+        doThrow(FeignException.NotFound.class).when(statementService).selectOffer(any());
+
+        String response = mockMvc.perform(post("/statement/offer")
+                        .content(objectMapper.writeValueAsString(loanOffer))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andReturn().getResponse().getContentAsString();
+
+        assertDoesNotThrow(() -> objectMapper.readValue(response, ErrorMessage.class));
+    }
+
+    @SneakyThrows
+    @Test
+    void selectOffer_whenRequestFailsPrecondition_ThenReturnPreconditionFailedErrorMessage() {
+        FeignException exception = mock(FeignException.class);
+        when(exception.status()).thenReturn(412);
+
+        String exceptionContentUtf8 = objectMapper.writeValueAsString(new ErrorMessage(LocalDateTime.now(), "", 412, "", ""));
+        feign.Request request = mock(feign.Request.class);
+        when(exception.contentUTF8()).thenReturn(exceptionContentUtf8);
+        when(exception.request()).thenReturn(request);
+        when(request.url()).thenReturn("");
+
+        doThrow(exception).when(statementService).selectOffer(any());
+
+        String response = mockMvc.perform(post("/statement/offer")
+                        .content(objectMapper.writeValueAsString(loanOffer))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isPreconditionFailed())
+                .andReturn().getResponse().getContentAsString();
+
+        assertDoesNotThrow(() -> objectMapper.readValue(response, ErrorMessage.class));
+    }
+
+    @SneakyThrows
+    @Test
+    void selectOffer_whenUnexpectedErrorFromDeal_ThenReturnInternalErrorMessage() {
+        FeignException exception = mock(FeignException.class);
+        when(exception.status()).thenReturn(500);
+
+        String exceptionContentUtf8 = objectMapper.writeValueAsString(new ErrorMessage(LocalDateTime.now(), "", 500, "", ""));
+        feign.Request request = mock(feign.Request.class);
+        when(exception.contentUTF8()).thenReturn(exceptionContentUtf8);
+        when(exception.request()).thenReturn(request);
+        when(request.url()).thenReturn("");
+
+        doThrow(exception).when(statementService).selectOffer(any());
+        String response = mockMvc.perform(post("/statement/offer")
+                        .content(objectMapper.writeValueAsString(loanOffer))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError())
+                .andReturn().getResponse().getContentAsString();
+
+        assertDoesNotThrow(() -> objectMapper.readValue(response, ErrorMessage.class));
+    }
+
+    @SneakyThrows
+    @Test
+    void selectOffer_whenUnexpectedErrorFromDealWithWrongFormat_ThenReturnInternalErrorMessage() {
+        FeignException exception = mock(FeignException.class);
+        when(exception.status()).thenReturn(600);
+        when(exception.getStackTrace()).thenReturn(new StackTraceElement[]{});
+
+        String exceptionContentUtf8 = objectMapper.writeValueAsString(new ErrorMessage(LocalDateTime.now(), "", 600, "", ""));
+        feign.Request request = mock(feign.Request.class);
+        when(exception.contentUTF8()).thenReturn(exceptionContentUtf8);
+        when(exception.request()).thenReturn(request);
+        when(request.url()).thenReturn("");
+
+        doThrow(exception).when(statementService).selectOffer(any());
+        String response = mockMvc.perform(post("/statement/offer")
+                        .content(objectMapper.writeValueAsString(loanOffer))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError())
+                .andReturn().getResponse().getContentAsString();
+
+        assertDoesNotThrow(() -> objectMapper.readValue(response, ErrorMessage.class));
+    }
+
+    @SneakyThrows
+    @Test
+    void selectOffer_whenUnexpectedError_ThenReturnInternalErrorMessage() {
+        doThrow(RuntimeException.class).when(statementService).selectOffer(any());
+
+        String response = mockMvc.perform(post("/statement/offer")
+                        .content(objectMapper.writeValueAsString(loanOffer))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError())
                 .andReturn().getResponse().getContentAsString();
 
         assertDoesNotThrow(() -> objectMapper.readValue(response, ErrorMessage.class));
