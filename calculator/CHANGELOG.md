@@ -6,3 +6,6 @@
 * Fixed missing enum values from MS 'Deal'
 * Removed mvnw files
 * Added base application.properties file
+## 1.0.2
+* Updated Dockerfile (no build + lightweight jre)
+* Added Github actions pipelines
