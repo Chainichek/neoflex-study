@@ -4,6 +4,8 @@ services:
     container_name: calculator
     build:
       context: ./calculator
+    expose:
+      - "8080"
     networks:
       - backend-net
   deal:
@@ -12,11 +14,13 @@ services:
       - .env
     build:
       context: ./deal
+    ports:
+      - "8081:8080"
     environment:
       SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres/hackathon-template"
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9093
       CALCULATOR_SERVICE_HOST: calculator:8080
       APP_SECURITY_AUTH_TOKEN: ${APP_SECURITY_AUTH_TOKEN}
     depends_on:
@@ -29,10 +33,10 @@ services:
       - postgres-net
   statement:
     container_name: statement
-    env_file:
-      - .env
     build:
       context: ./statement
+    ports:
+      - "8082:8080"
     environment:
       DEAL_SERVICE_HOST: deal:8080
     depends_on:
@@ -44,7 +48,7 @@ services:
     build:
       context: ./dossier
     environment:
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9093
       DEAL_SERVICE_HOST: deal:8080
       APP_SECURITY_AUTH_TOKEN: ${APP_SECURITY_AUTH_TOKEN}
     depends_on:
@@ -66,8 +70,8 @@ services:
       - backend-net
   zookeeper:
     image: bitnami/zookeeper:latest
-    ports:
-      - "2181:2181"
+    expose:
+      - "2181"
     environment:
       ALLOW_ANONYMOUS_LOGIN: yes
     networks:
