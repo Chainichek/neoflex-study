@@ -5,13 +5,13 @@ spring:
     gateway:
       routes:
         - id: deal
-          uri: ${DEAL_SERVICE_HOST}
+          uri: ${DEAL_SERVICE_HOST:http://localhost:8082}
           predicates:
             - Path=/deal/api-docs, /deal/calculate/*, /deal/document/*, /deal/admin/statement/*
           filters:
             - RewritePath=/deal/(?<path>.*), /$\{path}
         - id: statement
-          uri: ${STATEMENT_SERVICE_HOST}
+          uri: ${STATEMENT_SERVICE_HOST:http://localhost:8083}
           predicates:
             - Path=/statement/**
           filters:

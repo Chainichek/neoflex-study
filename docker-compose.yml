@@ -1,76 +1,81 @@
 version: '3.8'
 services:
-  neostudy_lib:
-    image: neostudy_lib
-    container_name: neostudy-lib-container
-    build:
-      context: ./lib
   calculator:
-    container_name: ${CALCULATOR_CONTAINER_NAME}
-    env_file:
-      - .env
+    container_name: calculator
     build:
       context: ./calculator
-    ports:
-      - "${CALCULATOR_SERVER_PORT}:${CALCULATOR_SERVER_PORT}"
-    environment:
-      SERVER_PORT: ${CALCULATOR_SERVER_PORT}
-    depends_on:
-      - neostudy_lib
+    expose:
+      - "8080"
+    networks:
+      - backend-net
   deal:
-    container_name: ${DEAL_CONTAINER_NAME}
+    container_name: deal
     env_file:
       - .env
     build:
       context: ./deal
     ports:
-      - "${DEAL_SERVER_PORT}:${DEAL_SERVER_PORT}"
+      - "8081:8080"
     environment:
-      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres/hackathon-template"
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-      CALCULATOR_SERVICE_HOST: "${CALCULATOR_CONTAINER_NAME}:${CALCULATOR_SERVER_PORT}"
-      SERVER_PORT: ${DEAL_SERVER_PORT}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9093
+      CALCULATOR_SERVICE_HOST: calculator:8080
       APP_SECURITY_AUTH_TOKEN: ${APP_SECURITY_AUTH_TOKEN}
     depends_on:
-      - neostudy_lib
       - calculator
       - kafka
+      - postgres
+    networks:
+      - backend-net
+      - kafka-net
+      - postgres-net
   statement:
-    container_name: ${STATEMENT_CONTAINER_NAME}
-    env_file:
-      - .env
+    container_name: statement
     build:
       context: ./statement
     ports:
-      - "${STATEMENT_SERVER_PORT}:${STATEMENT_SERVER_PORT}"
+      - "8082:8080"
     environment:
-      DEAL_SERVICE_HOST: "${DEAL_CONTAINER_NAME}:${DEAL_SERVER_PORT}"
-      SERVER_PORT: ${STATEMENT_SERVER_PORT}
+      DEAL_SERVICE_HOST: deal:8080
     depends_on:
-      - neostudy_lib
       - deal
+    networks:
+      - backend-net
   dossier:
-    container_name: ${DOSSIER_CONTAINER_NAME}
-    env_file:
-      - .env
+    container_name: dossier
     build:
-      context: ./statement
-    ports:
-      - "${DOSSIER_SERVER_PORT}:${DOSSIER_SERVER_PORT}"
+      context: ./dossier
     environment:
-      DEAL_SERVICE_HOST: "${DEAL_CONTAINER_NAME}:${DEAL_SERVER_PORT}"
-      SERVER_PORT: ${DOSSIER_SERVER_PORT}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9093
+      DEAL_SERVICE_HOST: deal:8080
+      APP_SECURITY_AUTH_TOKEN: ${APP_SECURITY_AUTH_TOKEN}
     depends_on:
-      - neostudy_lib
       - deal
       - kafka
+    networks:
+      - backend-net
+      - kafka-net
+  gateway:
+    container_name: gateway
+    build:
+      context: ./gateway
+    environment:
+      DEAL_SERVICE_HOST: http://deal:8080
+      STATEMENT_SERVICE_HOST: http://statement:8080
+    ports:
+      - "8080:8080"
+    networks:
+      - backend-net
   zookeeper:
     image: bitnami/zookeeper:latest
-    ports:
-      - "2181:2181"
+    expose:
+      - "2181"
     environment:
       ALLOW_ANONYMOUS_LOGIN: yes
+    networks:
+      - kafka-net
   kafka:
     image: bitnami/kafka:latest
     ports:
@@ -87,3 +92,26 @@ services:
       - zookeeper
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - kafka-net
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: hackathon-template
+      POSTGRES_USER: ${SPRING_DATASOURCE_USERNAME}
+      POSTGRES_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+    networks:
+      - postgres-net
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+networks:
+  postgres-net:
+    driver: bridge
+  kafka-net:
+    driver: bridge
+  backend-net:
+volumes:
+  postgres_data:

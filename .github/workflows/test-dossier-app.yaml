@@ -11,7 +11,7 @@ name: Test dossier app
 on:
   push:
     branches:
-      - 'release/dossier/**'
+      - 'feature/dossier/**'
       - 'fixbug/dossier/**'
   workflow_dispatch:
 

@@ -11,7 +11,7 @@ name: Test calculator app
 on:
   push:
     branches:
-      - 'release/calculator/**'
+      - 'feature/calculator/**'
       - 'fixbug/calculator/**'
   workflow_dispatch:
 

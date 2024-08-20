@@ -11,7 +11,7 @@ name: Test gateway app
 on:
   push:
     branches:
-      - 'release/gateway/**'
+      - 'feature/gateway/**'
       - 'fixbug/gateway/**'
   workflow_dispatch:
 

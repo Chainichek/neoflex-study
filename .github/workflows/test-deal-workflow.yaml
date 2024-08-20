@@ -11,7 +11,7 @@ name: Test deal app
 on:
   push:
     branches:
-      - 'release/deal/**'
+      - 'feature/deal/**'
       - 'fixbug/deal/**'
   workflow_dispatch:
 

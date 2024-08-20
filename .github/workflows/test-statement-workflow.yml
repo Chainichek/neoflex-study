@@ -11,7 +11,7 @@ name: Test statement app
 on:
   push:
     branches:
-      - 'release/statement/**'
+      - 'feature/statement/**'
       - 'fixbug/statement/**'
   workflow_dispatch:
 
