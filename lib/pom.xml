@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>ru.chainichek.neostudy</groupId>
+    <artifactId>lib</artifactId>
+    <version>1.1.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>lib</name>
+    <description>lib</description>
+
+    <properties>
+        <!--Compiler-->
+        <java.version>17</java.version>
+        <org.apache.maven.plugins.maven-compiler-plugin.version>3.13.0</org.apache.maven.plugins.maven-compiler-plugin.version>
+        <!--Spring Boot-->
+        <org.springframework.boot.version>3.3.1</org.springframework.boot.version>
+        <!-- Lib -->
+    </properties>
+
+    <modules>
+        <module>neostudy-lib-spring-boot-starter</module>
+        <module>logger-utils</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${org.springframework.boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>ru.chainichek.neostudy.lib</groupId>
+                <artifactId>neostudy-lib-spring-boot-starter</artifactId>
+                <version>1.1.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.chainichek.neostudy.lib</groupId>
+                <artifactId>logger-utils</artifactId>
+                <version>1.1.1-SNAPSHOT</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${org.springframework.boot.version}</version>
+                <executions>
+                    <execution>
+                        <id>repackage</id>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

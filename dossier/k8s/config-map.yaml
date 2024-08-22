@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dossier
+data:
+  SPRING_KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
+  DEAL_SERVICE_HOST: "deal:8080"
+  APP_DEFAULT_LOCALE: "en"
+  APP_MESSAGE_SEND_SES_BASE_PATH: "localhost:8081"

@@ -1,0 +1,69 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ru.chainichek.neostudy</groupId>
+        <artifactId>lib</artifactId>
+        <version>1.1.1-SNAPSHOT</version>
+    </parent>
+
+    <groupId>ru.chainichek.neostudy.lib</groupId>
+    <artifactId>logger-utils</artifactId>
+    <version>1.1.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>logger-utils</name>
+    <description>logger-utils</description>
+
+    <properties>
+        <!--AspectJ-->
+        <org.aspectj.version>1.9.22</org.aspectj.version>
+
+        <!--Logger-->
+        <org.slf4j.slf4j-api.version>2.0.13</org.slf4j.slf4j-api.version>
+
+        <!--Test-->
+        <org.junit.jupiter.junit-jupiter-api>5.10.2</org.junit.jupiter.junit-jupiter-api>
+        <org.mockito.version>5.11.0</org.mockito.version>
+        <ch.qos.logback.logback-classic.version>1.5.6</ch.qos.logback.logback-classic.version>
+    </properties>
+
+    <dependencies>
+        <!--AspectJ-->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>${org.aspectj.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${org.aspectj.version}</version>
+        </dependency>
+        <!--Logger-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+        </dependency>
+        <!--Test-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
+    </dependencies>
+    <build>
+        <finalName>${project.name}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${org.apache.maven.plugins.maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

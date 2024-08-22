@@ -1,0 +1,87 @@
+# General
+spring:
+  application:
+    name: dossier
+
+  # Mail
+  mail:
+    host: ${SPRING_MAIL_HOST:smtp.gmail.com}
+    port: ${SPRING_MAIL_PORT:587}
+
+  # Kafka
+  kafka:
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+
+    consumer:
+      group-id: dossier-group
+      auto-offset-reset: earliest
+      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+
+      properties:
+        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.value.default.type: ru.chainichek.neostudy.dossier.dto.message.EmailMessage
+        spring.json.type.mapping: EmailMessage:ru.chainichek.neostudy.dossier.dto.message.EmailMessage
+
+# Application
+app:
+  default-locale: ${APP_DEFAULT_LOCALE:en}
+
+  client:
+    deal:
+      url: ${DEAL_SERVICE_HOST:localhost:8081}
+      path:
+        base-path: /deal
+        get-statement: admin/statement/{statementId}
+        update-status: admin/statement/{statementId}/status
+      auth-token: ${APP_CLIENT_AUTH_TOKEN:secret}
+
+  kafka:
+    topic:
+      finish-registration: finish-registration
+      create-documents: create-documents
+      send-documents: send-documents
+      send-ses: send-ses
+      credit-issued: credit-issued
+      statement-denied: statement-denied
+
+    consumer:
+      back-off:
+        interval: 5000
+
+  message:
+    send-ses:
+      api-path: ${APP_MESSAGE_SEND_SES_BASE_PATH:localhost:8081}
+      base-path: /deal/document
+      send-path: /code
+
+  document:
+    date-time-pattern: dd/MM/yyyy HH:mm:ss
+
+    font:
+      title:
+        font-family: helvetica
+        font-size: 20
+        font-style: bold
+
+      section-title:
+        font-family: helvetica
+        font-size: 16
+        font-style: bold
+
+      content:
+        font-family: helvetica
+        font-size: 16
+        font-style: bold
+
+# Dev
+neostudy:
+  lib:
+    loggerutils:
+      enabled: true
+
+# Logging
+#logging:
+#  level:
+#    ru.chainichek.neostudy.dossier.client: DEBUG

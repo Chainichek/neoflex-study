@@ -31,4 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+/.mvn/
+/mvnw
+/mvnw.cmd
 /.env
+/k8s/secret.yaml

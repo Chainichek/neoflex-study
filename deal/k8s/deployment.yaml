@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: deal
+  template:
+    metadata:
+      name: deal
+      labels:
+        app: deal
+    spec:
+      containers:
+        - name: deal
+          image: deal:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: CALCULATOR_SERVICE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: deal
+                  key: CALCULATOR_SERVICE_HOST
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              valueFrom:
+                configMapKeyRef:
+                  name: deal
+                  key: SPRING_KAFKA_BOOTSTRAP_SERVERS
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: deal
+                  key: SPRING_DATASOURCE_URL
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres
+                  key: POSTGRES_USER
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres
+                  key: POSTGRES_PASSWORD
+            - name: APP_SECURITY_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: deal
+                  key: APP_SECURITY_AUTH_TOKEN
+      restartPolicy: Always
